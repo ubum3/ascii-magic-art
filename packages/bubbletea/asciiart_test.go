@@ -17,9 +17,9 @@ import (
 	"github.com/ubum3/ascii-magic-art/packages/bubbletea/slug"
 )
 
-// Chaotic orbits: one last-bit difference in sin() over 60,000 steps gives a
+// Chaotic orbits and flocks: one last-bit difference in sin() over many steps gives a
 // different, equally valid picture. Size check only, like the clock pieces.
-var chaotic = []string{"clifford-attractor"}
+var chaotic = []string{"clifford-attractor", "rest-starlings"}
 
 // Every library piece, drawn in goja, against the frame Node drew
 // (packages/fixtures/golden.bin, from `npm run native` in the repo root).
@@ -40,6 +40,16 @@ func TestParityWithNode(t *testing.T) {
 	var golden map[string][2]string
 	if err := json.Unmarshal(data, &golden); err != nil {
 		t.Fatal(err)
+	}
+	// ascii.rest's pieces (rest-*), when the bundle has them.
+	if raw, err := os.ReadFile("../fixtures/rest-golden.bin"); err == nil {
+		data, err := io.ReadAll(flate.NewReader(bytes.NewReader(raw)))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := json.Unmarshal(data, &golden); err != nil {
+			t.Fatal(err)
+		}
 	}
 	type timing struct {
 		slug       string

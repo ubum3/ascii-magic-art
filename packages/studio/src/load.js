@@ -1,6 +1,7 @@
 /*
- * load.js: anything playable, by name or path: a library slug, a spec (.json), a
- * clip (.amc) or a piece module (.js). Returns { meta, draw(t, state), kind }.
+ * load.js: anything playable, by name or path: a library slug, an ascii.rest
+ * piece (rest-rust), a spec (.json), a clip (.amc) or a piece module (.js).
+ * Returns { meta, draw(t, state), create(), kind }: create() makes a fresh draw.
  */
 import fs from "fs";
 import path from "path";
@@ -26,26 +27,37 @@ function closest(name, list) {
   return list.map((s) => [d(name, s), s]).sort((a, b) => a[0] - b[0]).slice(0, 3).map((x) => x[1]);
 }
 
+const piece = (mod, look, kind) => {
+  const create = () => withLook(mod.default(), mod.meta.palette, lookOn(look) ? look : null);
+  return { meta: mod.meta, draw: create(), create, kind };
+};
+
 export async function load(src, look = {}) {
-  if (src && typeof src === "object") return wrap(fromSpec(src, lookOn(look) ? look : undefined), "spec");
+  if (src && typeof src === "object") return wrap(fromSpec(src, lookOn(look) ? look : undefined), "spec", src);
   const ext = path.extname(src).toLowerCase();
   if (ext === ".amc") {
     const clip = decodeClip(fs.readFileSync(src), (u) => zlib.inflateRawSync(u));
-    const p = clipPiece(clip);
-    return { meta: p.meta, draw: withLook(p.default(), p.meta.palette, lookOn(look) ? look : null), kind: "clip", clip };
+    return { ...piece(clipPiece(clip), look, "clip"), clip };
   }
-  if (ext === ".json") return wrap(fromSpec(JSON.parse(fs.readFileSync(src, "utf8")), lookOn(look) ? look : undefined), "spec");
-  if (ext === ".js" || ext === ".mjs") {
-    const mod = await import(pathToFileURL(path.resolve(src)).href);
-    return { meta: mod.meta, draw: withLook(mod.default(), mod.meta.palette, lookOn(look) ? look : null), kind: "piece" };
+  if (ext === ".json") {
+    const spec = JSON.parse(fs.readFileSync(src, "utf8"));
+    return wrap(fromSpec(spec, lookOn(look) ? look : undefined), "spec", spec);
+  }
+  if (ext === ".js" || ext === ".mjs") return piece(await import(pathToFileURL(path.resolve(src)).href), look, "piece");
+  if (/^rest[-:]/.test(src)) {
+    const rest = await import("ascii-magic-art-rest");
+    const slug = "rest-" + src.slice(5);
+    if (!rest.isRestSlug(slug)) {
+      throw new Error(`no ascii.rest piece called "${src.slice(5)}". Did you mean: ${closest(slug, rest.restSlugs).join(", ")}?`);
+    }
+    return piece(await rest.restPiece(slug), look, "rest");
   }
   if (!fs.existsSync(path.join(PIECES, src + ".js"))) {
     throw new Error(`no piece, spec or clip called "${src}". Did you mean: ${closest(src, slugs()).join(", ")}?`);
   }
-  const mod = await import(pathToFileURL(path.join(PIECES, src + ".js")).href);
-  return { meta: mod.meta, draw: withLook(mod.default(), mod.meta.palette, lookOn(look) ? look : null), kind: "piece" };
+  return piece(await import(pathToFileURL(path.join(PIECES, src + ".js")).href), look, "piece");
 }
 
-function wrap(p, kind) {
-  return { meta: p.meta, draw: p.default(), kind };
+function wrap(p, kind, spec) {
+  return { meta: p.meta, draw: p.default(), create: p.default, kind, spec };
 }

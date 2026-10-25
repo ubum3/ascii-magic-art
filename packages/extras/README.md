@@ -24,6 +24,8 @@ bar(0.5, { value: 0.42, label: "Uploading" }); // data kinds take state too
 
 Specs usually come from [ama-studio](../studio/README.md): `ama-studio brand logo.svg -o logo.json`. See `src/index.d.ts` for every field.
 
+A brand spec can carry `chars`, the character each cell settles on. `ama-studio brand logo.svg --style glyphs` fills it with characters shaped like the logo's edges, the way [ascii.rest](../rest-bridge/README.md) draws its logos. Every effect still plays; it just ends on those characters instead of shading blocks.
+
 Also included:
 
 - **`cellsFromPixels(rgba, w, h)` and `buildPalette`:** pixels to cells, using a median-cut palette and brightness levels. Every package uses this one quantiser.

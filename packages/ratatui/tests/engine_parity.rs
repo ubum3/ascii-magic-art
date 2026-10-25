@@ -14,18 +14,25 @@ use std::time::Instant;
 
 use ascii_magic_art_ratatui::{JsPiece, catalog};
 
-/// Chaotic orbits: one last-bit difference in `sin()` over 60,000 steps gives a different,
+/// Chaotic orbits and flocks: one last-bit difference in `sin()` over many steps gives a different,
 /// equally valid picture. Size check only, like the clock pieces.
-const CHAOTIC: &[&str] = &["clifford-attractor"];
+const CHAOTIC: &[&str] = &["clifford-attractor", "rest-starlings"];
 
-fn golden() -> Option<HashMap<String, (String, String)>> {
-    let path = concat!(env!("CARGO_MANIFEST_DIR"), "/../fixtures/golden.bin");
+fn read_golden(name: &str) -> Option<HashMap<String, (String, String)>> {
+    let path = format!("{}/../fixtures/{name}", env!("CARGO_MANIFEST_DIR"));
     let raw = std::fs::read(path).ok()?;
     let mut s = String::new();
     flate2::read::DeflateDecoder::new(&raw[..])
         .read_to_string(&mut s)
         .ok()?;
     serde_json::from_str(&s).ok()
+}
+
+/// Ours, and ascii.rest's (`rest-*`) when the bundle has them.
+fn golden() -> Option<HashMap<String, (String, String)>> {
+    let mut g = read_golden("golden.bin")?;
+    g.extend(read_golden("rest-golden.bin").unwrap_or_default());
+    Some(g)
 }
 
 #[test]

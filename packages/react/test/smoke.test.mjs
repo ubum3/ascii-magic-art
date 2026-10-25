@@ -116,7 +116,8 @@ test('"use client" only where it belongs', () => {
   const first = (f) => fs.readFileSync(path.join(DIST, f), "utf8").split("\n", 1)[0];
   for (const dir of ["client", "hooks"]) for (const f of fs.readdirSync(path.join(DIST, dir)).filter((f) => f.endsWith(".js")))
     assert.equal(first(`${dir}/${f}`), '"use client";', `${dir}/${f}`);
-  for (const f of ["index.js", "server.js", "kit.js", "catalog.js", "core/look.js", "core/prerender.js", "core/resolve.js", "core/styles.js", "core/variants.js"])
+  assert.equal(first("rest.js"), '"use client";', "rest.js");
+  for (const f of ["index.js", "server.js", "rest-server.js", "kit.js", "catalog.js", "core/look.js", "core/prerender.js", "core/resolve.js", "core/styles.js", "core/variants.js"])
     assert.notEqual(first(f), '"use client";', f);
 });
 
@@ -144,4 +145,18 @@ test("extras: specs and sequences render their first frame on the server, clips 
   const clip = await loadClip(bytes);
   assert.equal(clip.default()(0.6), "cd");
   assert.equal(typeof useSpecPiece, "function");
+});
+
+test("rest: ascii.rest pieces render their first frame on the server, and hold their size without it", async () => {
+  const { AsciiRest: ServerRest } = await import("../dist/rest-server.js");
+  const { AsciiRest, restSize, REST_CATALOG } = await import("../dist/rest.js");
+  assert.equal(REST_CATALOG.length, 240);
+  const size = restSize("rust");
+  const html = renderToString(await ServerRest({ piece: "rust" }));
+  assert.match(html, /aria-label="rust, animated ASCII art"/);
+  assert.equal(lines(preText(html)), size.rows);
+  assert.match(preText(html), /8/);
+  const box = renderToString(h(AsciiRest, { piece: "night-coast" }));
+  assert.doesNotMatch(box, /<pre[^>]*>[^<]+</, "no frame without the server");
+  assert.throws(() => renderToString(h(AsciiRest, { piece: "nope" })), /no ascii.rest piece/);
 });

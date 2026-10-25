@@ -22,6 +22,9 @@ The output format comes from the extension you give `-o`. Without `-o`, the resu
 | `.amc` | a **clip**: video frames, read natively by every package |
 | `.cast` | an asciinema cast (asciicast v2): text, tiny, crisp at any size |
 | `.png` `.gif` `.mp4` `.webm` | drawn by `runtime/canvas.js`, exactly like the web player, then encoded by ffmpeg |
+| `.svg` | an **animated SVG**, one loop, for READMEs, docs and `<img>`, through [ascii.rest](https://github.com/bas3line/ascii)'s `svg()` |
+
+Anything a slug can name includes [ascii.rest](../rest-bridge/README.md)'s 240 pieces, as `rest-<name>`: `ama-studio play rest-rust`.
 
 ## Commands
 
@@ -32,7 +35,13 @@ The output format comes from the extension you give `-o`. Without `-o`, the resu
   - The logo is trimmed, fitted to `--cols` (default 60) with a cell of padding, and sampled at 4×7 points per cell, which gives soft edges.
   - It keeps its own colours. `--colors "#hex,#hex"` replaces them, in order of how much of the logo each one covers.
   - A PNG without transparency has its corner colour treated as the background.
+  - `--style glyphs` draws it the way ascii.rest draws its logos: each cell is the character whose shape best matches the logo's edge there (`/ \ ( ) d b q p`…), and `8` where it's solid. Every effect plays as before and settles on those characters. Thin strokes come out much sharper than with `blocks`, the default.
 - **`text "<words>"`:** words in a 5-row block font with a drop shadow, or use `--font plain`.
+- **`banner "<words>"`:** words in ascii.rest's banner fonts, with a glint now and then.
+  - **Lettering:** `--font block|slim|tall|bold|round|wide|mixed|italic`, `--shadow double|single|heavy|rounded|ascii|none`, `--fill CHAR` and `--colors "#a,#b"` (more than one colour gives a fade).
+  - **Motion:** `--effect glint|type|still`.
+  - **SVG extras:** to `.svg`, it takes `--tagline`, plus `--art <slug>` with `--place left|right|above|below` for a logo beside it. `--both` writes the light and dark versions and prints the `<picture>` that picks between them.
+  - **Other outputs:** `.gif`, `.cast` and the rest, or play it without `-o`.
 - **`play`** and **`export`:** for anything that plays. `--state '{"value":0.5}'` feeds a data spec.
 
 Effects, also listed by `--help`:
@@ -47,6 +56,10 @@ Effects, also listed by `--help`:
 - **Presets:** `--preset desktop|desktop-4k|phone|youtube|github-social|x-header|linkedin-banner|square|story`. These are the wallpaper and social sizes from `runtime/canvas.js`.
 - **Look and colour:** `--bg #hex` and `--look dots` (any look, shape looks included).
 - **PNG:** `--at 2.5` picks the frame a PNG shows.
+- **SVG:**
+  - **Theme:** `--dark` (the default) is for a dark page, with no background. `--light` is for a light page: a coloured piece sits on its own dark card, because its colours are made for one. `--both` writes `x.svg` and `x.dark.svg` and prints the `<picture>`.
+  - **Loop:** an SVG plays one loop. Without `--seconds`, it looks for a period the piece repeats at (2, 3, 4, 6, 8 or 12 s). A logo or text entrance plays once and holds. Anything else loops 4 s, and it warns you that the loop jumps.
+  - **Size:** ascii.rest keeps an SVG under 1 MB when it can, by dropping frames and colours, and warns you when it can't. A shorter `--seconds` or fewer `--cols` helps.
 
 ## Requirements
 

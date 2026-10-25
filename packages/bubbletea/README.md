@@ -146,6 +146,11 @@ m := asciiart.New(clip)
 - **Transitions:** `asciiart.Transition(kind, fromView, toView, w, h, p)` mixes any two rendered views: `Dissolve`, `WipeRight`, `WipeLeft`, `WipeDown`, `WipeUp`, `Melt`, `ScrambleIn` and `Iris`. `intro.Into(asciiart.Dissolve, 900*time.Millisecond)` ends an intro by going into your app, which starts when the transition does. `intro.Fit(asciiart.FitCenter)` keeps a logo at its own size.
 - **Casts:** `WriteCast(w, piece, seconds, fps)` writes an asciinema cast. `NewCastRecorder` records any views your app renders.
 
+## ascii.rest pieces
+
+With an [ascii.rest](https://github.com/bas3line/ascii) checkout in the repo root, the bundle also carries its 240 pieces (tech logos, companies, Linux distros and scenes) as `rest-<name>`. They work anywhere a slug does, and they're in the catalogue and the slug constants: `asciiart.MustSlug(slug.RestRust)`, `asciiart.FromSlug("rest-ubuntu")`.
+They're checked against Node by the same parity test as the library's pieces. A few of their photo scenes take seconds to load, so load those before you need them.
+
 ## Examples
 
 ```bash

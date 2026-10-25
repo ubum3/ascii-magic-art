@@ -51,6 +51,9 @@ export function fixtures() {
   out.push(["sparkline", { kind: "sparkline", cols: 30, rows: 4, label: "TPS" }, { values: Array.from({ length: 50 }, (_, i) => 20 + Math.sin(i / 3) * 10) }]);
   out.push(["ticker", { kind: "ticker", cols: 50 }, { items: [{ label: "VOLUME", value: 1234567, delta: 2.4 }, { label: "AUTH", value: 98.2, delta: -0.3 }] }]);
   for (const style of ["check", "confetti", "fireworks"]) out.push([`celebrate-${style}`, { kind: "celebrate", cols: 40, rows: 12, message: "Payment approved", style }]);
+  // Per-cell glyphs (ama-studio brand --style glyphs): edge characters where the mask is partial.
+  const chars = m.cov.map((r) => [...r].map((c) => (c === "0" ? " " : c === "8" ? "8" : "/")).join(""));
+  out.push(["brand-glyphs", { kind: "brand", effect: "draw", ...m, chars }]);
   return out;
 }
 

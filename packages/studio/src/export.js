@@ -4,6 +4,7 @@
  *   cast   asciicast v2 (asciinema), frames as ANSI text: tiny, crisp, copyable
  *   png    one frame, drawn by runtime/canvas.js exactly as the web player draws it
  *   gif / mp4 / webm   every frame drawn the same way, encoded by ffmpeg
+ *   svg    one loop as an animated SVG, for READMEs (svg.js, through ascii.rest)
  *
  * Images use @napi-rs/canvas. runtime/canvas.js makes its glyph atlas with
  * document.createElement("canvas") and draws dots with Path2D; stand-ins for both
@@ -14,6 +15,7 @@ import { spawn } from "child_process";
 import { createCanvas, GlobalFonts, Path2D } from "@napi-rs/canvas";
 import { ansi, termSize } from "./ansi.js";
 import { hasFfmpeg } from "./video.js";
+import { toSvg } from "./svg.js";
 
 if (!globalThis.document) globalThis.document = { createElement: () => createCanvas(1, 1) };
 if (!globalThis.Path2D) globalThis.Path2D = Path2D;
@@ -103,11 +105,14 @@ export async function toVideo(src, file, format, opts = {}) {
   return info;
 }
 
-export const FORMATS = ["cast", "png", "gif", "mp4", "webm"];
+export const FORMATS = ["cast", "png", "gif", "mp4", "webm", "svg"];
 
 /** Export by file extension. */
 export async function exportTo(src, file, opts = {}) {
   const format = (opts.format || file.split(".").pop()).toLowerCase();
+  // A piece with its own ground (ascii.rest scenes) is drawn on it unless told otherwise.
+  if (opts.bg == null && src.meta.bg) opts = { ...opts, bg: src.meta.bg };
+  if (format === "svg") { const r = toSvg(src, file, opts); if (r.snippet) opts.onSnippet?.(r.snippet); return format; }
   if (format === "cast") { fs.writeFileSync(file, toCast(src, opts)); return format; }
   if (format === "png") { await toPng(src, file, opts); return format; }
   if (CODECS[format]) { await toVideo(src, file, format, opts); return format; }

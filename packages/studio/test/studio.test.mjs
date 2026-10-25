@@ -11,6 +11,7 @@ import { videoClip, hasFfmpeg } from "../src/video.js";
 import { toCast, exportTo } from "../src/export.js";
 import { load } from "../src/load.js";
 import { pieceModule } from "../src/piecejs.js";
+import { svgText, periodOf } from "../src/svg.js";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const MARK = path.join(HERE, "../../extras/examples/mark.svg");
@@ -115,4 +116,68 @@ test("cli: help, a bad slug suggests names, frames print", () => {
   assert.equal(fr.status, 0);
   assert.match(fr.stdout, /█/);
   assert.match(run("brand", MARK, "--effect", "nope").stderr, /no effect "nope"/);
+});
+
+test("svg: a piece, a spec and a still, as animated SVGs", async () => {
+  const warn = [];
+  const torus = await load("spinning-torus");
+  const s = svgText(torus, {}, (w) => warn.push(w));
+  assert.match(s, /^<svg[^>]*xmlns="http:\/\/www.w3.org\/2000\/svg"/);
+  assert.ok(s.endsWith("</svg>") && s.includes("@keyframes"));
+  const logo = await load(JSON.parse(fs.readFileSync(path.join(HERE, "../../extras/examples/mark.json"), "utf8")));
+  const l = svgText(logo, {}, (w) => warn.push(w));
+  assert.match(l, /forwards/, "an entrance plays once and holds");
+  const still = await load({ kind: "text", text: "HI", effect: "plain" });
+  assert.ok(svgText(still, {}, (w) => warn.push(w)).startsWith("<svg"));
+  assert.match(svgText(logo, { light: true }), /<rect[^>]*fill="#09090b"/, "a coloured piece sits on a dark card on a light page");
+});
+
+test("svg: a period is found, or the loop is 4 s with a warning", async () => {
+  const p = await load("spinning-torus");
+  assert.ok(periodOf(p.create) >= 0);
+  const warn = [];
+  svgText(await load("matrix-rain"), { fps: 2 }, (w) => warn.push(w));
+  assert.ok(warn.some((w) => /no period found/.test(w)));
+});
+
+test("svg: --both writes two files and prints the <picture>", () => {
+  const out = path.join(tmp, "logo.svg");
+  const r = spawnSync(process.execPath, [CLI, "export", path.join(HERE, "../../extras/examples/mark.json"), "-o", out, "--both"], { encoding: "utf8" });
+  assert.equal(r.status, 0, r.stderr);
+  assert.ok(fs.existsSync(out) && fs.existsSync(out.replace(".svg", ".dark.svg")));
+  assert.match(r.stdout, /<picture>[\s\S]*prefers-color-scheme: dark[\s\S]*logo\.dark\.svg/);
+});
+
+test("rest: ascii.rest pieces load, play and export by rest-<name>", async () => {
+  const rust = await load("rest-rust");
+  assert.equal(rust.kind, "rest");
+  const f = rust.draw(1);
+  assert.equal(f.text.split("\n").length, rust.meta.rows);
+  const cast = toCast(rust, { seconds: 0.5 });
+  assert.match(cast.split("\n")[0], /"version":2/);
+  await assert.rejects(load("rest-nope"), /Did you mean: rest-/);
+});
+
+test("banner: their fonts, as a frame, an SVG and with art beside it", () => {
+  const run = (...a) => spawnSync(process.execPath, [CLI, ...a], { encoding: "utf8", env: { ...process.env, NO_COLOR: "1" } });
+  const fr = run("banner", "OK", "--font", "slim", "--effect", "still", "--frame");
+  assert.equal(fr.status, 0, fr.stderr);
+  assert.ok(fr.stdout.trim().split("\n").length >= 3);
+  const out = path.join(tmp, "b.svg");
+  assert.equal(run("banner", "ACME", "--art", "rest-zig", "--tagline", "hello", "-o", out).status, 0);
+  assert.match(fs.readFileSync(out, "utf8"), /hello/);
+  assert.match(run("banner", "X", "--font", "nope").stderr, /no font "nope"/);
+});
+
+test("brand --style glyphs: characters shaped like the logo's edges, that every effect settles on", async () => {
+  const spec = await brandSpec(MARK, { cols: 60, style: "glyphs", effect: "assemble" });
+  assert.equal(spec.chars.length, spec.rows);
+  assert.ok(spec.chars.every((r) => r.length === spec.cols));
+  const ink = spec.chars.join("");
+  assert.match(ink, /8/, "solid cells");
+  assert.match(ink, /[^8 ]/, "edge glyphs");
+  const p = await load(spec);
+  const f = p.create()(8);
+  assert.equal(f.text.split("\n").length, spec.rows);
+  await assert.rejects(brandSpec(MARK, { style: "nope" }), /no style "nope"/);
 });

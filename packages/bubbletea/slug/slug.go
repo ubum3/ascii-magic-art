@@ -1272,6 +1272,486 @@ const (
 	YawningCoffeeCup = "yawning-coffee-cup"
 	// ZigzagRule is Zigzag Rule: A doubled zigzag rule that scrolls sideways while a rainbow gradient slides along it.
 	ZigzagRule = "zigzag-rule"
+	// RestA0 is a0: the rounded a with a round hole, glinting now and then
+	RestA0 = "rest-a0"
+	// RestAgentmail is agentmail: the agent in a brimmed hat, glinting now and then
+	RestAgentmail = "rest-agentmail"
+	// RestAlmalinux is almalinux: five coloured figures in a ring, scanned now and then
+	RestAlmalinux = "rest-almalinux"
+	// RestAlpineDawn is alpine dawn: snow peaks catching first light above a still, misty mountain lake
+	RestAlpineDawn = "rest-alpine-dawn"
+	// RestAlpineLinux is alpine linux: the mountain in a hexagon, scanned now and then
+	RestAlpineLinux = "rest-alpine-linux"
+	// RestAmerFort is amer fort: amer fort floodlit gold on its hill, mirrored in maota lake at night
+	RestAmerFort = "rest-amer-fort"
+	// RestAnalogClock is analog clock: a round clock face showing the local time, seconds ticking
+	RestAnalogClock = "rest-analog-clock"
+	// RestApple is apple: the apple with a bite out of it, glinting now and then
+	RestApple = "rest-apple"
+	// RestAquarium is aquarium: fish swimming and turning in a tank, bubbles and weed
+	RestAquarium = "rest-aquarium"
+	// RestArchLinux is arch linux: the blue arch, scanned now and then
+	RestArchLinux = "rest-arch-linux"
+	// RestAurora is aurora: an aurora curtain rippling over a treeline under stars
+	RestAurora = "rest-aurora"
+	// RestAuroraFjord is aurora fjord: aurora curtains rippling over a still fjord, a cabin lit on the shore
+	RestAuroraFjord = "rest-aurora-fjord"
+	// RestAutumn is autumn: the leaf with a slash for its vein, glinting now and then
+	RestAutumn = "rest-autumn"
+	// RestBarChart is bar chart: bars easing between three datasets, values riding on top
+	RestBarChart = "rest-bar-chart"
+	// RestBigText is big text: a block-letter banner with a line shadow and a passing glint
+	RestBigText = "rest-big-text"
+	// RestBlackHole is black hole: a black hole, its lensed disk turning, one side brighter
+	RestBlackHole = "rest-black-hole"
+	// RestBlackPrism is black prism: the vercel triangle as a glass prism, splitting white light to a rainbow
+	RestBlackPrism = "rest-black-prism"
+	// RestBonsai is bonsai: a potted tree that sheds its leaves and leafs out again
+	RestBonsai = "rest-bonsai"
+	// RestBootLog is boot log: a self test counts memory, then the boot log scrolls by
+	RestBootLog = "rest-boot-log"
+	// RestBouncingBalls is bouncing balls: rubber balls bouncing lower each time, squashing on landing
+	RestBouncingBalls = "rest-bouncing-balls"
+	// RestBoxFrames is box frames: twelve frame styles to copy, each one labelled
+	RestBoxFrames = "rest-box-frames"
+	// RestButterfly is butterfly: a butterfly flapping and gliding along a wandering path
+	RestButterfly = "rest-butterfly"
+	// RestC is c: a c on a blue hexagon, glinting now and then
+	RestC = "rest-c"
+	// RestCalendar is calendar: this month like cal, today bracketed, time ticking below
+	RestCalendar = "rest-calendar"
+	// RestCampfire is campfire: a log fire flickering, sparks rising; denser ink is hotter
+	RestCampfire = "rest-campfire"
+	// RestCandle is candle: a flickering candle burning down in its holder, then renewed
+	RestCandle = "rest-candle"
+	// RestCandlesticks is candlesticks: hollow up candles, solid down ones, the last one forming live
+	RestCandlesticks = "rest-candlesticks"
+	// RestCat is cat: a tabby asleep on its paws, breathing slowly
+	RestCat = "rest-cat"
+	// RestCentos is centos: four coloured squares in a star, scanned now and then
+	RestCentos = "rest-centos"
+	// RestChat is chat: a chat in bubbles: typed, sent, three dots, then the reply streaming
+	RestChat = "rest-chat"
+	// RestCherryBlossom is cherry blossom: a flowering cherry branch shedding petals on the wind
+	RestCherryBlossom = "rest-cherry-blossom"
+	// RestChladni is chladni plate: sand travelling to the nodal lines of a ringing plate
+	RestChladni = "rest-chladni"
+	// RestClojure is clojure: a lambda in a green and blue circle, glinting now and then
+	RestClojure = "rest-clojure"
+	// RestCloudSea is cloud sea: the sun sinks into a drifting sea of orange cloud at dusk
+	RestCloudSea = "rest-cloud-sea"
+	// RestCloudflare is cloudflare: the orange cloud, glinting now and then
+	RestCloudflare = "rest-cloudflare"
+	// RestCoderabbit is coderabbit: the sitting rabbit in its orange disc, glinting now and then
+	RestCoderabbit = "rest-coderabbit"
+	// RestCoffee is coffee: steam curling up from a cup of coffee on its saucer
+	RestCoffee = "rest-coffee"
+	// RestCollabute is collabute: the disc shading white to black, in a black ring, glinting now and then
+	RestCollabute = "rest-collabute"
+	// RestCommandCity is command city: a night city whose boulevards trace the command key in streetlight
+	RestCommandCity = "rest-command-city"
+	// RestCommandCode is command code: the command key in a rounded square, glinting now and then
+	RestCommandCode = "rest-command-code"
+	// RestContourMap is contour map: an island in contour lines, its hills slowly reshaping
+	RestContourMap = "rest-contour-map"
+	// RestCpp is c++: c++ on a blue hexagon, glinting now and then
+	RestCpp = "rest-cpp"
+	// RestCpuMeters is cpu meters: htop-style core, memory and swap meters over a process list
+	RestCpuMeters = "rest-cpu-meters"
+	// RestCsharp is c#: c# on a purple hexagon, glinting now and then
+	RestCsharp = "rest-csharp"
+	// RestCss is css: the blue shield with a 3, glinting now and then
+	RestCss = "rest-css"
+	// RestCube is cube: a stippled hidden-line cube turning a quarter at a time
+	RestCube = "rest-cube"
+	// RestDart is dart: the dart, in blue and teal, glinting now and then
+	RestDart = "rest-dart"
+	// RestDatabuddy is databuddy: the databuddy bunny, glinting now and then
+	RestDatabuddy = "rest-databuddy"
+	// RestDebian is debian: the red swirl, scanned now and then
+	RestDebian = "rest-debian"
+	// RestDeepReef is deep reef: light shafts, swaying kelp and a turning school of fish over a reef
+	RestDeepReef = "rest-deep-reef"
+	// RestDeepin is deepin: the swirl in a blue ring, scanned now and then
+	RestDeepin = "rest-deepin"
+	// RestDesertNight is desert night: the milky way over a lone acacia on moonless dunes, meteors falling
+	RestDesertNight = "rest-desert-night"
+	// RestDigitalClock is digital clock: the local time in seven-segment digits, colon blinking
+	RestDigitalClock = "rest-digital-clock"
+	// RestDissolve is dissolve: words that crumble to dust and condense into the next
+	RestDissolve = "rest-dissolve"
+	// RestDividers is dividers: rules and ornaments for between sections, plain to fancy
+	RestDividers = "rest-dividers"
+	// RestDnaHelix is dna helix: a double helix with base pairs, turning about its axis
+	RestDnaHelix = "rest-dna-helix"
+	// RestDonut is donut: a lit torus turning on two axes, after donut.c
+	RestDonut = "rest-donut"
+	// RestDoomFire is doom fire: the psx fire spread, tongues climbing off a white-hot bed
+	RestDoomFire = "rest-doom-fire"
+	// RestDoublePendulum is double pendulum: a chaotic double pendulum; its tip leaves a fading trail
+	RestDoublePendulum = "rest-double-pendulum"
+	// RestEarth is earth: a lit globe turning, continents from a five-degree map
+	RestEarth = "rest-earth"
+	// RestEarthrise is earthrise: the earth rising over a cratered lunar horizon in long low sunlight
+	RestEarthrise = "rest-earthrise"
+	// RestEclipse is eclipse: the moon slides over the sun; diamond ring, then corona
+	RestEclipse = "rest-eclipse"
+	// RestEdgeOrbit is edge orbit: the night earth from orbit, cloudflare requests arcing city to city
+	RestEdgeOrbit = "rest-edge-orbit"
+	// RestElementaryOs is elementary os: the e in a ring, scanned now and then
+	RestElementaryOs = "rest-elementary-os"
+	// RestElixir is elixir: the purple drop, glinting now and then
+	RestElixir = "rest-elixir"
+	// RestElm is elm: seven tangram pieces in a square, glinting now and then
+	RestElm = "rest-elm"
+	// RestEndeavouros is endeavouros: the violet sail, scanned now and then
+	RestEndeavouros = "rest-endeavouros"
+	// RestEpicycles is epicycles: a chain of turning circles whose tip traces a star
+	RestEpicycles = "rest-epicycles"
+	// RestEqualizer is equalizer: spectrum bars bouncing to a beat, peak caps falling slowly
+	RestEqualizer = "rest-equalizer"
+	// RestErlang is erlang: the red e in brackets, glinting now and then
+	RestErlang = "rest-erlang"
+	// RestFallingSand is falling sand: sand pouring into a heap, then draining through the shelf
+	RestFallingSand = "rest-falling-sand"
+	// RestFedora is fedora: the f in its blue bubble, scanned now and then
+	RestFedora = "rest-fedora"
+	// RestFern is fern: barnsley's fern filling in point by point, then swaying
+	RestFern = "rest-fern"
+	// RestFerrisWheel is ferris wheel: a wheel turning on its a-frame, cabins hanging upright
+	RestFerrisWheel = "rest-ferris-wheel"
+	// RestFileTree is file tree: a tree listing opened folder by folder, then closed again
+	RestFileTree = "rest-file-tree"
+	// RestFireflies is fireflies: fireflies over night grass, a flash spreading through them
+	RestFireflies = "rest-fireflies"
+	// RestFireworks is fireworks: shells climb and burst as peonies, rings, willows and palms
+	RestFireworks = "rest-fireworks"
+	// RestFlag is flag: a striped flag rippling on a pole, folds catching the light
+	RestFlag = "rest-flag"
+	// RestFlowField is flow field: particle trails gathering into winding, merging streams
+	RestFlowField = "rest-flow-field"
+	// RestFormControls is form controls: a terminal style form being filled in, field by field
+	RestFormControls = "rest-form-controls"
+	// RestFountain is fountain: arcs of water from a nozzle falling as drops into a basin
+	RestFountain = "rest-fountain"
+	// RestFox is fox: a fox asleep on its tail, breathing, peeking now and then
+	RestFox = "rest-fox"
+	// RestFractalTree is fractal tree: a recursive branching tree swaying in the wind
+	RestFractalTree = "rest-fractal-tree"
+	// RestGalaxy is galaxy: a tilted spiral galaxy turning, its inner stars the fastest
+	RestGalaxy = "rest-galaxy"
+	// RestGangaurGhat is gangaur ghat: udaipur at night, a lit gateway on lake pichola and diyas on the water
+	RestGangaurGhat = "rest-gangaur-ghat"
+	// RestGauge is gauge: semicircle dial, the needle overshoots each new reading
+	RestGauge = "rest-gauge"
+	// RestGentoo is gentoo: the lavender g, scanned now and then
+	RestGentoo = "rest-gentoo"
+	// RestGitGraph is git graph: git log --graph scrolling, branches forking off main and merging back
+	RestGitGraph = "rest-git-graph"
+	// RestGliderGun is glider gun: gosper's gun firing a glider every 30 generations
+	RestGliderGun = "rest-glider-gun"
+	// RestGlitch is glitch: a pixel word that tears into sliding slices in short bursts
+	RestGlitch = "rest-glitch"
+	// RestGlxgears is glxgears: three meshing gears turning, after glxgears
+	RestGlxgears = "rest-glxgears"
+	// RestGo is go: go with its speed lines, glinting now and then
+	RestGo = "rest-go"
+	// RestGreenStorm is green storm: a thunderstorm at sea, the lightning striking in the supabase bolt
+	RestGreenStorm = "rest-green-storm"
+	// RestGreptile is greptile: the g folded into a cube, in green, glinting now and then
+	RestGreptile = "rest-greptile"
+	// RestGyroscope is gyroscope: gimbals swing round a spinning rotor whose axle holds still
+	RestGyroscope = "rest-gyroscope"
+	// RestHarmonograph is harmonograph: a pen on two decaying pendulums winding a figure inward
+	RestHarmonograph = "rest-harmonograph"
+	// RestHaskell is haskell: an angle, a lambda and an equals sign, glinting now and then
+	RestHaskell = "rest-haskell"
+	// RestHawaMahal is hawa mahal: jaipur's palace of winds at night, lamps behind the jali
+	RestHawaMahal = "rest-hawa-mahal"
+	// RestHeart is heart: a glossy 3d heart swaying and beating lub-dub
+	RestHeart = "rest-heart"
+	// RestHeartbeat is heartbeat: an ecg trace sweeping over its last pass, with a bpm readout
+	RestHeartbeat = "rest-heartbeat"
+	// RestHeatmap is heatmap: contribution calendar, a day at a time, weeks scrolling left
+	RestHeatmap = "rest-heatmap"
+	// RestHelium is helium: the six-point asterisk, in blue, glinting now and then
+	RestHelium = "rest-helium"
+	// RestHelixdb is helixdb: the stepped rungs of a helix between two posts, glinting now and then
+	RestHelixdb = "rest-helixdb"
+	// RestHelmcode is helmcode: the helmcode hexagon in its violet, glinting now and then
+	RestHelmcode = "rest-helmcode"
+	// RestHilbertCurve is hilbert curve: a closed loop of two hilbert curves, with two lit runners
+	RestHilbertCurve = "rest-hilbert-curve"
+	// RestHourglass is hourglass: sand running through the neck, then turned over
+	RestHourglass = "rest-hourglass"
+	// RestHtml is html: the orange shield with a 5, glinting now and then
+	RestHtml = "rest-html"
+	// RestIcosahedron is icosahedron: a wireframe icosahedron turning, its hidden edges dotted
+	RestIcosahedron = "rest-icosahedron"
+	// RestJalMahal is jal mahal: the jaipur water palace floating on a misty lake at sunrise
+	RestJalMahal = "rest-jal-mahal"
+	// RestJava is java: the steaming cup, glinting now and then
+	RestJava = "rest-java"
+	// RestJavascript is javascript: js on a yellow square, glinting now and then
+	RestJavascript = "rest-javascript"
+	// RestJellyfish is jellyfish: a jellyfish pulsing upward, its tentacles trailing late
+	RestJellyfish = "rest-jellyfish"
+	// RestJulia is julia: three dots, green, red and purple, glinting now and then
+	RestJulia = "rest-julia"
+	// RestJuliaSet is julia set: a julia set changing shape as its constant c goes round
+	RestJuliaSet = "rest-julia-set"
+	// RestJungleFalls is jungle falls: a tiered waterfall in a rainforest gorge, spray, a rainbow and macaws
+	RestJungleFalls = "rest-jungle-falls"
+	// RestKaliLinux is kali linux: the blue dragon, scanned now and then
+	RestKaliLinux = "rest-kali-linux"
+	// RestKeiki is keiki: the rocking horse, glinting now and then
+	RestKeiki = "rest-keiki"
+	// RestKite is kite: a diamond kite riding the wind, its string sagging in lulls
+	RestKite = "rest-kite"
+	// RestKiteFestival is kite festival: sankranti kites crowding a golden sky over the pink roofs of jaipur
+	RestKiteFestival = "rest-kite-festival"
+	// RestKotlin is kotlin: the k, in violet and pink, glinting now and then
+	RestKotlin = "rest-kotlin"
+	// RestKyotoDusk is kyoto dusk: a pagoda at dusk behind a cherry tree lit by a stone lantern
+	RestKyotoDusk = "rest-kyoto-dusk"
+	// RestLakePichola is lake pichola: sunset on lake pichola, udaipur's palaces glowing over the water
+	RestLakePichola = "rest-lake-pichola"
+	// RestLandscape is landscape: a range and a lake under the sun or moon of the local hour
+	RestLandscape = "rest-landscape"
+	// RestLangtonsAnt is langton's ant: order, then chaos, then the ant builds its highway
+	RestLangtonsAnt = "rest-langtons-ant"
+	// RestLanternLake is lantern lake: sky lanterns rising over a still mountain lake, one let go from a boat
+	RestLanternLake = "rest-lantern-lake"
+	// RestLavaLamp is lava lamp: wax blobs rising, merging and sinking in a lit glass
+	RestLavaLamp = "rest-lava-lamp"
+	// RestLavaWall is lava wall: a wall of lava lamps under the glowing orange cloud, watched by a camera
+	RestLavaWall = "rest-lava-wall"
+	// RestLighthouse is lighthouse: a beam sweeping over night sea from a lighthouse on rocks
+	RestLighthouse = "rest-lighthouse"
+	// RestLightning is lightning: a forked bolt striking out of a storm cloud in the rain
+	RestLightning = "rest-lightning"
+	// RestLinuxMint is linux mint: lm in a green circle, scanned now and then
+	RestLinuxMint = "rest-linux-mint"
+	// RestLorenz is lorenz attractor: one lorenz trajectory looping both wings, older loops fading
+	RestLorenz = "rest-lorenz"
+	// RestLua is lua: a planet and its moon, glinting now and then
+	RestLua = "rest-lua"
+	// RestMandelbrot is mandelbrot: a slow zoom into seahorse valley and back out again
+	RestMandelbrot = "rest-mandelbrot"
+	// RestManjaro is manjaro: three green blocks, scanned now and then
+	RestManjaro = "rest-manjaro"
+	// RestMarineDrive is marine drive: mumbai's queen's necklace at night, lamps curving round the bay
+	RestMarineDrive = "rest-marine-drive"
+	// RestMarquee is marquee: a scrolling led sign framed by chasing bulbs
+	RestMarquee = "rest-marquee"
+	// RestMatrixRain is matrix rain: streams of glyphs falling, heavy at the head, thin behind
+	RestMatrixRain = "rest-matrix-rain"
+	// RestMaze is maze: a maze carved by backtracking, then solved, then remade
+	RestMaze = "rest-maze"
+	// RestMintlify is mintlify: the leaf within a leaf, in mint green, glinting now and then
+	RestMintlify = "rest-mintlify"
+	// RestMistyForest is misty forest: pine ridges fading into morning fog, sunbeams slanting through
+	RestMistyForest = "rest-misty-forest"
+	// RestMobiusStrip is mobius strip: a mobius strip turning and nodding, lit from above
+	RestMobiusStrip = "rest-mobius-strip"
+	// RestMoonPhases is moon phases: the moon waxing and waning, its maria darker in the light
+	RestMoonPhases = "rest-moon-phases"
+	// RestMorse is morse: a lamp keying morse, the marks on a tape, letters decoded
+	RestMorse = "rest-morse"
+	// RestNewtonsCradle is newton's cradle: five steel balls on strings passing one knock back and forth
+	RestNewtonsCradle = "rest-newtons-cradle"
+	// RestNightCoast is night coast: a lighthouse turning its beam under moonlit clouds over a dark sea
+	RestNightCoast = "rest-night-coast"
+	// RestNightHighway is night highway: a desert highway at dusk, rushing toward the mountains and last light
+	RestNightHighway = "rest-night-highway"
+	// RestNixos is nixos: the snowflake of lambdas, scanned now and then
+	RestNixos = "rest-nixos"
+	// RestNotFound is not found: a block-letter 404 with a small ghost drifting beneath it
+	RestNotFound = "rest-not-found"
+	// RestOcaml is ocaml: the camel on an orange square, glinting now and then
+	RestOcaml = "rest-ocaml"
+	// RestOceanSunset is ocean sunset: the sun sets past a pine headland, lit cloud, glitter on rolling sea
+	RestOceanSunset = "rest-ocean-sunset"
+	// RestOmarchy is omarchy: the square o of brackets, in green, scanned now and then
+	RestOmarchy = "rest-omarchy"
+	// RestOpensuse is opensuse: the green chameleon, scanned now and then
+	RestOpensuse = "rest-opensuse"
+	// RestOrchid is orchid: the five-petal flower, glinting now and then
+	RestOrchid = "rest-orchid"
+	// RestOwl is owl: an owl on a branch, blinking slowly and turning its head
+	RestOwl = "rest-owl"
+	// RestPendulumWave is pendulum wave: a row of pendulums drifting in and out of step, from above
+	RestPendulumWave = "rest-pendulum-wave"
+	// RestPerl is perl: the onion, glinting now and then
+	RestPerl = "rest-perl"
+	// RestPhp is php: php in its purple oval, glinting now and then
+	RestPhp = "rest-php"
+	// RestPipeline is pipeline: a ci run going stage by stage, one run failing its tests, then green
+	RestPipeline = "rest-pipeline"
+	// RestPlanet is planet: a banded ringed planet turning, with shadows both ways
+	RestPlanet = "rest-planet"
+	// RestPlanetScale is planet scale: a dark planet cut into the planetscale mark, backlit, a moon circling
+	RestPlanetScale = "rest-planet-scale"
+	// RestPlanetscale is planetscale: the disc cut by two strokes, glinting now and then
+	RestPlanetscale = "rest-planetscale"
+	// RestPlasma is plasma: soft interference blobs drifting and pulsing
+	RestPlasma = "rest-plasma"
+	// RestPlaystation is playstation: the p standing on a flat s, in blue, glinting now and then
+	RestPlaystation = "rest-playstation"
+	// RestPluckedString is plucked string: a plucked string, slowed down, its harmonics fading
+	RestPluckedString = "rest-plucked-string"
+	// RestPolar is polar: the half star, bar and arc, glinting now and then
+	RestPolar = "rest-polar"
+	// RestPondRipples is pond ripples: raindrops opening rings that cross and fade on a pond
+	RestPondRipples = "rest-pond-ripples"
+	// RestPopOs is pop!_os: the p! in a teal circle, scanned now and then
+	RestPopOs = "rest-pop-os"
+	// RestPrismCity is prism city: a black spire and an orange cloud over a blue hour city and its river
+	RestPrismCity = "rest-prism-city"
+	// RestProgressBar is progress bar: five bar styles filling at uneven paces, percent at right
+	RestProgressBar = "rest-progress-bar"
+	// RestPython is python: two snakes, blue and yellow, glinting now and then
+	RestPython = "rest-python"
+	// RestR is r: a blue r over a grey ring, glinting now and then
+	RestR = "rest-r"
+	// RestRadar is radar: rotating sweep with afterglow, contacts fade between passes
+	RestRadar = "rest-radar"
+	// RestRain is rain: slanting rain in three depths, crowns and puddle rings
+	RestRain = "rest-rain"
+	// RestReactionDiffusion is reaction diffusion: gray-scott spots and stripes dying back and growing out
+	RestReactionDiffusion = "rest-reaction-diffusion"
+	// RestRedHat is red hat: the man in the red hat, scanned now and then
+	RestRedHat = "rest-red-hat"
+	// RestRocket is rocket: a rocket lifting off its pad at night, then landing back
+	RestRocket = "rest-rocket"
+	// RestRockyLinux is rocky linux: the mountain in a green circle, scanned now and then
+	RestRockyLinux = "rest-rocky-linux"
+	// RestRotozoomer is rotozoomer: a brick wall texture turning and zooming about the centre
+	RestRotozoomer = "rest-rotozoomer"
+	// RestRuby is ruby: the cut red gem, glinting now and then
+	RestRuby = "rest-ruby"
+	// RestRule30 is rule 30: one cell grows a row at a time under rules 30, 90 and 110
+	RestRule30 = "rest-rule-30"
+	// RestRuledMountains is ruled mountains: ruled lines with a range rising from them, drifting forward
+	RestRuledMountains = "rest-ruled-mountains"
+	// RestRust is rust: the r in its cog, in ferris orange, glinting now and then
+	RestRust = "rest-rust"
+	// RestSaltFlat is salt flat: the vercel triangle over a mirror of salt, the sun rising behind its tip
+	RestSaltFlat = "rest-salt-flat"
+	// RestSaptarishi is saptarishi: the big dipper at true positions in a twinkling sky
+	RestSaptarishi = "rest-saptarishi"
+	// RestSaturnRise is saturn rise: saturn and its rings hanging over the cracked ice and geysers of a moon
+	RestSaturnRise = "rest-saturn-rise"
+	// RestScala is scala: the red spiral stair, glinting now and then
+	RestScala = "rest-scala"
+	// RestScramble is scramble: phrases decoding left to right out of flickering glyphs
+	RestScramble = "rest-scramble"
+	// RestSeaSwell is sea swell: a long swell lifting a small sailboat as it rolls under
+	RestSeaSwell = "rest-sea-swell"
+	// RestSierpinski is sierpinski: the chaos game filling a sierpinski triangle point by point
+	RestSierpinski = "rest-sierpinski"
+	// RestSkeleton is skeleton: a loading card in shade blocks with a shimmer passing over
+	RestSkeleton = "rest-skeleton"
+	// RestSkyline is skyline: a city at night, windows going on and off, a blinking mast
+	RestSkyline = "rest-skyline"
+	// RestSmoke is smoke: incense smoke rising straight, then curling and thinning
+	RestSmoke = "rest-smoke"
+	// RestSnake is snake: a snake slithering along an s-curve, flicking its tongue
+	RestSnake = "rest-snake"
+	// RestSnowTrain is snow train: a lit train crossing a snowy stone viaduct at night as snow falls
+	RestSnowTrain = "rest-snow-train"
+	// RestSnowfall is snowfall: snow swaying down, building drifts on the ground and a fence
+	RestSnowfall = "rest-snowfall"
+	// RestSolarSystem is solar system: four planets on dotted orbits, periods by kepler's third law
+	RestSolarSystem = "rest-solar-system"
+	// RestSparkline is sparkline: three live block sparklines scrolling left, values at right
+	RestSparkline = "rest-sparkline"
+	// RestSparks is sparks: an angle grinder throwing sparks that arc, skip and cool
+	RestSparks = "rest-sparks"
+	// RestSpider is spider: a spider lowering itself on silk, then climbing back up
+	RestSpider = "rest-spider"
+	// RestSpinners is spinners: twelve loading spinners side by side, each with its name
+	RestSpinners = "rest-spinners"
+	// RestSplitFlap is split-flap: a departures board whose flaps riffle to each new line
+	RestSplitFlap = "rest-split-flap"
+	// RestSpring is spring: a weight bouncing on a coil spring, its coils bunching
+	RestSpring = "rest-spring"
+	// RestStarfield is starfield: stars rush out from the centre and streak at the edges
+	RestStarfield = "rest-starfield"
+	// RestStarlings is starlings: a murmuration wheeling about, split by a passing falcon
+	RestStarlings = "rest-starlings"
+	// RestStormPlains is storm plains: an anvil thunderhead at dusk flickering over a wheat field
+	RestStormPlains = "rest-storm-plains"
+	// RestSundial is sundial: jaipur's samrat yantra, its shadow set by your local time
+	RestSundial = "rest-sundial"
+	// RestSunrise is sunrise: the sun lifting off a sea horizon, its path glittering
+	RestSunrise = "rest-sunrise"
+	// RestSupabase is supabase: the green bolt, glinting now and then
+	RestSupabase = "rest-supabase"
+	// RestSupermemory is supermemory: the two mirrored strokes, glinting now and then
+	RestSupermemory = "rest-supermemory"
+	// RestSvelte is svelte: the orange ribbon folded round an s, glinting now and then
+	RestSvelte = "rest-svelte"
+	// RestSwift is swift: the swift on an orange square, glinting now and then
+	RestSwift = "rest-swift"
+	// RestSynthwave is synthwave: a grid rolling toward a striped sun behind a mountain ridge
+	RestSynthwave = "rest-synthwave"
+	// RestTajDawn is taj dawn: the taj mahal at sunrise, mirrored in its pool through morning haze
+	RestTajDawn = "rest-taj-dawn"
+	// RestTerminal is terminal: a shell session: typed commands, output, scrolling, clear
+	RestTerminal = "rest-terminal"
+	// RestTesseract is tesseract: a 4d hypercube turning, its cubes passing through each other
+	RestTesseract = "rest-tesseract"
+	// RestThreeBody is three-body: three equal masses sharing one figure-eight orbit
+	RestThreeBody = "rest-three-body"
+	// RestTokyoRain is tokyo rain: a tokyo side street in the rain, neon signs shining on the wet road
+	RestTokyoRain = "rest-tokyo-rain"
+	// RestTorusKnot is torus knot: a trefoil knot drawn as a lit tube, turning slowly
+	RestTorusKnot = "rest-torus-knot"
+	// RestTrain is train: a steam train crossing on its track, smoke puffing behind
+	RestTrain = "rest-train"
+	// RestTunnel is tunnel: flying down a tiled tube that bends and twists
+	RestTunnel = "rest-tunnel"
+	// RestTux is tux: tux the penguin, scanned now and then
+	RestTux = "rest-tux"
+	// RestTvStatic is tv static: snow on an old set that tunes into a test card and loses it
+	RestTvStatic = "rest-tv-static"
+	// RestTwistedRing is twisted ring: a square ring twisted three quarters, so it has one face
+	RestTwistedRing = "rest-twisted-ring"
+	// RestTypescript is typescript: ts on a blue square, glinting now and then
+	RestTypescript = "rest-typescript"
+	// RestTypewriter is typewriter: phrases typed and deleted in turn behind a blinking cursor
+	RestTypewriter = "rest-typewriter"
+	// RestUbuntu is ubuntu: the circle of friends, in orange, scanned now and then
+	RestUbuntu = "rest-ubuntu"
+	// RestUptimeBar is uptime bar: 60-day uptime bars for three services, a new day slides in
+	RestUptimeBar = "rest-uptime-bar"
+	// RestVaranasiGhats is varanasi ghats: dusk aarti on the ganga, lamps on the steps and diyas on the water
+	RestVaranasiGhats = "rest-varanasi-ghats"
+	// RestVercel is vercel: the vercel triangle, glinting now and then
+	RestVercel = "rest-vercel"
+	// RestVinyl is vinyl: a record turning under the tonearm, seen from above
+	RestVinyl = "rest-vinyl"
+	// RestVoidLinux is void linux: the green ring, cut through, scanned now and then
+	RestVoidLinux = "rest-void-linux"
+	// RestVolcanoNight is volcano night: a volcano erupting at night, lava rivers, an ash plume full of lightning
+	RestVolcanoNight = "rest-volcano-night"
+	// RestVoronoi is voronoi: cells of ground nearest each drifting seed
+	RestVoronoi = "rest-voronoi"
+	// RestWaveInterference is wave interference: two sources in a ripple tank, still lines fanning out
+	RestWaveInterference = "rest-wave-interference"
+	// RestWaveText is wave text: a swell running through a line of text, left to right
+	RestWaveText = "rest-wave-text"
+	// RestWhale is whale: a whale blows, arches its back and dives, fluke last
+	RestWhale = "rest-whale"
+	// RestWind is wind: gusts streaming along bending lines, curling at the head
+	RestWind = "rest-wind"
+	// RestWindmill is windmill: four lattice sails turning on a dutch mill, clouds passing
+	RestWindmill = "rest-windmill"
+	// RestZig is zig: the slanted z in brackets, glinting now and then
+	RestZig = "rest-zig"
+	// RestZorinOs is zorin os: the z in blue stripes, scanned now and then
+	RestZorinOs = "rest-zorin-os"
 )
 
 // All is every slug, sorted.
@@ -1910,4 +2390,244 @@ var All = []string{
 	"world-map-pings",
 	"yawning-coffee-cup",
 	"zigzag-rule",
+	"rest-a0",
+	"rest-agentmail",
+	"rest-almalinux",
+	"rest-alpine-dawn",
+	"rest-alpine-linux",
+	"rest-amer-fort",
+	"rest-analog-clock",
+	"rest-apple",
+	"rest-aquarium",
+	"rest-arch-linux",
+	"rest-aurora",
+	"rest-aurora-fjord",
+	"rest-autumn",
+	"rest-bar-chart",
+	"rest-big-text",
+	"rest-black-hole",
+	"rest-black-prism",
+	"rest-bonsai",
+	"rest-boot-log",
+	"rest-bouncing-balls",
+	"rest-box-frames",
+	"rest-butterfly",
+	"rest-c",
+	"rest-calendar",
+	"rest-campfire",
+	"rest-candle",
+	"rest-candlesticks",
+	"rest-cat",
+	"rest-centos",
+	"rest-chat",
+	"rest-cherry-blossom",
+	"rest-chladni",
+	"rest-clojure",
+	"rest-cloud-sea",
+	"rest-cloudflare",
+	"rest-coderabbit",
+	"rest-coffee",
+	"rest-collabute",
+	"rest-command-city",
+	"rest-command-code",
+	"rest-contour-map",
+	"rest-cpp",
+	"rest-cpu-meters",
+	"rest-csharp",
+	"rest-css",
+	"rest-cube",
+	"rest-dart",
+	"rest-databuddy",
+	"rest-debian",
+	"rest-deep-reef",
+	"rest-deepin",
+	"rest-desert-night",
+	"rest-digital-clock",
+	"rest-dissolve",
+	"rest-dividers",
+	"rest-dna-helix",
+	"rest-donut",
+	"rest-doom-fire",
+	"rest-double-pendulum",
+	"rest-earth",
+	"rest-earthrise",
+	"rest-eclipse",
+	"rest-edge-orbit",
+	"rest-elementary-os",
+	"rest-elixir",
+	"rest-elm",
+	"rest-endeavouros",
+	"rest-epicycles",
+	"rest-equalizer",
+	"rest-erlang",
+	"rest-falling-sand",
+	"rest-fedora",
+	"rest-fern",
+	"rest-ferris-wheel",
+	"rest-file-tree",
+	"rest-fireflies",
+	"rest-fireworks",
+	"rest-flag",
+	"rest-flow-field",
+	"rest-form-controls",
+	"rest-fountain",
+	"rest-fox",
+	"rest-fractal-tree",
+	"rest-galaxy",
+	"rest-gangaur-ghat",
+	"rest-gauge",
+	"rest-gentoo",
+	"rest-git-graph",
+	"rest-glider-gun",
+	"rest-glitch",
+	"rest-glxgears",
+	"rest-go",
+	"rest-green-storm",
+	"rest-greptile",
+	"rest-gyroscope",
+	"rest-harmonograph",
+	"rest-haskell",
+	"rest-hawa-mahal",
+	"rest-heart",
+	"rest-heartbeat",
+	"rest-heatmap",
+	"rest-helium",
+	"rest-helixdb",
+	"rest-helmcode",
+	"rest-hilbert-curve",
+	"rest-hourglass",
+	"rest-html",
+	"rest-icosahedron",
+	"rest-jal-mahal",
+	"rest-java",
+	"rest-javascript",
+	"rest-jellyfish",
+	"rest-julia",
+	"rest-julia-set",
+	"rest-jungle-falls",
+	"rest-kali-linux",
+	"rest-keiki",
+	"rest-kite",
+	"rest-kite-festival",
+	"rest-kotlin",
+	"rest-kyoto-dusk",
+	"rest-lake-pichola",
+	"rest-landscape",
+	"rest-langtons-ant",
+	"rest-lantern-lake",
+	"rest-lava-lamp",
+	"rest-lava-wall",
+	"rest-lighthouse",
+	"rest-lightning",
+	"rest-linux-mint",
+	"rest-lorenz",
+	"rest-lua",
+	"rest-mandelbrot",
+	"rest-manjaro",
+	"rest-marine-drive",
+	"rest-marquee",
+	"rest-matrix-rain",
+	"rest-maze",
+	"rest-mintlify",
+	"rest-misty-forest",
+	"rest-mobius-strip",
+	"rest-moon-phases",
+	"rest-morse",
+	"rest-newtons-cradle",
+	"rest-night-coast",
+	"rest-night-highway",
+	"rest-nixos",
+	"rest-not-found",
+	"rest-ocaml",
+	"rest-ocean-sunset",
+	"rest-omarchy",
+	"rest-opensuse",
+	"rest-orchid",
+	"rest-owl",
+	"rest-pendulum-wave",
+	"rest-perl",
+	"rest-php",
+	"rest-pipeline",
+	"rest-planet",
+	"rest-planet-scale",
+	"rest-planetscale",
+	"rest-plasma",
+	"rest-playstation",
+	"rest-plucked-string",
+	"rest-polar",
+	"rest-pond-ripples",
+	"rest-pop-os",
+	"rest-prism-city",
+	"rest-progress-bar",
+	"rest-python",
+	"rest-r",
+	"rest-radar",
+	"rest-rain",
+	"rest-reaction-diffusion",
+	"rest-red-hat",
+	"rest-rocket",
+	"rest-rocky-linux",
+	"rest-rotozoomer",
+	"rest-ruby",
+	"rest-rule-30",
+	"rest-ruled-mountains",
+	"rest-rust",
+	"rest-salt-flat",
+	"rest-saptarishi",
+	"rest-saturn-rise",
+	"rest-scala",
+	"rest-scramble",
+	"rest-sea-swell",
+	"rest-sierpinski",
+	"rest-skeleton",
+	"rest-skyline",
+	"rest-smoke",
+	"rest-snake",
+	"rest-snow-train",
+	"rest-snowfall",
+	"rest-solar-system",
+	"rest-sparkline",
+	"rest-sparks",
+	"rest-spider",
+	"rest-spinners",
+	"rest-split-flap",
+	"rest-spring",
+	"rest-starfield",
+	"rest-starlings",
+	"rest-storm-plains",
+	"rest-sundial",
+	"rest-sunrise",
+	"rest-supabase",
+	"rest-supermemory",
+	"rest-svelte",
+	"rest-swift",
+	"rest-synthwave",
+	"rest-taj-dawn",
+	"rest-terminal",
+	"rest-tesseract",
+	"rest-three-body",
+	"rest-tokyo-rain",
+	"rest-torus-knot",
+	"rest-train",
+	"rest-tunnel",
+	"rest-tux",
+	"rest-tv-static",
+	"rest-twisted-ring",
+	"rest-typescript",
+	"rest-typewriter",
+	"rest-ubuntu",
+	"rest-uptime-bar",
+	"rest-varanasi-ghats",
+	"rest-vercel",
+	"rest-vinyl",
+	"rest-void-linux",
+	"rest-volcano-night",
+	"rest-voronoi",
+	"rest-wave-interference",
+	"rest-wave-text",
+	"rest-whale",
+	"rest-wind",
+	"rest-windmill",
+	"rest-zig",
+	"rest-zorin-os",
 }

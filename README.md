@@ -89,6 +89,10 @@ Both packages run the pieces from this repo. After adding or changing pieces, re
 
   The same spec plays in React (`ascii-magic-art-react/extras`), Rust (`Player::from_spec`) and Go (`asciiart.FromSpec`). The Rust and Go packages also add native clips, transitions between screens, intros that go straight into your app, and cast recording. Each package has a `brand` example: a logo intro that dissolves into a live dashboard.
 
+- **[packages/rest-bridge](packages/rest-bridge/README.md)** brings in [ascii.rest](https://github.com/bas3line/ascii) (MIT) both ways:
+  - its 240 pieces (tech logos, companies, Linux distros and scenes) play everywhere as `rest-<name>`
+  - its animated SVGs (`ama-studio export logo.json -o logo.svg --both`), banner fonts (`ama-studio banner`) and shape-matched logo glyphs (`ama-studio brand logo.svg --style glyphs`) work on ours
+
 None of this changes the pieces, `lib/` or `runtime/`. It builds on them.
 
 ## Use a piece in your own code

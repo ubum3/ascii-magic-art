@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { fromSpec, make, cellsFromPixels, buildPalette, cellsFrame, encodeClip, decodeClip, clipPiece, layout } from "../src/index.js";
-import { fixtures, testPixels, TIMES } from "./fixtures.js";
+import { fixtures, testPixels, testMask, TIMES } from "./fixtures.js";
 import zlib from "node:zlib";
 
 const text = (f) => (typeof f === "string" ? f : f.text);
@@ -107,3 +107,15 @@ test("transitions: every kind goes from a to b, sequences merge palettes", async
   assert.notDeepEqual(draw(0.5), draw(2.0), "the second piece shows after the first");
   for (const k of new Set(draw(1.25).color.replace(/[\n ]/g, ""))) assert.ok(seq.meta.palette[k], k);
 });
+
+test("brand: chars replace the shading a cell settles on, and only that", () => {
+  const m = testMask();
+  const chars = m.cov.map((r) => [...r].map((c) => (c === "0" ? " " : "q")).join(""));
+  const plain = fromSpec({ kind: "brand", effect: "reveal", ...m }).default();
+  const glyphs = fromSpec({ kind: "brand", effect: "reveal", ...m, chars }).default();
+  const a = plain(6), b = glyphs(6);
+  assert.equal(a.text.replace(/[^ \n]/g, "x"), b.text.replace(/[^ \n]/g, "x"), "same cells inked");
+  assert.match(b.text, /q/);
+  assert.doesNotMatch(a.text, /q/);
+});
+

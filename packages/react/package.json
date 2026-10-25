@@ -26,6 +26,14 @@
       "types": "./dist/extras.d.ts",
       "default": "./dist/extras.js"
     },
+    "./rest": {
+      "types": "./dist/rest.d.ts",
+      "default": "./dist/rest.js"
+    },
+    "./rest/server": {
+      "types": "./dist/rest-server.d.ts",
+      "default": "./dist/rest-server.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -54,6 +62,7 @@
     "typescript": "^7.0.2"
   },
   "dependencies": {
-    "ascii-magic-art-extras": "0.1.0"
+    "ascii-magic-art-extras": "0.1.0",
+    "ascii-magic-art-rest": "0.1.0"
   }
 }

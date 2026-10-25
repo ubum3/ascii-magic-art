@@ -192,6 +192,25 @@ import logo from "./logo.json"; // npx ama-studio brand logo.svg --effect assemb
 - **Server rendering:** `AsciiSpec` and `AsciiSequence` render their first frame on the server, like `AsciiPlayer`. Clips and the webcam start on the client.
 - **Hooks:** `useSpecPiece(spec, state)` and `useClip(src)` give you the piece module. `loadClip(bytes)` decodes a clip with the browser's `DecompressionStream`.
 
+## ascii.rest pieces
+
+`ascii-magic-art-react/rest` plays the 240 pieces of [ascii.rest](../rest-bridge/README.md) (tech logos, companies, Linux distros and scenes) through the same player, so every look and prop works:
+
+```tsx
+// app/page.tsx: a Server Component, first frame in the HTML
+import { AsciiRest } from "ascii-magic-art-react/rest/server";
+<AsciiRest piece="rust" look="dots" />
+```
+
+```tsx
+"use client";
+import { AsciiRest, useRestPiece, REST_CATALOG } from "ascii-magic-art-react/rest";
+<AsciiRest piece="night-coast" />               {/* loads as its own chunk; a box of its size until then */}
+const { module } = useRestPiece("ubuntu");      // for AsciiPlayer, AsciiSequence or your own player
+```
+
+`REST_CATALOG` lists each piece's slug, name, categories, note and size, for pickers.
+
 ## Hooks
 
 - `useAsciiFrame(piece, { look, playing, speed, fps, t0, ref })` returns `{ frame, text, html, t }` as React state, for putting a piece into your own markup (a status-bar spinner, a terminal UI). It re-renders every frame, so keep it for small pieces.

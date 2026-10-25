@@ -149,6 +149,11 @@ let clip = Player::new(Clip::open("demo.amc")?);                       // `ama-s
 - **Transitions:** `Transition::{Dissolve, Wipe(Direction), Melt, Scramble, Iris}` mix any two `Buffer`s. Use `TransitionView` as a widget, or `transition::run(terminal, kind, duration, from, to)` to play one. `intro::run_into(terminal, splash, Transition::Dissolve, duration, |f| app.draw(f))` ends an intro by going into your app instead of fading to black.
 - **Casts:** `cast::record(&mut piece, seconds, fps, file)` writes an asciinema cast. `cast::Recorder` records any screen you render into a `Buffer`.
 
+## ascii.rest pieces
+
+With an [ascii.rest](https://github.com/bas3line/ascii) checkout in the repo root, the bundle also carries its 240 pieces (tech logos, companies, Linux distros and scenes) as `rest-<name>`. They work anywhere a slug does, and they're in the catalogue and the slug constants: `Player::from_slug(slug::REST_RUST)`, `Intro::from_slug("rest-ubuntu")`.
+They're checked against Node by the same parity test as the library's pieces. A few of their photo scenes take seconds to load, so load those before you need them.
+
 ## Examples
 
 ```bash

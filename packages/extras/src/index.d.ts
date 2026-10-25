@@ -32,6 +32,8 @@ export interface BrandSpec extends Common {
   cols: number; rows: number;
   palette: Palette;
   cov: string[]; color: string[];
+  /** Optional: the character each cell settles on (ama-studio brand --style glyphs), instead of shading. */
+  chars?: string[];
   /** Seconds the entrance takes. Default 2.2. */
   duration?: number;
   /** Replay every n seconds; 0 plays once, then idles. */

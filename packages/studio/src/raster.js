@@ -51,8 +51,19 @@ const hex = (c) => "#" + c.slice(0, 3).map((v) => Math.round(v).toString(16).pad
  * of its main colours. colors: hex colours that replace the logo's own, in order
  * of how much of the logo they cover. background: a colour to treat as empty, for
  * PNGs without transparency (default: the corner colour when the corners are opaque).
+ *
+ * style "glyphs" draws the logo the way ascii.rest draws its logos: each cell is
+ * the character whose shape best matches the logo's edge through it (/ \ ( ) d b
+ * and so on), 8 where it is solid. The effects play as before and settle on those
+ * characters (spec.chars).
  */
-export async function brandSpec(file, { cols = 60, rows, square = false, effect = "reveal", idle, duration, loop, colors, maxColors = 8, padding = 1, background, name, look } = {}) {
+export async function brandSpec(file, opts = {}) {
+  if (opts.style === "glyphs") return glyphBrandSpec(file, opts);
+  if (opts.style && opts.style !== "blocks") throw new Error(`no style "${opts.style}": blocks, glyphs`);
+  return blockBrandSpec(file, opts);
+}
+
+async function blockBrandSpec(file, { cols = 60, rows, square = false, effect = "reveal", idle, duration, loop, colors, maxColors = 8, padding = 1, background, name, look } = {}) {
   const sx = 4, sy = square ? 4 : 7;
   // Opaque PNG: when all four corners are the same opaque colour, that is the background.
   let bgc = background ? [1, 3, 5].map((i) => parseInt(background.slice(i, i + 2), 16)) : null;
@@ -115,6 +126,34 @@ export async function brandSpec(file, { cols = 60, rows, square = false, effect 
   }
   return {
     kind: "brand", name, effect, cols, rows, palette, cov, color, square,
+    ...(idle ? { idle } : {}), ...(duration ? { duration } : {}), ...(loop ? { loop } : {}), ...(look ? { look } : {}),
+  };
+}
+
+/*
+ * ascii.rest measures its glyphs on cells twice as tall as wide; ours are 1/0.602
+ * tall. Stretching the picture by the difference keeps the logo's shape.
+ */
+const REST_STRETCH = 2 * 0.602;
+
+async function glyphBrandSpec(file, { cols = 60, rows, effect = "reveal", idle, duration, loop, colors, name, look } = {}) {
+  const { drawing } = await import("ascii-magic-art-rest");
+  const img = await input(file, 600);
+  const { width, height } = await img.metadata();
+  const w = Math.min(2400, cols * 24), h = Math.max(1, Math.round((height / width) * w * (1 / REST_STRETCH)));
+  const { data, info } = await img.resize(w, h, { fit: "fill", kernel: "lanczos3" }).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const d = drawing(new Uint8Array(data.buffer, data.byteOffset, data.length), info.width, info.height, {
+    style: "logo", width: cols, ...(rows ? { height: rows } : {}), color: true,
+  });
+  const palette = {};
+  d.colors.forEach((c, i) => (palette[String(i)] = colors && colors[i] ? colors[i] : hex(c)));
+  const pad = (row) => row.padEnd(d.cols).slice(0, d.cols);
+  const chars = d.art.map(pad), ink = d.ink.map(pad);
+  // Coverage, for the effects that shade by it: solid cells are 8, edge glyphs half.
+  const cov = chars.map((r) => [...r].map((ch) => (ch === " " ? 0 : ch === "8" ? 8 : 4)).join(""));
+  const color = chars.map((r, y) => [...r].map((ch, x) => (ch === " " ? " " : String(parseInt(ink[y][x], 36) || 0))).join(""));
+  return {
+    kind: "brand", name, effect, cols: d.cols, rows: d.rows, palette, cov, color, chars, square: false,
     ...(idle ? { idle } : {}), ...(duration ? { duration } : {}), ...(loop ? { loop } : {}), ...(look ? { look } : {}),
   };
 }

@@ -51,6 +51,9 @@ export function brand(spec) {
     const c = spec.cov[y] ? spec.cov[y].charCodeAt(x) - 48 : 0;
     return c > 0 && c <= 8 ? c : 0;
   }));
+  // Optional: the character each cell settles on (ama-studio brand --style glyphs),
+  // in place of the shading block its coverage gives.
+  const chAt = (x, y) => { const c = spec.chars && spec.chars[y] && spec.chars[y][x]; return c && c !== " " ? c : null; };
   const keyAt = (x, y) => (spec.color[y] && spec.color[y][x] && spec.color[y][x] !== " " ? spec.color[y][x] : "0");
   const cells = [];
   let sx = 0, sy = 0;
@@ -58,7 +61,7 @@ export function brand(spec) {
     const c = cov[y][x];
     if (!c) continue;
     const edge = [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => !(cov[y + dy] && cov[y + dy][x + dx]));
-    cells.push({ x, y, c, k: keyAt(x, y), edge, i: cells.length });
+    cells.push({ x, y, c, k: keyAt(x, y), edge, i: cells.length, ch: chAt(x, y) });
     sx += x; sy += y;
   }
   const cx = cells.length ? sx / cells.length : W / 2, cy = cells.length ? sy / cells.length : H / 2;
@@ -79,7 +82,9 @@ export function brand(spec) {
     x = Math.round(x); y = Math.round(y);
     if (x >= 0 && y >= 0 && x < W && y < H) { o.T[y][x] = ch; o.C[y][x] = k; }
   };
-  const logo = (o, p, c = p.c, k = p.k) => { if (c > 0) put(o, p.x, p.y, COVER[Math.min(8, c)], k); };
+  // A cell's glyph at coverage c: its own character once it is fully in, else shading.
+  const glyph = (p, c) => (p.ch && c >= p.c ? p.ch : COVER[Math.min(8, c)]);
+  const logo = (o, p, c = p.c, k = p.k) => { if (c > 0) put(o, p.x, p.y, glyph(p, c), k); };
 
   // ── idles: what plays once the entrance is over (t counts from its end) ──
   const IDLE = {
@@ -145,7 +150,7 @@ export function brand(spec) {
         if (p.edge) {
           if (p.order > p1) continue;
           const head = p1 - p.order < 0.03 && p1 < 1;
-          put(o, p.x, p.y, head ? "█" : COVER[Math.max(4, p.c)], head || p2 < 0.5 ? FX.accent : p.k);
+          put(o, p.x, p.y, head ? "█" : p.ch || COVER[Math.max(4, p.c)], head || p2 < 0.5 ? FX.accent : p.k);
         } else if (p2 > 0) {
           const stage = clamp01(p2 * 1.6 - hash(p.x, p.y, 3) * 0.6);
           logo(o, p, Math.round(p.c * stage));
@@ -198,7 +203,7 @@ export function brand(spec) {
       let x = p.x, k = p.k;
       if (hash(band, f, 1) < intensity * 0.35) x += Math.round((hash(band, f, 2) - 0.5) * intensity * W * 0.25);
       if (hash(band, f, 3) < intensity * 0.3) k = hash(band, f, 4) < 0.5 ? FX.extra : FX.accent;
-      put(o, x, p.y, COVER[p.c], k);
+      put(o, x, p.y, glyph(p, p.c), k);
     }
     const noise = Math.floor(intensity * cells.length * 0.04);
     for (let n = 0; n < noise; n++) put(o, hash(n, f, 6) * W, hash(n, f, 7) * H, hash(n, f, 8) < 0.5 ? "▓" : "░", FX.extra);

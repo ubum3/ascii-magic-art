@@ -638,6 +638,246 @@ pub const SLUGS: &[&str] = &[
     "world-map-pings",
     "yawning-coffee-cup",
     "zigzag-rule",
+    "rest-a0",
+    "rest-agentmail",
+    "rest-almalinux",
+    "rest-alpine-dawn",
+    "rest-alpine-linux",
+    "rest-amer-fort",
+    "rest-analog-clock",
+    "rest-apple",
+    "rest-aquarium",
+    "rest-arch-linux",
+    "rest-aurora",
+    "rest-aurora-fjord",
+    "rest-autumn",
+    "rest-bar-chart",
+    "rest-big-text",
+    "rest-black-hole",
+    "rest-black-prism",
+    "rest-bonsai",
+    "rest-boot-log",
+    "rest-bouncing-balls",
+    "rest-box-frames",
+    "rest-butterfly",
+    "rest-c",
+    "rest-calendar",
+    "rest-campfire",
+    "rest-candle",
+    "rest-candlesticks",
+    "rest-cat",
+    "rest-centos",
+    "rest-chat",
+    "rest-cherry-blossom",
+    "rest-chladni",
+    "rest-clojure",
+    "rest-cloud-sea",
+    "rest-cloudflare",
+    "rest-coderabbit",
+    "rest-coffee",
+    "rest-collabute",
+    "rest-command-city",
+    "rest-command-code",
+    "rest-contour-map",
+    "rest-cpp",
+    "rest-cpu-meters",
+    "rest-csharp",
+    "rest-css",
+    "rest-cube",
+    "rest-dart",
+    "rest-databuddy",
+    "rest-debian",
+    "rest-deep-reef",
+    "rest-deepin",
+    "rest-desert-night",
+    "rest-digital-clock",
+    "rest-dissolve",
+    "rest-dividers",
+    "rest-dna-helix",
+    "rest-donut",
+    "rest-doom-fire",
+    "rest-double-pendulum",
+    "rest-earth",
+    "rest-earthrise",
+    "rest-eclipse",
+    "rest-edge-orbit",
+    "rest-elementary-os",
+    "rest-elixir",
+    "rest-elm",
+    "rest-endeavouros",
+    "rest-epicycles",
+    "rest-equalizer",
+    "rest-erlang",
+    "rest-falling-sand",
+    "rest-fedora",
+    "rest-fern",
+    "rest-ferris-wheel",
+    "rest-file-tree",
+    "rest-fireflies",
+    "rest-fireworks",
+    "rest-flag",
+    "rest-flow-field",
+    "rest-form-controls",
+    "rest-fountain",
+    "rest-fox",
+    "rest-fractal-tree",
+    "rest-galaxy",
+    "rest-gangaur-ghat",
+    "rest-gauge",
+    "rest-gentoo",
+    "rest-git-graph",
+    "rest-glider-gun",
+    "rest-glitch",
+    "rest-glxgears",
+    "rest-go",
+    "rest-green-storm",
+    "rest-greptile",
+    "rest-gyroscope",
+    "rest-harmonograph",
+    "rest-haskell",
+    "rest-hawa-mahal",
+    "rest-heart",
+    "rest-heartbeat",
+    "rest-heatmap",
+    "rest-helium",
+    "rest-helixdb",
+    "rest-helmcode",
+    "rest-hilbert-curve",
+    "rest-hourglass",
+    "rest-html",
+    "rest-icosahedron",
+    "rest-jal-mahal",
+    "rest-java",
+    "rest-javascript",
+    "rest-jellyfish",
+    "rest-julia",
+    "rest-julia-set",
+    "rest-jungle-falls",
+    "rest-kali-linux",
+    "rest-keiki",
+    "rest-kite",
+    "rest-kite-festival",
+    "rest-kotlin",
+    "rest-kyoto-dusk",
+    "rest-lake-pichola",
+    "rest-landscape",
+    "rest-langtons-ant",
+    "rest-lantern-lake",
+    "rest-lava-lamp",
+    "rest-lava-wall",
+    "rest-lighthouse",
+    "rest-lightning",
+    "rest-linux-mint",
+    "rest-lorenz",
+    "rest-lua",
+    "rest-mandelbrot",
+    "rest-manjaro",
+    "rest-marine-drive",
+    "rest-marquee",
+    "rest-matrix-rain",
+    "rest-maze",
+    "rest-mintlify",
+    "rest-misty-forest",
+    "rest-mobius-strip",
+    "rest-moon-phases",
+    "rest-morse",
+    "rest-newtons-cradle",
+    "rest-night-coast",
+    "rest-night-highway",
+    "rest-nixos",
+    "rest-not-found",
+    "rest-ocaml",
+    "rest-ocean-sunset",
+    "rest-omarchy",
+    "rest-opensuse",
+    "rest-orchid",
+    "rest-owl",
+    "rest-pendulum-wave",
+    "rest-perl",
+    "rest-php",
+    "rest-pipeline",
+    "rest-planet",
+    "rest-planet-scale",
+    "rest-planetscale",
+    "rest-plasma",
+    "rest-playstation",
+    "rest-plucked-string",
+    "rest-polar",
+    "rest-pond-ripples",
+    "rest-pop-os",
+    "rest-prism-city",
+    "rest-progress-bar",
+    "rest-python",
+    "rest-r",
+    "rest-radar",
+    "rest-rain",
+    "rest-reaction-diffusion",
+    "rest-red-hat",
+    "rest-rocket",
+    "rest-rocky-linux",
+    "rest-rotozoomer",
+    "rest-ruby",
+    "rest-rule-30",
+    "rest-ruled-mountains",
+    "rest-rust",
+    "rest-salt-flat",
+    "rest-saptarishi",
+    "rest-saturn-rise",
+    "rest-scala",
+    "rest-scramble",
+    "rest-sea-swell",
+    "rest-sierpinski",
+    "rest-skeleton",
+    "rest-skyline",
+    "rest-smoke",
+    "rest-snake",
+    "rest-snow-train",
+    "rest-snowfall",
+    "rest-solar-system",
+    "rest-sparkline",
+    "rest-sparks",
+    "rest-spider",
+    "rest-spinners",
+    "rest-split-flap",
+    "rest-spring",
+    "rest-starfield",
+    "rest-starlings",
+    "rest-storm-plains",
+    "rest-sundial",
+    "rest-sunrise",
+    "rest-supabase",
+    "rest-supermemory",
+    "rest-svelte",
+    "rest-swift",
+    "rest-synthwave",
+    "rest-taj-dawn",
+    "rest-terminal",
+    "rest-tesseract",
+    "rest-three-body",
+    "rest-tokyo-rain",
+    "rest-torus-knot",
+    "rest-train",
+    "rest-tunnel",
+    "rest-tux",
+    "rest-tv-static",
+    "rest-twisted-ring",
+    "rest-typescript",
+    "rest-typewriter",
+    "rest-ubuntu",
+    "rest-uptime-bar",
+    "rest-varanasi-ghats",
+    "rest-vercel",
+    "rest-vinyl",
+    "rest-void-linux",
+    "rest-volcano-night",
+    "rest-voronoi",
+    "rest-wave-interference",
+    "rest-wave-text",
+    "rest-whale",
+    "rest-wind",
+    "rest-windmill",
+    "rest-zig",
+    "rest-zorin-os",
 ];
 
 /// Slug constants, one per piece.
@@ -1910,4 +2150,484 @@ pub mod slug {
     pub const YAWNING_COFFEE_CUP: &str = "yawning-coffee-cup";
     /// Zigzag Rule: A doubled zigzag rule that scrolls sideways while a rainbow gradient slides along it.
     pub const ZIGZAG_RULE: &str = "zigzag-rule";
+    /// a0: the rounded a with a round hole, glinting now and then
+    pub const REST_A0: &str = "rest-a0";
+    /// agentmail: the agent in a brimmed hat, glinting now and then
+    pub const REST_AGENTMAIL: &str = "rest-agentmail";
+    /// almalinux: five coloured figures in a ring, scanned now and then
+    pub const REST_ALMALINUX: &str = "rest-almalinux";
+    /// alpine dawn: snow peaks catching first light above a still, misty mountain lake
+    pub const REST_ALPINE_DAWN: &str = "rest-alpine-dawn";
+    /// alpine linux: the mountain in a hexagon, scanned now and then
+    pub const REST_ALPINE_LINUX: &str = "rest-alpine-linux";
+    /// amer fort: amer fort floodlit gold on its hill, mirrored in maota lake at night
+    pub const REST_AMER_FORT: &str = "rest-amer-fort";
+    /// analog clock: a round clock face showing the local time, seconds ticking
+    pub const REST_ANALOG_CLOCK: &str = "rest-analog-clock";
+    /// apple: the apple with a bite out of it, glinting now and then
+    pub const REST_APPLE: &str = "rest-apple";
+    /// aquarium: fish swimming and turning in a tank, bubbles and weed
+    pub const REST_AQUARIUM: &str = "rest-aquarium";
+    /// arch linux: the blue arch, scanned now and then
+    pub const REST_ARCH_LINUX: &str = "rest-arch-linux";
+    /// aurora: an aurora curtain rippling over a treeline under stars
+    pub const REST_AURORA: &str = "rest-aurora";
+    /// aurora fjord: aurora curtains rippling over a still fjord, a cabin lit on the shore
+    pub const REST_AURORA_FJORD: &str = "rest-aurora-fjord";
+    /// autumn: the leaf with a slash for its vein, glinting now and then
+    pub const REST_AUTUMN: &str = "rest-autumn";
+    /// bar chart: bars easing between three datasets, values riding on top
+    pub const REST_BAR_CHART: &str = "rest-bar-chart";
+    /// big text: a block-letter banner with a line shadow and a passing glint
+    pub const REST_BIG_TEXT: &str = "rest-big-text";
+    /// black hole: a black hole, its lensed disk turning, one side brighter
+    pub const REST_BLACK_HOLE: &str = "rest-black-hole";
+    /// black prism: the vercel triangle as a glass prism, splitting white light to a rainbow
+    pub const REST_BLACK_PRISM: &str = "rest-black-prism";
+    /// bonsai: a potted tree that sheds its leaves and leafs out again
+    pub const REST_BONSAI: &str = "rest-bonsai";
+    /// boot log: a self test counts memory, then the boot log scrolls by
+    pub const REST_BOOT_LOG: &str = "rest-boot-log";
+    /// bouncing balls: rubber balls bouncing lower each time, squashing on landing
+    pub const REST_BOUNCING_BALLS: &str = "rest-bouncing-balls";
+    /// box frames: twelve frame styles to copy, each one labelled
+    pub const REST_BOX_FRAMES: &str = "rest-box-frames";
+    /// butterfly: a butterfly flapping and gliding along a wandering path
+    pub const REST_BUTTERFLY: &str = "rest-butterfly";
+    /// c: a c on a blue hexagon, glinting now and then
+    pub const REST_C: &str = "rest-c";
+    /// calendar: this month like cal, today bracketed, time ticking below
+    pub const REST_CALENDAR: &str = "rest-calendar";
+    /// campfire: a log fire flickering, sparks rising; denser ink is hotter
+    pub const REST_CAMPFIRE: &str = "rest-campfire";
+    /// candle: a flickering candle burning down in its holder, then renewed
+    pub const REST_CANDLE: &str = "rest-candle";
+    /// candlesticks: hollow up candles, solid down ones, the last one forming live
+    pub const REST_CANDLESTICKS: &str = "rest-candlesticks";
+    /// cat: a tabby asleep on its paws, breathing slowly
+    pub const REST_CAT: &str = "rest-cat";
+    /// centos: four coloured squares in a star, scanned now and then
+    pub const REST_CENTOS: &str = "rest-centos";
+    /// chat: a chat in bubbles: typed, sent, three dots, then the reply streaming
+    pub const REST_CHAT: &str = "rest-chat";
+    /// cherry blossom: a flowering cherry branch shedding petals on the wind
+    pub const REST_CHERRY_BLOSSOM: &str = "rest-cherry-blossom";
+    /// chladni plate: sand travelling to the nodal lines of a ringing plate
+    pub const REST_CHLADNI: &str = "rest-chladni";
+    /// clojure: a lambda in a green and blue circle, glinting now and then
+    pub const REST_CLOJURE: &str = "rest-clojure";
+    /// cloud sea: the sun sinks into a drifting sea of orange cloud at dusk
+    pub const REST_CLOUD_SEA: &str = "rest-cloud-sea";
+    /// cloudflare: the orange cloud, glinting now and then
+    pub const REST_CLOUDFLARE: &str = "rest-cloudflare";
+    /// coderabbit: the sitting rabbit in its orange disc, glinting now and then
+    pub const REST_CODERABBIT: &str = "rest-coderabbit";
+    /// coffee: steam curling up from a cup of coffee on its saucer
+    pub const REST_COFFEE: &str = "rest-coffee";
+    /// collabute: the disc shading white to black, in a black ring, glinting now and then
+    pub const REST_COLLABUTE: &str = "rest-collabute";
+    /// command city: a night city whose boulevards trace the command key in streetlight
+    pub const REST_COMMAND_CITY: &str = "rest-command-city";
+    /// command code: the command key in a rounded square, glinting now and then
+    pub const REST_COMMAND_CODE: &str = "rest-command-code";
+    /// contour map: an island in contour lines, its hills slowly reshaping
+    pub const REST_CONTOUR_MAP: &str = "rest-contour-map";
+    /// c++: c++ on a blue hexagon, glinting now and then
+    pub const REST_CPP: &str = "rest-cpp";
+    /// cpu meters: htop-style core, memory and swap meters over a process list
+    pub const REST_CPU_METERS: &str = "rest-cpu-meters";
+    /// c#: c# on a purple hexagon, glinting now and then
+    pub const REST_CSHARP: &str = "rest-csharp";
+    /// css: the blue shield with a 3, glinting now and then
+    pub const REST_CSS: &str = "rest-css";
+    /// cube: a stippled hidden-line cube turning a quarter at a time
+    pub const REST_CUBE: &str = "rest-cube";
+    /// dart: the dart, in blue and teal, glinting now and then
+    pub const REST_DART: &str = "rest-dart";
+    /// databuddy: the databuddy bunny, glinting now and then
+    pub const REST_DATABUDDY: &str = "rest-databuddy";
+    /// debian: the red swirl, scanned now and then
+    pub const REST_DEBIAN: &str = "rest-debian";
+    /// deep reef: light shafts, swaying kelp and a turning school of fish over a reef
+    pub const REST_DEEP_REEF: &str = "rest-deep-reef";
+    /// deepin: the swirl in a blue ring, scanned now and then
+    pub const REST_DEEPIN: &str = "rest-deepin";
+    /// desert night: the milky way over a lone acacia on moonless dunes, meteors falling
+    pub const REST_DESERT_NIGHT: &str = "rest-desert-night";
+    /// digital clock: the local time in seven-segment digits, colon blinking
+    pub const REST_DIGITAL_CLOCK: &str = "rest-digital-clock";
+    /// dissolve: words that crumble to dust and condense into the next
+    pub const REST_DISSOLVE: &str = "rest-dissolve";
+    /// dividers: rules and ornaments for between sections, plain to fancy
+    pub const REST_DIVIDERS: &str = "rest-dividers";
+    /// dna helix: a double helix with base pairs, turning about its axis
+    pub const REST_DNA_HELIX: &str = "rest-dna-helix";
+    /// donut: a lit torus turning on two axes, after donut.c
+    pub const REST_DONUT: &str = "rest-donut";
+    /// doom fire: the psx fire spread, tongues climbing off a white-hot bed
+    pub const REST_DOOM_FIRE: &str = "rest-doom-fire";
+    /// double pendulum: a chaotic double pendulum; its tip leaves a fading trail
+    pub const REST_DOUBLE_PENDULUM: &str = "rest-double-pendulum";
+    /// earth: a lit globe turning, continents from a five-degree map
+    pub const REST_EARTH: &str = "rest-earth";
+    /// earthrise: the earth rising over a cratered lunar horizon in long low sunlight
+    pub const REST_EARTHRISE: &str = "rest-earthrise";
+    /// eclipse: the moon slides over the sun; diamond ring, then corona
+    pub const REST_ECLIPSE: &str = "rest-eclipse";
+    /// edge orbit: the night earth from orbit, cloudflare requests arcing city to city
+    pub const REST_EDGE_ORBIT: &str = "rest-edge-orbit";
+    /// elementary os: the e in a ring, scanned now and then
+    pub const REST_ELEMENTARY_OS: &str = "rest-elementary-os";
+    /// elixir: the purple drop, glinting now and then
+    pub const REST_ELIXIR: &str = "rest-elixir";
+    /// elm: seven tangram pieces in a square, glinting now and then
+    pub const REST_ELM: &str = "rest-elm";
+    /// endeavouros: the violet sail, scanned now and then
+    pub const REST_ENDEAVOUROS: &str = "rest-endeavouros";
+    /// epicycles: a chain of turning circles whose tip traces a star
+    pub const REST_EPICYCLES: &str = "rest-epicycles";
+    /// equalizer: spectrum bars bouncing to a beat, peak caps falling slowly
+    pub const REST_EQUALIZER: &str = "rest-equalizer";
+    /// erlang: the red e in brackets, glinting now and then
+    pub const REST_ERLANG: &str = "rest-erlang";
+    /// falling sand: sand pouring into a heap, then draining through the shelf
+    pub const REST_FALLING_SAND: &str = "rest-falling-sand";
+    /// fedora: the f in its blue bubble, scanned now and then
+    pub const REST_FEDORA: &str = "rest-fedora";
+    /// fern: barnsley's fern filling in point by point, then swaying
+    pub const REST_FERN: &str = "rest-fern";
+    /// ferris wheel: a wheel turning on its a-frame, cabins hanging upright
+    pub const REST_FERRIS_WHEEL: &str = "rest-ferris-wheel";
+    /// file tree: a tree listing opened folder by folder, then closed again
+    pub const REST_FILE_TREE: &str = "rest-file-tree";
+    /// fireflies: fireflies over night grass, a flash spreading through them
+    pub const REST_FIREFLIES: &str = "rest-fireflies";
+    /// fireworks: shells climb and burst as peonies, rings, willows and palms
+    pub const REST_FIREWORKS: &str = "rest-fireworks";
+    /// flag: a striped flag rippling on a pole, folds catching the light
+    pub const REST_FLAG: &str = "rest-flag";
+    /// flow field: particle trails gathering into winding, merging streams
+    pub const REST_FLOW_FIELD: &str = "rest-flow-field";
+    /// form controls: a terminal style form being filled in, field by field
+    pub const REST_FORM_CONTROLS: &str = "rest-form-controls";
+    /// fountain: arcs of water from a nozzle falling as drops into a basin
+    pub const REST_FOUNTAIN: &str = "rest-fountain";
+    /// fox: a fox asleep on its tail, breathing, peeking now and then
+    pub const REST_FOX: &str = "rest-fox";
+    /// fractal tree: a recursive branching tree swaying in the wind
+    pub const REST_FRACTAL_TREE: &str = "rest-fractal-tree";
+    /// galaxy: a tilted spiral galaxy turning, its inner stars the fastest
+    pub const REST_GALAXY: &str = "rest-galaxy";
+    /// gangaur ghat: udaipur at night, a lit gateway on lake pichola and diyas on the water
+    pub const REST_GANGAUR_GHAT: &str = "rest-gangaur-ghat";
+    /// gauge: semicircle dial, the needle overshoots each new reading
+    pub const REST_GAUGE: &str = "rest-gauge";
+    /// gentoo: the lavender g, scanned now and then
+    pub const REST_GENTOO: &str = "rest-gentoo";
+    /// git graph: git log --graph scrolling, branches forking off main and merging back
+    pub const REST_GIT_GRAPH: &str = "rest-git-graph";
+    /// glider gun: gosper's gun firing a glider every 30 generations
+    pub const REST_GLIDER_GUN: &str = "rest-glider-gun";
+    /// glitch: a pixel word that tears into sliding slices in short bursts
+    pub const REST_GLITCH: &str = "rest-glitch";
+    /// glxgears: three meshing gears turning, after glxgears
+    pub const REST_GLXGEARS: &str = "rest-glxgears";
+    /// go: go with its speed lines, glinting now and then
+    pub const REST_GO: &str = "rest-go";
+    /// green storm: a thunderstorm at sea, the lightning striking in the supabase bolt
+    pub const REST_GREEN_STORM: &str = "rest-green-storm";
+    /// greptile: the g folded into a cube, in green, glinting now and then
+    pub const REST_GREPTILE: &str = "rest-greptile";
+    /// gyroscope: gimbals swing round a spinning rotor whose axle holds still
+    pub const REST_GYROSCOPE: &str = "rest-gyroscope";
+    /// harmonograph: a pen on two decaying pendulums winding a figure inward
+    pub const REST_HARMONOGRAPH: &str = "rest-harmonograph";
+    /// haskell: an angle, a lambda and an equals sign, glinting now and then
+    pub const REST_HASKELL: &str = "rest-haskell";
+    /// hawa mahal: jaipur's palace of winds at night, lamps behind the jali
+    pub const REST_HAWA_MAHAL: &str = "rest-hawa-mahal";
+    /// heart: a glossy 3d heart swaying and beating lub-dub
+    pub const REST_HEART: &str = "rest-heart";
+    /// heartbeat: an ecg trace sweeping over its last pass, with a bpm readout
+    pub const REST_HEARTBEAT: &str = "rest-heartbeat";
+    /// heatmap: contribution calendar, a day at a time, weeks scrolling left
+    pub const REST_HEATMAP: &str = "rest-heatmap";
+    /// helium: the six-point asterisk, in blue, glinting now and then
+    pub const REST_HELIUM: &str = "rest-helium";
+    /// helixdb: the stepped rungs of a helix between two posts, glinting now and then
+    pub const REST_HELIXDB: &str = "rest-helixdb";
+    /// helmcode: the helmcode hexagon in its violet, glinting now and then
+    pub const REST_HELMCODE: &str = "rest-helmcode";
+    /// hilbert curve: a closed loop of two hilbert curves, with two lit runners
+    pub const REST_HILBERT_CURVE: &str = "rest-hilbert-curve";
+    /// hourglass: sand running through the neck, then turned over
+    pub const REST_HOURGLASS: &str = "rest-hourglass";
+    /// html: the orange shield with a 5, glinting now and then
+    pub const REST_HTML: &str = "rest-html";
+    /// icosahedron: a wireframe icosahedron turning, its hidden edges dotted
+    pub const REST_ICOSAHEDRON: &str = "rest-icosahedron";
+    /// jal mahal: the jaipur water palace floating on a misty lake at sunrise
+    pub const REST_JAL_MAHAL: &str = "rest-jal-mahal";
+    /// java: the steaming cup, glinting now and then
+    pub const REST_JAVA: &str = "rest-java";
+    /// javascript: js on a yellow square, glinting now and then
+    pub const REST_JAVASCRIPT: &str = "rest-javascript";
+    /// jellyfish: a jellyfish pulsing upward, its tentacles trailing late
+    pub const REST_JELLYFISH: &str = "rest-jellyfish";
+    /// julia: three dots, green, red and purple, glinting now and then
+    pub const REST_JULIA: &str = "rest-julia";
+    /// julia set: a julia set changing shape as its constant c goes round
+    pub const REST_JULIA_SET: &str = "rest-julia-set";
+    /// jungle falls: a tiered waterfall in a rainforest gorge, spray, a rainbow and macaws
+    pub const REST_JUNGLE_FALLS: &str = "rest-jungle-falls";
+    /// kali linux: the blue dragon, scanned now and then
+    pub const REST_KALI_LINUX: &str = "rest-kali-linux";
+    /// keiki: the rocking horse, glinting now and then
+    pub const REST_KEIKI: &str = "rest-keiki";
+    /// kite: a diamond kite riding the wind, its string sagging in lulls
+    pub const REST_KITE: &str = "rest-kite";
+    /// kite festival: sankranti kites crowding a golden sky over the pink roofs of jaipur
+    pub const REST_KITE_FESTIVAL: &str = "rest-kite-festival";
+    /// kotlin: the k, in violet and pink, glinting now and then
+    pub const REST_KOTLIN: &str = "rest-kotlin";
+    /// kyoto dusk: a pagoda at dusk behind a cherry tree lit by a stone lantern
+    pub const REST_KYOTO_DUSK: &str = "rest-kyoto-dusk";
+    /// lake pichola: sunset on lake pichola, udaipur's palaces glowing over the water
+    pub const REST_LAKE_PICHOLA: &str = "rest-lake-pichola";
+    /// landscape: a range and a lake under the sun or moon of the local hour
+    pub const REST_LANDSCAPE: &str = "rest-landscape";
+    /// langton's ant: order, then chaos, then the ant builds its highway
+    pub const REST_LANGTONS_ANT: &str = "rest-langtons-ant";
+    /// lantern lake: sky lanterns rising over a still mountain lake, one let go from a boat
+    pub const REST_LANTERN_LAKE: &str = "rest-lantern-lake";
+    /// lava lamp: wax blobs rising, merging and sinking in a lit glass
+    pub const REST_LAVA_LAMP: &str = "rest-lava-lamp";
+    /// lava wall: a wall of lava lamps under the glowing orange cloud, watched by a camera
+    pub const REST_LAVA_WALL: &str = "rest-lava-wall";
+    /// lighthouse: a beam sweeping over night sea from a lighthouse on rocks
+    pub const REST_LIGHTHOUSE: &str = "rest-lighthouse";
+    /// lightning: a forked bolt striking out of a storm cloud in the rain
+    pub const REST_LIGHTNING: &str = "rest-lightning";
+    /// linux mint: lm in a green circle, scanned now and then
+    pub const REST_LINUX_MINT: &str = "rest-linux-mint";
+    /// lorenz attractor: one lorenz trajectory looping both wings, older loops fading
+    pub const REST_LORENZ: &str = "rest-lorenz";
+    /// lua: a planet and its moon, glinting now and then
+    pub const REST_LUA: &str = "rest-lua";
+    /// mandelbrot: a slow zoom into seahorse valley and back out again
+    pub const REST_MANDELBROT: &str = "rest-mandelbrot";
+    /// manjaro: three green blocks, scanned now and then
+    pub const REST_MANJARO: &str = "rest-manjaro";
+    /// marine drive: mumbai's queen's necklace at night, lamps curving round the bay
+    pub const REST_MARINE_DRIVE: &str = "rest-marine-drive";
+    /// marquee: a scrolling led sign framed by chasing bulbs
+    pub const REST_MARQUEE: &str = "rest-marquee";
+    /// matrix rain: streams of glyphs falling, heavy at the head, thin behind
+    pub const REST_MATRIX_RAIN: &str = "rest-matrix-rain";
+    /// maze: a maze carved by backtracking, then solved, then remade
+    pub const REST_MAZE: &str = "rest-maze";
+    /// mintlify: the leaf within a leaf, in mint green, glinting now and then
+    pub const REST_MINTLIFY: &str = "rest-mintlify";
+    /// misty forest: pine ridges fading into morning fog, sunbeams slanting through
+    pub const REST_MISTY_FOREST: &str = "rest-misty-forest";
+    /// mobius strip: a mobius strip turning and nodding, lit from above
+    pub const REST_MOBIUS_STRIP: &str = "rest-mobius-strip";
+    /// moon phases: the moon waxing and waning, its maria darker in the light
+    pub const REST_MOON_PHASES: &str = "rest-moon-phases";
+    /// morse: a lamp keying morse, the marks on a tape, letters decoded
+    pub const REST_MORSE: &str = "rest-morse";
+    /// newton's cradle: five steel balls on strings passing one knock back and forth
+    pub const REST_NEWTONS_CRADLE: &str = "rest-newtons-cradle";
+    /// night coast: a lighthouse turning its beam under moonlit clouds over a dark sea
+    pub const REST_NIGHT_COAST: &str = "rest-night-coast";
+    /// night highway: a desert highway at dusk, rushing toward the mountains and last light
+    pub const REST_NIGHT_HIGHWAY: &str = "rest-night-highway";
+    /// nixos: the snowflake of lambdas, scanned now and then
+    pub const REST_NIXOS: &str = "rest-nixos";
+    /// not found: a block-letter 404 with a small ghost drifting beneath it
+    pub const REST_NOT_FOUND: &str = "rest-not-found";
+    /// ocaml: the camel on an orange square, glinting now and then
+    pub const REST_OCAML: &str = "rest-ocaml";
+    /// ocean sunset: the sun sets past a pine headland, lit cloud, glitter on rolling sea
+    pub const REST_OCEAN_SUNSET: &str = "rest-ocean-sunset";
+    /// omarchy: the square o of brackets, in green, scanned now and then
+    pub const REST_OMARCHY: &str = "rest-omarchy";
+    /// opensuse: the green chameleon, scanned now and then
+    pub const REST_OPENSUSE: &str = "rest-opensuse";
+    /// orchid: the five-petal flower, glinting now and then
+    pub const REST_ORCHID: &str = "rest-orchid";
+    /// owl: an owl on a branch, blinking slowly and turning its head
+    pub const REST_OWL: &str = "rest-owl";
+    /// pendulum wave: a row of pendulums drifting in and out of step, from above
+    pub const REST_PENDULUM_WAVE: &str = "rest-pendulum-wave";
+    /// perl: the onion, glinting now and then
+    pub const REST_PERL: &str = "rest-perl";
+    /// php: php in its purple oval, glinting now and then
+    pub const REST_PHP: &str = "rest-php";
+    /// pipeline: a ci run going stage by stage, one run failing its tests, then green
+    pub const REST_PIPELINE: &str = "rest-pipeline";
+    /// planet: a banded ringed planet turning, with shadows both ways
+    pub const REST_PLANET: &str = "rest-planet";
+    /// planet scale: a dark planet cut into the planetscale mark, backlit, a moon circling
+    pub const REST_PLANET_SCALE: &str = "rest-planet-scale";
+    /// planetscale: the disc cut by two strokes, glinting now and then
+    pub const REST_PLANETSCALE: &str = "rest-planetscale";
+    /// plasma: soft interference blobs drifting and pulsing
+    pub const REST_PLASMA: &str = "rest-plasma";
+    /// playstation: the p standing on a flat s, in blue, glinting now and then
+    pub const REST_PLAYSTATION: &str = "rest-playstation";
+    /// plucked string: a plucked string, slowed down, its harmonics fading
+    pub const REST_PLUCKED_STRING: &str = "rest-plucked-string";
+    /// polar: the half star, bar and arc, glinting now and then
+    pub const REST_POLAR: &str = "rest-polar";
+    /// pond ripples: raindrops opening rings that cross and fade on a pond
+    pub const REST_POND_RIPPLES: &str = "rest-pond-ripples";
+    /// pop!_os: the p! in a teal circle, scanned now and then
+    pub const REST_POP_OS: &str = "rest-pop-os";
+    /// prism city: a black spire and an orange cloud over a blue hour city and its river
+    pub const REST_PRISM_CITY: &str = "rest-prism-city";
+    /// progress bar: five bar styles filling at uneven paces, percent at right
+    pub const REST_PROGRESS_BAR: &str = "rest-progress-bar";
+    /// python: two snakes, blue and yellow, glinting now and then
+    pub const REST_PYTHON: &str = "rest-python";
+    /// r: a blue r over a grey ring, glinting now and then
+    pub const REST_R: &str = "rest-r";
+    /// radar: rotating sweep with afterglow, contacts fade between passes
+    pub const REST_RADAR: &str = "rest-radar";
+    /// rain: slanting rain in three depths, crowns and puddle rings
+    pub const REST_RAIN: &str = "rest-rain";
+    /// reaction diffusion: gray-scott spots and stripes dying back and growing out
+    pub const REST_REACTION_DIFFUSION: &str = "rest-reaction-diffusion";
+    /// red hat: the man in the red hat, scanned now and then
+    pub const REST_RED_HAT: &str = "rest-red-hat";
+    /// rocket: a rocket lifting off its pad at night, then landing back
+    pub const REST_ROCKET: &str = "rest-rocket";
+    /// rocky linux: the mountain in a green circle, scanned now and then
+    pub const REST_ROCKY_LINUX: &str = "rest-rocky-linux";
+    /// rotozoomer: a brick wall texture turning and zooming about the centre
+    pub const REST_ROTOZOOMER: &str = "rest-rotozoomer";
+    /// ruby: the cut red gem, glinting now and then
+    pub const REST_RUBY: &str = "rest-ruby";
+    /// rule 30: one cell grows a row at a time under rules 30, 90 and 110
+    pub const REST_RULE_30: &str = "rest-rule-30";
+    /// ruled mountains: ruled lines with a range rising from them, drifting forward
+    pub const REST_RULED_MOUNTAINS: &str = "rest-ruled-mountains";
+    /// rust: the r in its cog, in ferris orange, glinting now and then
+    pub const REST_RUST: &str = "rest-rust";
+    /// salt flat: the vercel triangle over a mirror of salt, the sun rising behind its tip
+    pub const REST_SALT_FLAT: &str = "rest-salt-flat";
+    /// saptarishi: the big dipper at true positions in a twinkling sky
+    pub const REST_SAPTARISHI: &str = "rest-saptarishi";
+    /// saturn rise: saturn and its rings hanging over the cracked ice and geysers of a moon
+    pub const REST_SATURN_RISE: &str = "rest-saturn-rise";
+    /// scala: the red spiral stair, glinting now and then
+    pub const REST_SCALA: &str = "rest-scala";
+    /// scramble: phrases decoding left to right out of flickering glyphs
+    pub const REST_SCRAMBLE: &str = "rest-scramble";
+    /// sea swell: a long swell lifting a small sailboat as it rolls under
+    pub const REST_SEA_SWELL: &str = "rest-sea-swell";
+    /// sierpinski: the chaos game filling a sierpinski triangle point by point
+    pub const REST_SIERPINSKI: &str = "rest-sierpinski";
+    /// skeleton: a loading card in shade blocks with a shimmer passing over
+    pub const REST_SKELETON: &str = "rest-skeleton";
+    /// skyline: a city at night, windows going on and off, a blinking mast
+    pub const REST_SKYLINE: &str = "rest-skyline";
+    /// smoke: incense smoke rising straight, then curling and thinning
+    pub const REST_SMOKE: &str = "rest-smoke";
+    /// snake: a snake slithering along an s-curve, flicking its tongue
+    pub const REST_SNAKE: &str = "rest-snake";
+    /// snow train: a lit train crossing a snowy stone viaduct at night as snow falls
+    pub const REST_SNOW_TRAIN: &str = "rest-snow-train";
+    /// snowfall: snow swaying down, building drifts on the ground and a fence
+    pub const REST_SNOWFALL: &str = "rest-snowfall";
+    /// solar system: four planets on dotted orbits, periods by kepler's third law
+    pub const REST_SOLAR_SYSTEM: &str = "rest-solar-system";
+    /// sparkline: three live block sparklines scrolling left, values at right
+    pub const REST_SPARKLINE: &str = "rest-sparkline";
+    /// sparks: an angle grinder throwing sparks that arc, skip and cool
+    pub const REST_SPARKS: &str = "rest-sparks";
+    /// spider: a spider lowering itself on silk, then climbing back up
+    pub const REST_SPIDER: &str = "rest-spider";
+    /// spinners: twelve loading spinners side by side, each with its name
+    pub const REST_SPINNERS: &str = "rest-spinners";
+    /// split-flap: a departures board whose flaps riffle to each new line
+    pub const REST_SPLIT_FLAP: &str = "rest-split-flap";
+    /// spring: a weight bouncing on a coil spring, its coils bunching
+    pub const REST_SPRING: &str = "rest-spring";
+    /// starfield: stars rush out from the centre and streak at the edges
+    pub const REST_STARFIELD: &str = "rest-starfield";
+    /// starlings: a murmuration wheeling about, split by a passing falcon
+    pub const REST_STARLINGS: &str = "rest-starlings";
+    /// storm plains: an anvil thunderhead at dusk flickering over a wheat field
+    pub const REST_STORM_PLAINS: &str = "rest-storm-plains";
+    /// sundial: jaipur's samrat yantra, its shadow set by your local time
+    pub const REST_SUNDIAL: &str = "rest-sundial";
+    /// sunrise: the sun lifting off a sea horizon, its path glittering
+    pub const REST_SUNRISE: &str = "rest-sunrise";
+    /// supabase: the green bolt, glinting now and then
+    pub const REST_SUPABASE: &str = "rest-supabase";
+    /// supermemory: the two mirrored strokes, glinting now and then
+    pub const REST_SUPERMEMORY: &str = "rest-supermemory";
+    /// svelte: the orange ribbon folded round an s, glinting now and then
+    pub const REST_SVELTE: &str = "rest-svelte";
+    /// swift: the swift on an orange square, glinting now and then
+    pub const REST_SWIFT: &str = "rest-swift";
+    /// synthwave: a grid rolling toward a striped sun behind a mountain ridge
+    pub const REST_SYNTHWAVE: &str = "rest-synthwave";
+    /// taj dawn: the taj mahal at sunrise, mirrored in its pool through morning haze
+    pub const REST_TAJ_DAWN: &str = "rest-taj-dawn";
+    /// terminal: a shell session: typed commands, output, scrolling, clear
+    pub const REST_TERMINAL: &str = "rest-terminal";
+    /// tesseract: a 4d hypercube turning, its cubes passing through each other
+    pub const REST_TESSERACT: &str = "rest-tesseract";
+    /// three-body: three equal masses sharing one figure-eight orbit
+    pub const REST_THREE_BODY: &str = "rest-three-body";
+    /// tokyo rain: a tokyo side street in the rain, neon signs shining on the wet road
+    pub const REST_TOKYO_RAIN: &str = "rest-tokyo-rain";
+    /// torus knot: a trefoil knot drawn as a lit tube, turning slowly
+    pub const REST_TORUS_KNOT: &str = "rest-torus-knot";
+    /// train: a steam train crossing on its track, smoke puffing behind
+    pub const REST_TRAIN: &str = "rest-train";
+    /// tunnel: flying down a tiled tube that bends and twists
+    pub const REST_TUNNEL: &str = "rest-tunnel";
+    /// tux: tux the penguin, scanned now and then
+    pub const REST_TUX: &str = "rest-tux";
+    /// tv static: snow on an old set that tunes into a test card and loses it
+    pub const REST_TV_STATIC: &str = "rest-tv-static";
+    /// twisted ring: a square ring twisted three quarters, so it has one face
+    pub const REST_TWISTED_RING: &str = "rest-twisted-ring";
+    /// typescript: ts on a blue square, glinting now and then
+    pub const REST_TYPESCRIPT: &str = "rest-typescript";
+    /// typewriter: phrases typed and deleted in turn behind a blinking cursor
+    pub const REST_TYPEWRITER: &str = "rest-typewriter";
+    /// ubuntu: the circle of friends, in orange, scanned now and then
+    pub const REST_UBUNTU: &str = "rest-ubuntu";
+    /// uptime bar: 60-day uptime bars for three services, a new day slides in
+    pub const REST_UPTIME_BAR: &str = "rest-uptime-bar";
+    /// varanasi ghats: dusk aarti on the ganga, lamps on the steps and diyas on the water
+    pub const REST_VARANASI_GHATS: &str = "rest-varanasi-ghats";
+    /// vercel: the vercel triangle, glinting now and then
+    pub const REST_VERCEL: &str = "rest-vercel";
+    /// vinyl: a record turning under the tonearm, seen from above
+    pub const REST_VINYL: &str = "rest-vinyl";
+    /// void linux: the green ring, cut through, scanned now and then
+    pub const REST_VOID_LINUX: &str = "rest-void-linux";
+    /// volcano night: a volcano erupting at night, lava rivers, an ash plume full of lightning
+    pub const REST_VOLCANO_NIGHT: &str = "rest-volcano-night";
+    /// voronoi: cells of ground nearest each drifting seed
+    pub const REST_VORONOI: &str = "rest-voronoi";
+    /// wave interference: two sources in a ripple tank, still lines fanning out
+    pub const REST_WAVE_INTERFERENCE: &str = "rest-wave-interference";
+    /// wave text: a swell running through a line of text, left to right
+    pub const REST_WAVE_TEXT: &str = "rest-wave-text";
+    /// whale: a whale blows, arches its back and dives, fluke last
+    pub const REST_WHALE: &str = "rest-whale";
+    /// wind: gusts streaming along bending lines, curling at the head
+    pub const REST_WIND: &str = "rest-wind";
+    /// windmill: four lattice sails turning on a dutch mill, clouds passing
+    pub const REST_WINDMILL: &str = "rest-windmill";
+    /// zig: the slanted z in brackets, glinting now and then
+    pub const REST_ZIG: &str = "rest-zig";
+    /// zorin os: the z in blue stripes, scanned now and then
+    pub const REST_ZORIN_OS: &str = "rest-zorin-os";
 }
