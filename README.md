@@ -73,6 +73,15 @@ The element plays only while it is on screen, and holds a still frame for visito
 
 See [packages/react/README.md](packages/react/README.md), and `examples/next-demo` for a working app.
 
+## Terminal UIs: ratatui and Bubble Tea
+
+Every piece also plays in terminal apps, as a full-screen background or as an intro with a title card that fades in and out. Each package also lets you write your own pieces in that language.
+
+- **Rust:** [packages/ratatui](packages/ratatui/README.md) has the `AsciiArt` widget, `Intro` and `intro::run`. Pieces run in embedded QuickJS.
+- **Go:** [packages/bubbletea](packages/bubbletea/README.md) has an `asciiart.Model` component for Bubble Tea v2, `Background`, and an `intro` package. Pieces run in goja, which is pure Go.
+
+Both packages run the pieces from this repo. After adding or changing pieces, rebuild them with `npm run native`.
+
 ## Use a piece in your own code
 
 ```bash

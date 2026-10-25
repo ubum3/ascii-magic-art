@@ -48,6 +48,10 @@
   ],
   "scripts": {
     "validate": "node scripts/validate.mjs",
-    "stress": "node scripts/stress.mjs"
+    "stress": "node scripts/stress.mjs",
+    "native": "node scripts/bundle-native.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.12"
   }
 }

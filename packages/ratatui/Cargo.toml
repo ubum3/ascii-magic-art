@@ -1,0 +1,33 @@
+[package]
+name = "ascii-magic-art-ratatui"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+description = "The 634 animated ascii-magic-art pieces as ratatui widgets: backgrounds, intros and splash screens."
+license = "MIT"
+repository = "https://github.com/ubum3/ascii-magic-art"
+keywords = ["ratatui", "tui", "ascii-art", "animation", "terminal"]
+categories = ["command-line-interface", "visualization"]
+include = ["src/**", "assets/pieces.bin", "examples/**", "README.md"]
+
+[dependencies]
+flate2 = "1.1.10"
+ratatui = { version = "0.30.2", default-features = false }
+rquickjs = "0.14.0"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+
+[features]
+default = ["crossterm"]
+# intro::run and the examples. Off for other ratatui backends.
+crossterm = ["ratatui/crossterm"]
+
+[dev-dependencies]
+flate2 = "1.1.10"
+serde_json = "1.0.154"
+ratatui = { version = "0.30.2" }
+
+# QuickJS is C. Unoptimised, heavy pieces draw several times slower, so build it
+# optimised even in debug. Apps using this crate should copy this into their own Cargo.toml.
+[profile.dev.package.rquickjs-sys]
+opt-level = 3
