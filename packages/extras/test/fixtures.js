@@ -54,6 +54,7 @@ export function fixtures() {
   // Per-cell glyphs (ama-studio brand --style glyphs): edge characters where the mask is partial.
   const chars = m.cov.map((r) => [...r].map((c) => (c === "0" ? " " : c === "8" ? "8" : "/")).join(""));
   out.push(["brand-glyphs", { kind: "brand", effect: "draw", ...m, chars }]);
+  for (const effect of ["assemble", "matrix"]) out.push([`qr-${effect}`, { kind: "qr", text: "https://pay.example/r/42", effect, settle: 2 }]);
   return out;
 }
 

@@ -1,0 +1,18 @@
+[package]
+name = "ascii-magic-art-payment-states"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+description = "Payment, payout, onboarding and POS terminal statuses as ascii-magic-art pieces for ratatui."
+license = "MIT"
+repository = "https://github.com/ubum3/ascii-magic-art"
+keywords = ["ratatui", "tui", "payments", "ascii-art"]
+include = ["src/**", "states.json"]
+
+[dependencies]
+ascii-magic-art-ratatui = { path = "../../ratatui", version = "0.1.0", default-features = false }
+serde_json = { version = "1.0.154", features = ["preserve_order"] }
+
+# QuickJS is C; build it optimised even in debug, as ascii-magic-art-ratatui does.
+[profile.dev.package.rquickjs-sys]
+opt-level = 3

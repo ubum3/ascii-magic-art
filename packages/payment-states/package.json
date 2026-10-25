@@ -1,0 +1,39 @@
+{
+  "name": "ascii-magic-art-payment-states",
+  "version": "0.1.0",
+  "description": "Payment, payout, onboarding and POS terminal statuses as ascii-magic-art pieces: one table (states.json) with PSP event aliases, for React, Go (Bubble Tea) and Rust (ratatui).",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": { "types": "./src/index.d.ts", "default": "./src/index.js" },
+    "./react": { "types": "./src/react.d.ts", "default": "./src/react.js" },
+    "./states.json": "./src/states.json",
+    "./package.json": "./package.json"
+  },
+  "files": ["src", "README.md"],
+  "engines": { "node": ">=20.10" },
+  "scripts": {
+    "sync": "node scripts/sync.mjs",
+    "test": "node scripts/sync.mjs --check && node --test \"test/*.test.mjs\""
+  },
+  "dependencies": {
+    "ascii-magic-art-extras": "0.1.0"
+  },
+  "devDependencies": {
+    "ascii-magic-art-react": "0.1.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "peerDependencies": {
+    "ascii-magic-art": ">=1.0.2",
+    "ascii-magic-art-react": "0.1.0",
+    "react": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "ascii-magic-art-react": { "optional": true },
+    "react": { "optional": true }
+  }
+}

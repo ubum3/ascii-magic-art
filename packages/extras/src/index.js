@@ -15,8 +15,10 @@ import { image } from "./image.js";
 import { brand } from "./brand.js";
 import { text } from "./text.js";
 import { progress, sparkline, ticker, celebrate } from "./data.js";
+import { qr } from "./qr.js";
 
 export const KINDS = { image, brand, text, progress, sparkline, ticker, celebrate };
+KINDS.qr = qr;
 
 /** A spec to { meta, create } where create() returns draw(t, state?). Throws on an unknown kind. */
 export function make(spec) {
@@ -46,3 +48,4 @@ export { TEXT_EFFECTS, layout } from "./text.js";
 export { cellsFromPixels, buildPalette, cellsFrame, gridSize } from "./media.js";
 export { encodeClip, decodeClip, readClipHeader, splitFrames, clipPiece } from "./clip.js";
 export { TRANSITIONS, mixFrames, mergePalettes, sequence } from "./transition.js";
+export { qr, QR_EFFECTS } from "./qr.js";
