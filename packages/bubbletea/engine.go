@@ -43,6 +43,11 @@ type asset struct {
 	data    []byte
 	prelude *goja.Program
 	progs   sync.Map // slug -> *goja.Program
+	extras  [2]int
+	hasX    bool
+	xOnce   sync.Once
+	xProg   *goja.Program
+	xErr    error
 }
 
 var (
@@ -58,6 +63,7 @@ func lib() *asset {
 		n := int(binary.LittleEndian.Uint32(bundle[4:8]))
 		var idx struct {
 			Prelude [2]int     `json:"prelude"`
+			Extras  *[2]int    `json:"extras"`
 			Pieces  []rawPiece `json:"pieces"`
 		}
 		if err := json.Unmarshal(bundle[8:8+n], &idx); err != nil {
@@ -74,6 +80,9 @@ func lib() *asset {
 			})
 		}
 		a.prelude = goja.MustCompile("prelude.js", a.inflate(idx.Prelude), false)
+		if idx.Extras != nil {
+			a.extras, a.hasX = *idx.Extras, true
+		}
 		loaded = a
 	})
 	return loaded
@@ -99,6 +108,35 @@ func (a *asset) program(i int) (*goja.Program, error) {
 	}
 	a.progs.Store(slug, p)
 	return p, nil
+}
+
+// The extras script (specs: logos, text, data, pictures), compiled once.
+func (a *asset) extrasProgram() (*goja.Program, error) {
+	a.xOnce.Do(func() {
+		if !a.hasX {
+			a.xErr = fmt.Errorf("this pieces.bin has no extras: run `npm run native`")
+			return
+		}
+		a.xProg, a.xErr = goja.Compile("extras.js", a.inflate(a.extras), false)
+	})
+	return a.xProg, a.xErr
+}
+
+// extrasVM is a runtime with the prelude and the extras loaded.
+func extrasVM() (*goja.Runtime, *goja.Object, error) {
+	a := lib()
+	x, err := a.extrasProgram()
+	if err != nil {
+		return nil, nil, err
+	}
+	vm := goja.New()
+	if _, err := vm.RunProgram(a.prelude); err != nil {
+		return nil, nil, err
+	}
+	if _, err := vm.RunProgram(x); err != nil {
+		return nil, nil, err
+	}
+	return vm, vm.Get("__ama").ToObject(vm), nil
 }
 
 // Catalog is every library piece, sorted by slug.
@@ -186,13 +224,95 @@ func levenshtein(a, b string) int {
 // JSPiece is a library piece running in its own goja runtime. A runtime is not
 // safe for concurrent use, so neither is a JSPiece: the Model serialises its draws.
 type JSPiece struct {
-	meta    Meta
-	palette Palette
-	vm      *goja.Runtime
-	create  goja.Callable
-	draw    goja.Callable
-	drop    goja.Callable
-	handle  goja.Value
+	meta     Meta
+	palette  Palette
+	vm       *goja.Runtime
+	create   goja.Callable
+	draw     goja.Callable
+	drop     goja.Callable
+	setState goja.Callable
+	handle   goja.Value
+	// spec is the JSON of a piece made from a spec, so a new look can remake it.
+	spec, state string
+}
+
+type specMeta struct {
+	Slug     string            `json:"slug"`
+	Name     string            `json:"name"`
+	Category string            `json:"category"`
+	Note     string            `json:"note"`
+	Tags     []string          `json:"tags"`
+	Cols     int               `json:"cols"`
+	Rows     int               `json:"rows"`
+	FPS      float64           `json:"fps"`
+	Cell     string            `json:"cell"`
+	Palette  map[string]string `json:"palette"`
+}
+
+// NewSpecPiece makes a piece from an extras spec (JSON): a logo from
+// `ama-studio brand`, animated text, a progress bar, a picture... See Spec.
+func NewSpecPiece(spec string, look Look) (*JSPiece, error) {
+	vm, ama, err := extrasVM()
+	if err != nil {
+		return nil, &JSError{"spec", err.Error()}
+	}
+	fn := func(name string) goja.Callable { f, _ := goja.AssertFunction(ama.Get(name)); return f }
+	p := &JSPiece{vm: vm, create: fn("makeSpec"), draw: fn("draw"), drop: fn("drop"), setState: fn("setState"), spec: spec}
+	h, err := p.create(goja.Undefined(), vm.ToValue(spec), vm.ToValue(look.json()))
+	if err != nil {
+		return nil, &JSError{"spec", err.Error()}
+	}
+	mv, err := fn("meta")(goja.Undefined(), h)
+	if err != nil {
+		return nil, &JSError{"spec", err.Error()}
+	}
+	var m specMeta
+	if err := json.Unmarshal([]byte(mv.String()), &m); err != nil {
+		return nil, &JSError{"spec", err.Error()}
+	}
+	p.meta = Meta{
+		Slug: m.Slug, Name: m.Name, Category: m.Category, Note: m.Note, Tags: m.Tags,
+		Cols: m.Cols, Rows: m.Rows, FPS: m.FPS, Square: m.Cell == "square", Palette: paletteFromMap(m.Palette),
+	}
+	p.handle, p.palette = h, p.meta.Palette
+	return p, nil
+}
+
+// SetState gives a data spec (progress, sparkline, ticker, celebrate) its state as
+// JSON, such as {"value": 0.4}. Every frame from now on draws it.
+func (p *JSPiece) SetState(state string) error {
+	if p.setState == nil {
+		return nil
+	}
+	if _, err := p.setState(goja.Undefined(), p.handle, p.vm.ToValue(state)); err != nil {
+		return &JSError{p.meta.Slug, err.Error()}
+	}
+	p.state = state
+	return nil
+}
+
+// ImageSpecFromRGBA turns RGBA pixels (one per cell, w x h) into an image spec,
+// with the same quantiser the studio CLI and the browser use. opts is JSON such as
+// {"colors": 48, "square": true, "motion": {"glint": true}}.
+func ImageSpecFromRGBA(rgba []byte, w, h int, opts string) (string, error) {
+	if len(rgba) != w*h*4 {
+		return "", fmt.Errorf("asciiart: %d bytes is not %dx%d RGBA", len(rgba), w, h)
+	}
+	vm, ama, err := extrasVM()
+	if err != nil {
+		return "", err
+	}
+	// One rune per byte: the cheapest way to hand bytes to the engine.
+	rs := make([]rune, len(rgba))
+	for i, b := range rgba {
+		rs[i] = rune(b)
+	}
+	f, _ := goja.AssertFunction(ama.Get("imageSpec"))
+	v, err := f(goja.Undefined(), vm.ToValue(string(rs)), vm.ToValue(w), vm.ToValue(h), vm.ToValue(opts))
+	if err != nil {
+		return "", &JSError{"image", err.Error()}
+	}
+	return v.String(), nil
 }
 
 // NewJSPiece loads a library piece by slug, drawn in a look (the zero Look is the original).
@@ -230,11 +350,18 @@ func (p *JSPiece) SetLook(look Look) error {
 	if p.handle != nil {
 		_, _ = p.drop(goja.Undefined(), p.handle)
 	}
-	h, err := p.create(goja.Undefined(), p.vm.ToValue(p.meta.Slug), p.vm.ToValue(look.json()))
+	first := p.vm.ToValue(p.meta.Slug)
+	if p.spec != "" {
+		first = p.vm.ToValue(p.spec)
+	}
+	h, err := p.create(goja.Undefined(), first, p.vm.ToValue(look.json()))
 	if err != nil {
 		return &JSError{p.meta.Slug, err.Error()}
 	}
 	p.handle, p.palette = h, p.meta.Palette
+	if p.state != "" {
+		return p.SetState(p.state)
+	}
 	return nil
 }
 

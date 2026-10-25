@@ -1,6 +1,7 @@
 package asciiart
 
 import (
+	"encoding/json"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -15,6 +16,9 @@ var nextID atomic.Int64
 type player struct {
 	mu    sync.Mutex
 	piece Piece
+	// State waiting for the next draw, so setting it never waits on a draw.
+	stateMu sync.Mutex
+	state   *string
 }
 
 // frameMsg carries a finished frame back to the Model that asked for it.
@@ -139,6 +143,17 @@ func (m Model) drawCmd(delay time.Duration, t float64, at time.Time) tea.Cmd {
 		if look != nil {
 			if l, ok := p.piece.(Looker); ok {
 				msg.err = l.SetLook(*look)
+			}
+		}
+		p.stateMu.Lock()
+		state := p.state
+		p.state = nil
+		p.stateMu.Unlock()
+		if state != nil {
+			if s, ok := p.piece.(Stater); ok {
+				if err := s.SetState(*state); err != nil {
+					msg.err = err
+				}
 			}
 		}
 		if js, ok := p.piece.(*JSPiece); ok {
@@ -276,4 +291,56 @@ func (m *Model) SetSpeed(s float64) tea.Cmd {
 func (m *Model) SetLook(l Look) tea.Cmd {
 	m.look = &l
 	return m.restart()
+}
+
+// Stater is a piece that draws state as well as time. Spec pieces are.
+type Stater interface {
+	SetState(json string) error
+}
+
+// FromSpec plays an extras spec (JSON): a logo from `ama-studio brand`, animated
+// text, a progress bar, a picture... See Spec for building one in Go.
+func FromSpec(spec string, opts ...Option) (Model, error) {
+	var look Look
+	probe := Model{}
+	for _, o := range opts {
+		o(&probe)
+	}
+	if probe.look != nil {
+		look = *probe.look
+	}
+	p, err := NewSpecPiece(spec, look)
+	if err != nil {
+		return Model{}, err
+	}
+	m := New(p, opts...)
+	m.look = nil // already applied
+	return m, nil
+}
+
+// SetState gives a data spec its state: anything that marshals to the kind's state,
+// such as map[string]any{"value": 0.4}, or a JSON string. The next frame draws it.
+// Return the command from your Update: a paused or still model needs it to redraw.
+func (m *Model) SetState(v any) tea.Cmd {
+	var s string
+	switch x := v.(type) {
+	case string:
+		s = x
+	case []byte:
+		s = string(x)
+	default:
+		b, err := json.Marshal(v)
+		if err != nil {
+			m.err = err
+			return nil
+		}
+		s = string(b)
+	}
+	m.p.stateMu.Lock()
+	m.p.state = &s
+	m.p.stateMu.Unlock()
+	if m.paused || m.still {
+		return m.restart()
+	}
+	return nil
 }

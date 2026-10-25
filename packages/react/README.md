@@ -171,6 +171,27 @@ Rules that keep it smooth:
 
 `ascii-magic-art-react/kit` re-exports the whole typed kit (`Grid`, `rng`, `noise2`, `fbm`, `hsl`, `palette`, `gradient`, `rotX`/`rotY`/`rotZ`, `project`, `wire`, `bigText`, `RAMPS`) plus `restyle`, `withLook` and `frameHTML`. The 634 pieces in `ascii-magic-art/pieces/` are the best examples.
 
+## Extras: logos, text, data, clips, the webcam
+
+`ascii-magic-art-react/extras` plays pieces made from data ([packages/extras](../extras/README.md)), through `AsciiPlayer`, so every look and prop works:
+
+```tsx
+"use client";
+import { AsciiSpec, AsciiClip, AsciiSequence, AsciiWebcam, type BrandSpec } from "ascii-magic-art-react/extras";
+import logo from "./logo.json"; // npx ama-studio brand logo.svg --effect assemble -o logo.json
+
+<AsciiSpec spec={logo as BrandSpec} />
+<AsciiSpec spec={{ kind: "progress", cols: 40 }} state={{ value: progress, label: "Uploading" }} />
+<AsciiSpec spec={{ kind: "celebrate", message: "Payment approved", style: "confetti" }} />
+<AsciiClip src="/intro.amc" />                       {/* npx ama-studio convert intro.mp4 -o public/intro.amc */}
+<AsciiSequence pieces={[logo as BrandSpec, { kind: "text", text: "WELCOME" }]} kind="melt" />
+<AsciiWebcam cols={80} />                            {/* asks for the camera; nothing leaves the page */}
+```
+
+- **`state`:** data kinds read it every frame, so changing it never restarts playback. Changing the `spec` does restart it.
+- **Server rendering:** `AsciiSpec` and `AsciiSequence` render their first frame on the server, like `AsciiPlayer`. Clips and the webcam start on the client.
+- **Hooks:** `useSpecPiece(spec, state)` and `useClip(src)` give you the piece module. `loadClip(bytes)` decodes a clip with the browser's `DecompressionStream`.
+
 ## Hooks
 
 - `useAsciiFrame(piece, { look, playing, speed, fps, t0, ref })` returns `{ frame, text, html, t }` as React state, for putting a piece into your own markup (a status-bar spinner, a terminal UI). It re-renders every frame, so keep it for small pieces.

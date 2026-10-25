@@ -14,6 +14,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <Link href="/hero">Hero</Link>
           <Link href="/states">States</Link>
           <Link href="/custom">Custom pieces</Link>
+          <Link href="/extras">Extras</Link>
           <Link href="/nope">404</Link>
         </nav>
         <main>{children}</main>

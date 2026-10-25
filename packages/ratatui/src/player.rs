@@ -19,6 +19,7 @@ struct Ctl {
     max_fps: Option<f64>,
     seek: Option<f64>,
     look: Option<Look>,
+    state: Option<String>,
     /// Something changed that needs a redraw even while paused.
     dirty: bool,
 }
@@ -64,6 +65,60 @@ impl Player {
         ))
     }
 
+    /// Play an extras spec (JSON): a logo from `ama-studio brand`, animated text, a
+    /// progress bar, a picture... The spec loads on the player's thread; this waits
+    /// for it (a few ms) so a bad spec fails here.
+    ///
+    /// ```no_run
+    /// use ascii_magic_art_ratatui::Player;
+    /// let p = Player::from_spec(r#"{"kind":"text","text":"DEPLOYED","effect":"scramble"}"#)?;
+    /// # Ok::<(), ascii_magic_art_ratatui::Error>(())
+    /// ```
+    pub fn from_spec(spec: impl Into<String>) -> Result<Player, Error> {
+        Player::from_spec_with_look(spec, Look::default())
+    }
+
+    /// [`from_spec`](Player::from_spec), drawn in a look.
+    pub fn from_spec_with_look(
+        spec: impl Into<String>,
+        look: impl Into<Look>,
+    ) -> Result<Player, Error> {
+        let (spec, look) = (spec.into(), look.into());
+        Player::spawn_built(move || {
+            JsPiece::from_spec_with_look(&spec, &look).map(|p| Box::new(p) as Box<dyn Piece>)
+        })
+    }
+
+    /// Build a piece on the player's thread (for pieces that aren't `Send`), waiting
+    /// for its meta.
+    fn spawn_built(
+        build: impl FnOnce() -> Result<Box<dyn Piece>, Error> + Send + 'static,
+    ) -> Result<Player, Error> {
+        let (tx, rx) = std::sync::mpsc::sync_channel::<Result<Meta, Error>>(1);
+        let make: Make = Box::new(move || match build() {
+            Ok(p) => {
+                let _ = tx.send(Ok(p.meta().clone()));
+                Ok(p)
+            }
+            Err(e) => {
+                let _ = tx.send(Err(e.clone()));
+                Err(e)
+            }
+        });
+        let mut player = Player::spawn(Meta::new("loading", 0, 0), make);
+        match rx.recv() {
+            Ok(Ok(meta)) => {
+                player.meta = meta;
+                Ok(player)
+            }
+            Ok(Err(e)) => Err(e),
+            Err(_) => Err(Error::Js {
+                slug: "spec".into(),
+                message: "the player thread stopped".into(),
+            }),
+        }
+    }
+
     /// Play your own piece.
     pub fn new<P: Piece + Send + 'static>(piece: P) -> Player {
         let meta = piece.meta().clone();
@@ -87,6 +142,7 @@ impl Player {
                 max_fps: None,
                 seek: None,
                 look: None,
+                state: None,
                 dirty: false,
             }),
             wake: Condvar::new(),
@@ -201,6 +257,13 @@ impl Player {
         self.ctl(|c| c.look = Some(look));
     }
 
+    /// The state a data spec draws, as JSON: `{"value": 0.4, "label": "Uploading"}`.
+    /// See `packages/extras` for each kind's state.
+    pub fn set_state(&self, state: impl Into<String>) {
+        let state = state.into();
+        self.ctl(|c| c.state = Some(state));
+    }
+
     /// Builder form of [`set_speed`](Player::set_speed).
     pub fn speed(self, speed: f64) -> Self {
         self.set_speed(speed);
@@ -258,9 +321,17 @@ fn run(sh: Arc<Shared>, make: Make, fps: f64) {
             return;
         }
     };
+    // A piece built here (a spec) only now knows its size.
+    if sh.frame_id.load(Ordering::Acquire) == 0 {
+        let m = piece.meta();
+        *sh.frame.lock().unwrap() = Arc::new(Frame {
+            square: m.square,
+            ..Frame::blank(m.cols, m.rows)
+        });
+    }
     let (mut t, mut last, mut advancing, mut drawn) = (0.0f64, Instant::now(), false, false);
     loop {
-        let (look, speed, running, period) = {
+        let (look, state, speed, running, period) = {
             let mut c = sh.ctl.lock().unwrap();
             if c.stop {
                 return;
@@ -282,6 +353,7 @@ fn run(sh: Arc<Shared>, make: Make, fps: f64) {
             let rate = c.max_fps.map_or(fps, |m| m.min(fps)).max(0.5);
             (
                 c.look.take(),
+                c.state.take(),
                 c.speed,
                 running,
                 Duration::from_secs_f64(1.0 / rate),
@@ -294,6 +366,9 @@ fn run(sh: Arc<Shared>, make: Make, fps: f64) {
         (last, advancing) = (now, running);
         if let Some(l) = look {
             piece.set_look(&l);
+        }
+        if let Some(s) = state {
+            piece.set_state(&s);
         }
         let frame = piece.draw(t);
         *sh.error.lock().unwrap() = piece.error().map(str::to_string);

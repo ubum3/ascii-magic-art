@@ -1,0 +1,22 @@
+{
+  "name": "ascii-magic-art-studio",
+  "version": "0.1.0",
+  "description": "ama-studio: turn photos, GIFs, videos and SVG logos into animated ASCII art, make animated text, play anything in the terminal, and export pieces to asciinema casts, GIF, MP4, WebM and PNG.",
+  "license": "MIT",
+  "type": "module",
+  "bin": { "ama-studio": "bin/ama-studio.js" },
+  "files": ["bin", "src"],
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^1.0.13",
+    "ascii-magic-art-extras": "0.1.0",
+    "esbuild": "^0.25.12",
+    "sharp": "^0.35.5"
+  },
+  "peerDependencies": {
+    "ascii-magic-art": ">=1.0.2"
+  }
+}

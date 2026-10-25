@@ -1,7 +1,7 @@
 {
   "name": "ascii-magic-art-react",
   "version": "0.1.0",
-  "description": "Typed React and Next.js components for ascii-magic-art: a player that renders on the server, a hero background, ready-made loading, empty and error states, and hooks for writing your own pieces.",
+  "description": "Typed React and Next.js components for ascii-magic-art: a player that renders on the server, a hero background, ready-made loading, empty and error states, and hooks for writing your own pieces, plus pieces made from data: logos, animated text, progress bars, clips, transitions and the webcam (ascii-magic-art-react/extras).",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
@@ -21,6 +21,10 @@
     "./catalog": {
       "types": "./dist/catalog.d.ts",
       "default": "./dist/catalog.js"
+    },
+    "./extras": {
+      "types": "./dist/extras.d.ts",
+      "default": "./dist/extras.js"
     },
     "./package.json": "./package.json"
   },
@@ -48,5 +52,8 @@
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "ascii-magic-art-extras": "0.1.0"
   }
 }

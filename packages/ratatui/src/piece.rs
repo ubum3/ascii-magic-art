@@ -71,6 +71,9 @@ pub trait Piece {
     /// Switch to another look. Library pieces support this; the default does nothing.
     fn set_look(&mut self, _look: &Look) {}
 
+    /// The state a data piece draws, as JSON (extras specs only); the default does nothing.
+    fn set_state(&mut self, _state: &str) {}
+
     /// The last error, if drawing failed (library pieces only).
     fn error(&self) -> Option<&str> {
         None
@@ -86,6 +89,9 @@ impl<P: Piece + ?Sized> Piece for Box<P> {
     }
     fn set_look(&mut self, look: &Look) {
         (**self).set_look(look)
+    }
+    fn set_state(&mut self, state: &str) {
+        (**self).set_state(state)
     }
     fn error(&self) -> Option<&str> {
         (**self).error()

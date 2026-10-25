@@ -15,6 +15,12 @@
  *   packages/fixtures/golden.bin
  *       deflated JSON { slug: [text, color] }: each piece drawn by Node at
  *       t = 0, 0.5, 1.5 (the last kept), for the engine parity tests.
+ *   packages/fixtures/extras-golden.bin
+ *       deflated JSON { name: { spec, state, frame: [text, color] } }: the
+ *       packages/extras fixtures drawn by Node, for the extras parity tests.
+ *
+ * The bundle also carries packages/extras (pieces made from JSON specs: logos,
+ * text, data, pictures) as one more blob, which an engine loads only for specs.
  *
  * Pieces are lowered to ES2017 and CommonJS by esbuild, which both engines run.
  * Run it again after pulling upstream pieces or adding your own.
@@ -33,7 +39,7 @@ const TARGET = "es2017";
 const PRELUDE = `
 import * as kit from "./lib/kit.js";
 import * as image from "./lib/image.js";
-import { withLook } from "./runtime/glyphs.js";
+import { withLook, restyle } from "./runtime/glyphs.js";
 // QuickJS and goja have no Intl: QuickJS ignores "en-US" and drops the thousands
 // separators that ledger and leaderboard pieces show, and goja takes it for a radix
 // and throws. Same rules as Intl: up to 3 decimals, at least minimumFractionDigits.
@@ -74,10 +80,30 @@ globalThis.__ama = {
     handles.push({ draw, pal: null });
     return handles.length - 1;
   },
+  // A player for an extras spec (JSON), in a look. Needs the extras blob loaded.
+  makeSpec(spec, look) {
+    const p = globalThis.__ama.extras.make(JSON.parse(spec)), d = p.create();
+    const o = look ? JSON.parse(look) : null;
+    const on = o && (o.chars || (o.look && o.look !== "original") || o.mono);
+    handles.push({ draw: on ? (t, s) => restyle(d(t, s), p.meta.palette, o) : d, pal: null, meta: p.meta, state: undefined });
+    return handles.length - 1;
+  },
+  // A spec player's meta, as JSON.
+  meta(h) { return JSON.stringify(handles[h].meta); },
+  // The state a data spec draws (JSON), passed with every frame from now on.
+  setState(h, state) { handles[h].state = state ? JSON.parse(state) : undefined; },
+  // Pixels to an image spec: rgba is a string with one character per byte.
+  imageSpec(rgba, w, h, opts) {
+    const px = new Uint8Array(rgba.length);
+    for (let i = 0; i < rgba.length; i++) px[i] = rgba.charCodeAt(i);
+    const o = opts ? JSON.parse(opts) : {};
+    const cells = globalThis.__ama.extras.cellsFromPixels(px, w, h, o);
+    return JSON.stringify(Object.assign({ kind: "image", square: o.square !== false }, cells, o.motion ? { motion: o.motion } : {}));
+  },
   // One frame as "text\\0color\\0palette". color is empty for a plain frame; palette is
   // JSON only when a look brought its own (brightened) palette and it changed.
   draw(h, t) {
-    const H = handles[h], f = H.draw(t);
+    const H = handles[h], f = H.draw(t, H.state);
     if (typeof f === "string") return f + "\\0\\0";
     let p = "";
     if (f.palette && f.palette !== H.pal) { H.pal = f.palette; p = JSON.stringify(f.palette); }
@@ -89,6 +115,12 @@ globalThis.__ama = {
 
 const prelude = (await esbuild.build({
   stdin: { contents: PRELUDE, resolveDir: ROOT, loader: "js" },
+  bundle: true, write: false, format: "iife", target: TARGET, minify: true, legalComments: "none",
+})).outputFiles[0].text;
+
+// The extras, as a script that hangs them on __ama.extras.
+const extras = (await esbuild.build({
+  stdin: { contents: `import * as x from "./packages/extras/src/index.js"; globalThis.__ama.extras = x;`, resolveDir: ROOT, loader: "js" },
   bundle: true, write: false, format: "iife", target: TARGET, minify: true, legalComments: "none",
 })).outputFiles[0].text;
 
@@ -104,6 +136,7 @@ const push = (src) => {
   return at;
 };
 const preludeAt = push(prelude);
+const extrasAt = push(extras);
 
 for (const f of files) {
   const slug = f.slice(0, -3);
@@ -131,7 +164,7 @@ for (const f of files) {
 }
 if (problems.length) { console.error(problems.join("\n")); process.exit(1); }
 
-const index = Buffer.from(JSON.stringify({ version: 1, prelude: preludeAt, pieces }), "utf8");
+const index = Buffer.from(JSON.stringify({ version: 1, prelude: preludeAt, extras: extrasAt, pieces }), "utf8");
 const head = Buffer.alloc(8);
 head.write("AMA1", 0, "latin1");
 head.writeUInt32LE(index.length, 4);
@@ -147,6 +180,18 @@ out("packages/ratatui/assets/pieces.bin", bin);
 out("packages/bubbletea/pieces.bin", bin);
 out("packages/fixtures/golden.bin", zlib.deflateRawSync(Buffer.from(JSON.stringify(golden)), { level: 9 }));
 
+// The extras fixtures, drawn by Node at the same times the parity tests use.
+const fx = await import(pathToFileURL(path.join(ROOT, "packages/extras/test/fixtures.js")).href);
+const { fromSpec } = await import(pathToFileURL(path.join(ROOT, "packages/extras/src/index.js")).href);
+const extrasGolden = {};
+for (const [name, spec, state] of fx.fixtures()) {
+  const draw = fromSpec(spec).default();
+  let fr;
+  for (const t of fx.TIMES) fr = draw(t, state);
+  extrasGolden[name] = { spec, state: state ?? null, times: fx.TIMES, frame: typeof fr === "string" ? [fr, ""] : [fr.text, fr.color] };
+}
+out("packages/fixtures/extras-golden.bin", zlib.deflateRawSync(Buffer.from(JSON.stringify(extrasGolden)), { level: 9 }));
+
 // Slug constants. Identifiers can't start with a digit, so those get a prefix.
 const words = (s) => s.split("-");
 const rustId = (s) => (/^\d/.test(s) ? "P_" : "") + s.toUpperCase().replace(/-/g, "_");
@@ -160,4 +205,4 @@ out("packages/bubbletea/slug/slug.go", Buffer.from(
   `// Code generated by scripts/bundle-native.mjs. DO NOT EDIT.\n\n// Package slug names every piece, so slugs complete in your editor: slug.MatrixRain.\npackage slug\n\n` +
   `const (\n${pieces.map((p) => `\t// ${goId(p.slug)} is ${p.name}: ${p.note.replace(/\s+/g, " ")}\n\t${goId(p.slug)} = "${p.slug}"`).join("\n")}\n)\n\n` +
   `// All is every slug, sorted.\nvar All = []string{\n${pieces.map((p) => `\t"${p.slug}",`).join("\n")}\n}\n`));
-console.log(`${pieces.length} pieces, prelude ${(prelude.length / 1024).toFixed(0)} KB`);
+console.log(`${pieces.length} pieces, prelude ${(prelude.length / 1024).toFixed(0)} KB, extras ${(extras.length / 1024).toFixed(0)} KB`);

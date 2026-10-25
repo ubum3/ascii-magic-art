@@ -127,6 +127,25 @@ art := asciiart.New(&badge{meta, asciiart.NewGrid(20, 3)})
 
 `Grid` has `Set`, `Get`, `Text`, `Block`, `HLine`, `VLine`, `Box`, `Fill`, `Line`, `Circle` and `Shade`, plus `Ramp()` and `Ramps`, as in `lib/kit.js`. `asciiart.NoKey` leaves a cell's colour as it is. Looks only apply to library pieces.
 
+## Extras: logos, text, data, clips, transitions, casts
+
+Pieces made from data ([packages/extras](../extras/README.md)) run in the same engine:
+
+```go
+logo, err := asciiart.FromSpec(string(logoJSON))                       // from `ama-studio brand logo.svg -o logo.json`
+text, err := asciiart.TextSpec("DEPLOYED").Effect(asciiart.Scramble).Model()
+bar, err := asciiart.ProgressSpec(40).With("label", "Uploading").Model()
+cmd := bar.SetState(map[string]any{"value": 0.42})                      // return cmd from your Update
+party, err := asciiart.CelebrateSpec("Payment approved", asciiart.Check).Model()
+clip, err := asciiart.OpenClip("demo.amc")                               // `ama-studio convert demo.mp4 -o demo.amc`
+m := asciiart.New(clip)
+```
+
+- **Specs:** `FromSpec(json)` and `Spec` (`TextSpec`, `ProgressSpec`, `SparklineSpec`, `TickerSpec`, `CelebrateSpec` and `ParseSpec`). `ImageSpec(img, cols, square)` takes any `image.Image`. `Model.SetState` feeds data kinds without waiting on a draw.
+- **Clips:** `LoadClip` and `OpenClip` read `.amc` files natively, without the JS engine. A `*Clip` is a `Piece`.
+- **Transitions:** `asciiart.Transition(kind, fromView, toView, w, h, p)` mixes any two rendered views: `Dissolve`, `WipeRight`, `WipeLeft`, `WipeDown`, `WipeUp`, `Melt`, `ScrambleIn` and `Iris`. `intro.Into(asciiart.Dissolve, 900*time.Millisecond)` ends an intro by going into your app, which starts when the transition does. `intro.Fit(asciiart.FitCenter)` keeps a logo at its own size.
+- **Casts:** `WriteCast(w, piece, seconds, fps)` writes an asciinema cast. `NewCastRecorder` records any views your app renders.
+
 ## Examples
 
 ```bash
@@ -134,6 +153,7 @@ go run ./examples/gallery [slug]      # every piece; s cycles looks, f cycles fi
 go run ./examples/background [slug]   # a panel over synthwave-grid
 go run ./examples/intro [slug]        # a splash, then an app
 go run ./examples/custom              # a native piece
+go run ./examples/brand [logo.json]   # a logo intro into a live dashboard (extras)
 ```
 
 ## Performance

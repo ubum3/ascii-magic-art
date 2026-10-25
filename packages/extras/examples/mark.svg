@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 120" width="240" height="120">
+  <!-- A placeholder brandmark: a rounded hexagon with a spark, and a bar. Swap in your own SVG. -->
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7c5cff"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+  </defs>
+  <path d="M60 6 L104 31 Q110 35 110 42 L110 78 Q110 85 104 89 L60 114 Q54 117 48 114 L10 89 Q4 85 4 78 L4 42 Q4 35 10 31 L48 6 Q54 3 60 6 Z" fill="url(#g)"/>
+  <path d="M64 22 L36 66 L56 66 L46 98 L80 50 L60 50 Z" fill="#ffffff"/>
+  <rect x="126" y="34" width="108" height="20" rx="10" fill="#7c5cff"/>
+  <rect x="126" y="66" width="76" height="20" rx="10" fill="#22d3ee"/>
+</svg>

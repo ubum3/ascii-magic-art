@@ -65,3 +65,26 @@ func TestHandsOffToNext(t *testing.T) {
 		t.Fatalf("next got size %dx%d", a.w, a.h)
 	}
 }
+
+func TestIntoTransitionsThenHandsOff(t *testing.T) {
+	m, t0 := started(Title("Hello"), Into(asciiart.Dissolve, time.Second))
+	m.Update(tea.WindowSizeMsg{Width: 40, Height: 12})
+	_ = m.View() // the intro on screen, at full strength
+	m.lastAlpha = 1
+	got, _ := m.Update(tickMsg{m.self, t0.Add(3 * time.Second)})
+	if got != tea.Model(m) || m.intoStart.IsZero() {
+		t.Fatalf("hold over: the transition starts (got %T)", got)
+	}
+	if a := m.next.(app); a.w != 40 || a.h != 12 {
+		t.Fatalf("next starts at once, sized: %dx%d", a.w, a.h)
+	}
+	m.intoStart = time.Now().Add(-500 * time.Millisecond)
+	v := m.View().Content
+	if v == m.intoFrom || strings.Count(v, "\n") != 11 || !strings.Contains(v, "p") {
+		t.Fatalf("half way, a mix of 40x12:\n%s", v)
+	}
+	next, _ := m.Update(tickMsg{m.self, m.intoStart.Add(time.Second)})
+	if _, ok := next.(app); !ok {
+		t.Fatalf("handed off to %T", next)
+	}
+}

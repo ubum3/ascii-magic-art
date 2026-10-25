@@ -39,6 +39,12 @@ type Model struct {
 	skipAlpha             float64
 	skipped               bool
 	width, height         int
+	// Into: a transition into next instead of a fade to black.
+	lastAlpha float64
+	into      *asciiart.TransitionKind
+	intoFor   time.Duration
+	intoStart time.Time
+	intoFrom  string
 }
 
 // Option sets up an intro.
@@ -77,8 +83,19 @@ func Background(c asciiart.RGB) Option { return func(m *Model) { m.bg = c } }
 // TitleBox draws a rounded box behind the title. Default true.
 func TitleBox(on bool) Option { return func(m *Model) { m.box = on } }
 
+// Fit sets how the art fills the window. Default asciiart.FitCover; a logo looks
+// best at asciiart.FitCenter, its own size.
+func Fit(f asciiart.Fit) Option { return func(m *Model) { m.art.SetFit(f) } }
+
 // AltScreen plays the intro in the alternate screen. Default true.
 func AltScreen(on bool) Option { return func(m *Model) { m.alt = on } }
+
+// Into ends the intro with a transition into your app (asciiart.Dissolve,
+// asciiart.WipeRight, asciiart.Melt...) instead of a fade to black. Your model
+// starts when the transition does, so its first screen can already move.
+func Into(kind asciiart.TransitionKind, d time.Duration) Option {
+	return func(m *Model) { m.into, m.intoFor, m.fadeOut = &kind, d, 0 }
+}
 
 // New plays art as an intro, then hands over to next. The art fills the window
 // (asciiart.FitCover) unless you gave it another fit.
@@ -158,6 +175,21 @@ func (m *Model) Skip(now time.Time) {
 
 // Update plays the intro, and once it's done returns next in its place.
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	if !m.intoStart.IsZero() {
+		// Transitioning into next: it is running, and gets every message but our clock.
+		if t, ok := msg.(tickMsg); ok && t.id == m.self {
+			if t.now.Sub(m.intoStart) >= m.intoFor {
+				return m.next, nil
+			}
+			return m, m.tick()
+		}
+		if s, ok := msg.(tea.WindowSizeMsg); ok {
+			m.width, m.height = s.Width, s.Height
+		}
+		var cmd tea.Cmd
+		m.next, cmd = m.next.Update(msg)
+		return m, cmd
+	}
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.width, m.height = msg.Width, msg.Height
@@ -178,6 +210,9 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.start = msg.now // the clock starts with the first frame on screen
 		}
 		if m.DoneAt(msg.now) {
+			if m.into != nil {
+				return m.startInto(msg.now)
+			}
 			return m.handOff()
 		}
 		return m, m.tick()
@@ -185,6 +220,14 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	m.art, cmd = m.art.Update(msg)
 	return m, cmd
+}
+
+// startInto starts next and the transition into it, from the intro as it last looked.
+func (m *Model) startInto(now time.Time) (tea.Model, tea.Cmd) {
+	m.intoFrom = m.content(m.lastAlpha)
+	next, cmd := m.handOff()
+	m.next, m.intoStart = next, now
+	return m, tea.Batch(cmd, m.tick())
 }
 
 func (m *Model) handOff() (tea.Model, tea.Cmd) {
@@ -201,8 +244,24 @@ func (m *Model) handOff() (tea.Model, tea.Cmd) {
 
 // View draws the art, faded, with the title card over it.
 func (m *Model) View() tea.View {
-	now := time.Now()
-	a := m.AlphaAt(now)
+	if !m.intoStart.IsZero() {
+		p := float64(time.Since(m.intoStart)) / float64(max(m.intoFor, time.Millisecond))
+		nv := m.next.View()
+		v := tea.NewView(asciiart.Transition(*m.into, m.intoFrom, nv.Content, m.width, m.height, p))
+		v.AltScreen = m.alt || nv.AltScreen
+		return v
+	}
+	a := m.AlphaAt(time.Now())
+	if a > 0 {
+		m.lastAlpha = a
+	}
+	v := tea.NewView(m.content(a))
+	v.AltScreen = m.alt
+	v.BackgroundColor = lipglossColor(m.bg)
+	return v
+}
+
+func (m *Model) content(a float64) string {
 	m.art.SetDim(1 - a)
 	st := m.art.Style()
 	st.BG = &m.bg
@@ -211,10 +270,7 @@ func (m *Model) View() tea.View {
 	if card := m.card(a); card != "" && m.width > 0 {
 		out = asciiart.Background(out, card, m.width, m.height)
 	}
-	v := tea.NewView(out)
-	v.AltScreen = m.alt
-	v.BackgroundColor = lipglossColor(m.bg)
-	return v
+	return out
 }
 
 func (m *Model) card(a float64) string {

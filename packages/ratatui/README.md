@@ -129,6 +129,26 @@ let player = Player::new(Badge { meta, grid: Grid::new(20, 3) });
 
 `Grid` has `set`, `get`, `text`, `block`, `hline`, `vline`, `draw_box`, `fill`, `line`, `circle` and `shade`, plus `ramp()` and `RAMPS`, as in `lib/kit.js`. Looks only apply to library pieces.
 
+## Extras: logos, text, data, clips, transitions, casts
+
+Pieces made from data ([packages/extras](../extras/README.md)) run in the same engine:
+
+```rust
+use ascii_magic_art_ratatui::{Celebration, Clip, Player, Spec, TextEffect, Transition, cast, intro};
+
+let logo = Player::from_spec(std::fs::read_to_string("logo.json")?)?;   // from `ama-studio brand logo.svg -o logo.json`
+let text = Spec::text("DEPLOYED").effect(TextEffect::Scramble).player()?;
+let bar = Spec::progress(40).set("label", "Uploading").player()?;
+bar.set_state(r#"{"value": 0.42}"#);                                   // data kinds draw state; set it any time
+let party = Spec::celebrate("Payment approved", Celebration::Check).player()?;
+let clip = Player::new(Clip::open("demo.amc")?);                       // `ama-studio convert demo.mp4 -o demo.amc`
+```
+
+- **Specs:** `Player::from_spec(json)` loads one on the player's thread and fails at once on a bad spec. `Spec` builds `text`, `progress`, `sparkline`, `ticker` and `celebrate` specs. `Spec::image_rgba` makes one from pixels, and with the `image` feature, `Spec::image(&DynamicImage, cols, square)`. `Player::set_state` feeds data kinds.
+- **Clips:** `Clip` reads `.amc` files natively, without the JS engine, and is a `Piece`.
+- **Transitions:** `Transition::{Dissolve, Wipe(Direction), Melt, Scramble, Iris}` mix any two `Buffer`s. Use `TransitionView` as a widget, or `transition::run(terminal, kind, duration, from, to)` to play one. `intro::run_into(terminal, splash, Transition::Dissolve, duration, |f| app.draw(f))` ends an intro by going into your app instead of fading to black.
+- **Casts:** `cast::record(&mut piece, seconds, fps, file)` writes an asciinema cast. `cast::Recorder` records any screen you render into a `Buffer`.
+
 ## Examples
 
 ```bash
@@ -136,6 +156,7 @@ cargo run --release --example gallery [slug]      # every piece; s cycles looks,
 cargo run --release --example background [slug]   # a dashboard over synthwave-grid
 cargo run --release --example intro [slug]        # a splash, then an app
 cargo run --release --example custom              # a native piece
+cargo run --release --example brand [logo.json]   # a logo intro into a live dashboard (extras)
 ```
 
 ## Performance

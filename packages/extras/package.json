@@ -1,0 +1,23 @@
+{
+  "name": "ascii-magic-art-extras",
+  "version": "0.1.0",
+  "description": "Pieces made from data: logos with entrance effects, animated text, progress bars, sparklines, tickers and celebrations, pictures from photos, and .amc clips. One JSON spec plays on the web, in React and in the Rust and Go terminal packages.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": { "types": "./src/index.d.ts", "default": "./src/index.js" },
+    "./media": "./src/media.js",
+    "./clip": "./src/clip.js",
+    "./package.json": "./package.json"
+  },
+  "files": ["src"],
+  "scripts": {
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "peerDependencies": {
+    "ascii-magic-art": ">=1.0.2"
+  }
+}

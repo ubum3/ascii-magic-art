@@ -82,6 +82,15 @@ Every piece also plays in terminal apps, as a full-screen background or as an in
 
 Both packages run the pieces from this repo. After adding or changing pieces, rebuild them with `npm run native`.
 
+## Extras: your logo, photos, videos, text and data
+
+- **[packages/studio](packages/studio/README.md)** is `ama-studio`, the easy way in. `ama-studio brand logo.svg --effect assemble -o logo.json` makes your logo into an animated intro. `ama-studio convert photo.jpg` and `ama-studio convert clip.mp4 -o clip.amc` turn pictures and videos into ASCII. `ama-studio export <anything> -o out.gif` writes an asciinema `.cast`, a GIF, an MP4, a WebM or a PNG.
+- **[packages/extras](packages/extras/README.md)** has pieces made from JSON specs: logos with entrance effects, animated text, progress bars, sparklines, tickers, celebrations, pictures, `.amc` clips and transitions.
+
+  The same spec plays in React (`ascii-magic-art-react/extras`), Rust (`Player::from_spec`) and Go (`asciiart.FromSpec`). The Rust and Go packages also add native clips, transitions between screens, intros that go straight into your app, and cast recording. Each package has a `brand` example: a logo intro that dissolves into a live dashboard.
+
+None of this changes the pieces, `lib/` or `runtime/`. It builds on them.
+
 ## Use a piece in your own code
 
 ```bash

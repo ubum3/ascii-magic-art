@@ -355,6 +355,72 @@ pub fn run(terminal: &mut ratatui::DefaultTerminal, intro: Intro) -> std::io::Re
     }
 }
 
+/// Play an intro, then go into your app with a [`Transition`](crate::Transition)
+/// instead of a fade to black. `app` draws your app's screen; it is called every
+/// frame while the transition plays, so your first screen can already move. When
+/// this returns, carry on drawing your app as usual.
+///
+/// ```no_run
+/// use std::time::Duration;
+/// use ascii_magic_art_ratatui::{Intro, Transition, intro};
+/// use ratatui::widgets::Paragraph;
+/// let mut terminal = ratatui::init();
+/// let splash = Intro::from_slug("moonlit-sea")?.title("My App");
+/// let draw_app = |f: &mut ratatui::Frame| f.render_widget(Paragraph::new("hello"), f.area());
+/// intro::run_into(&mut terminal, splash, Transition::Dissolve, Duration::from_millis(700), draw_app)?;
+/// # ratatui::restore();
+/// # Ok::<(), Box<dyn std::error::Error>>(())
+/// ```
+#[cfg(feature = "crossterm")]
+pub fn run_into(
+    terminal: &mut ratatui::DefaultTerminal,
+    intro: Intro,
+    transition: crate::Transition,
+    duration: Duration,
+    mut app: impl FnMut(&mut ratatui::Frame),
+) -> std::io::Result<Outcome> {
+    use ratatui::crossterm::event::{self, Event, KeyCode, KeyEventKind, KeyModifiers};
+    let intro = intro.fade_out(Duration::ZERO);
+    intro.player.wait_ready(Duration::from_millis(500));
+    let mut state = intro.start();
+    let mut last = Buffer::empty(terminal.get_frame().area());
+    let outcome = loop {
+        if state.is_done() {
+            break if state.was_skipped() {
+                Outcome::Skipped
+            } else {
+                Outcome::Finished
+            };
+        }
+        last = terminal
+            .draw(|f| f.render_widget(&state, f.area()))?
+            .buffer
+            .clone();
+        if event::poll(Duration::from_millis(16))?
+            && let Event::Key(k) = event::read()?
+        {
+            if k.kind != KeyEventKind::Press {
+                continue;
+            }
+            let ctrl_c =
+                k.modifiers.contains(KeyModifiers::CONTROL) && k.code == KeyCode::Char('c');
+            if ctrl_c || matches!(k.code, KeyCode::Esc | KeyCode::Char('q')) {
+                return Ok(Outcome::Quit);
+            }
+            state.skip();
+        }
+    };
+    drop(state);
+    crate::transition::run(
+        terminal,
+        transition,
+        duration,
+        |f| f.buffer_mut().merge(&last),
+        &mut app,
+    )?;
+    Ok(outcome)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

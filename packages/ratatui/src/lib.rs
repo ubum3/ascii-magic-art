@@ -15,7 +15,9 @@
 //! [`Player`]'s thread, so a slow piece drops frames instead of blocking your UI.
 //! Your own pieces implement [`Piece`], usually drawing into a [`Grid`].
 
+pub mod cast;
 mod catalog;
+mod clip;
 mod color;
 mod engine;
 mod frame;
@@ -24,17 +26,22 @@ pub mod intro;
 mod look;
 mod piece;
 mod player;
+mod spec;
+pub mod transition;
 mod widget;
 
 pub use catalog::{SLUGS, slug};
+pub use clip::Clip;
 pub use color::{ColorMode, KEYS, Palette, Rgb, to256};
-pub use engine::{JsPiece, catalog, meta};
+pub use engine::{JsPiece, catalog, image_spec_from_rgba, meta};
 pub use frame::{Cell, Frame};
 pub use grid::{BoxStyle, Grid, RAMPS, ramp};
 pub use intro::{Intro, IntroState};
 pub use look::{Look, LookName};
 pub use piece::{Meta, Piece};
 pub use player::Player;
+pub use spec::{BrandEffect, BrandIdle, Celebration, Spec, TextEffect};
+pub use transition::{Direction, Transition};
 pub use widget::{Align, AsciiArt, Fit, FrameRef};
 
 /// What can go wrong loading or drawing a piece.

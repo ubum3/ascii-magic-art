@@ -126,3 +126,22 @@ test("server AsciiArt takes a library module by name, and refuses a custom one c
   const custom = definePiece({ slug: "mine", cols: 20, rows: 2 }, () => () => "x".repeat(20) + "\n" + "y".repeat(20));
   await assert.rejects(() => ServerAsciiArt({ piece: custom }), /use client/);
 });
+
+test("extras: specs and sequences render their first frame on the server, clips decode", async () => {
+  const { AsciiSpec, AsciiSequence, AsciiClip, loadClip, useSpecPiece } = await import("../dist/extras.js");
+  const { encodeClip } = await import("ascii-magic-art-extras");
+  const zlib = await import("node:zlib");
+  const spec = { kind: "text", text: "HI", effect: "plain" };
+  const html = renderToString(h(AsciiSpec, { spec, t0: 2 }));
+  assert.match(html, /aria-label="text, animated ASCII art"/);
+  assert.match(preText(html), /█/);
+  const bar = renderToString(h(AsciiSpec, { spec: { kind: "progress", cols: 20 }, state: { value: 0.5, label: "Up" }, t0: 1 }));
+  assert.match(preText(bar), /50%/, "state reaches the first frame");
+  const seq = renderToString(h(AsciiSequence, { pieces: [spec, torus], hold: 1 }));
+  assert.equal(lines(preText(seq)), torus.meta.rows);
+  assert.match(renderToString(h(AsciiClip, { src: "/x.amc" })), /aria-busy="true"/);
+  const bytes = encodeClip({ cols: 2, rows: 1, fps: 2 }, ["ab", "cd"], (u) => zlib.deflateRawSync(u));
+  const clip = await loadClip(bytes);
+  assert.equal(clip.default()(0.6), "cd");
+  assert.equal(typeof useSpecPiece, "function");
+});
