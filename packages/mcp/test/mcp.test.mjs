@@ -143,10 +143,22 @@ test("export: png and gif come back as files and images, cast as a file", async 
   assert.equal(long.isError, true, "seconds is at most 30");
 });
 
-test("export: svg says when the studio is too old for it", async () => {
+test("export: an animated svg", async () => {
   const r = await call("export", { source: "alien-wave", format: "svg", seconds: 1, out: path.join(work, "a.svg") });
-  if (r.isError) assert.match(body(r), /needs a newer ascii-magic-art-studio/);
-  else assert.ok(fs.readFileSync(JSON.parse(r.content[0].text).path, "utf8").includes("<svg"));
+  assert.equal(r.isError, undefined, body(r));
+  assert.ok(fs.readFileSync(JSON.parse(r.content[0].text).path, "utf8").includes("<svg"));
+});
+
+test("ascii.rest pieces: searchable, renderable, and glyph logos", async () => {
+  const hits = JSON.parse(body(await call("search_pieces", { query: "rust", limit: 50 })));
+  assert.ok(hits.results.some((h) => h.slug === "rest-rust"), "rest-rust is found");
+  const fr = await call("render_frame", { source: "rest-rust", t: 1 });
+  assert.equal(fr.isError, undefined, body(fr));
+  assert.match(body(fr), /8888/);
+  assert.equal((await call("render_frame", { source: "rest-nope" })).isError, true);
+  const g = await call("svg_to_brand", { path: MARK, cols: 40, style: "glyphs" });
+  assert.equal(g.isError, undefined, body(g));
+  assert.match(body(g), /"chars"/);
 });
 
 test("timeout: a call that runs too long is an error, not a hang", async () => {

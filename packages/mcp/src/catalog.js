@@ -28,17 +28,11 @@ export function restBridge() {
   return rest;
 }
 
-// The bridge's pieces as [name, restPiece]: restPieces may be a map or a list, restSlugs names them.
+// The bridge's catalogue: every piece's meta without loading it.
 async function restEntries() {
   const m = await restBridge();
-  if (!m) return [];
-  const all = typeof m.restPieces === "function" ? await m.restPieces() : m.restPieces;
-  if (!all) return [];
-  if (Array.isArray(all)) return all.map((p) => [p.meta?.slug || p.meta?.name, p]).filter(([n]) => n);
-  const names = typeof m.restSlugs === "function" ? await m.restSlugs() : m.restSlugs || Object.keys(all);
-  return names.map((n) => [n, all[n]]).filter(([, p]) => p);
+  return m && m.REST_CATALOG ? m.REST_CATALOG : [];
 }
-const restName = (n) => (n.startsWith(REST) ? n : REST + n);
 
 let index;
 /** Every piece's searchable meta, built once: ours, then the bridge's. */
@@ -48,11 +42,8 @@ export function catalog() {
       const { meta } = await import(pathToFileURL(path.join(PIECES, slug + ".js")).href);
       return entry(slug, meta, "ascii-magic-art");
     }));
-    const theirs = [];
-    for (const [n, p] of await restEntries()) {
-      try { theirs.push(entry(restName(n), (await (await restBridge()).fromRest(p)).meta, "ascii.rest")); }
-      catch (e) { console.error(`ama-mcp: skipping rest piece ${n}: ${e.message}`); }
-    }
+    const theirs = (await restEntries()).map(([slug, name, category, theirCategory, note, cols, rows, fps, square]) =>
+      entry(slug, { name, category, note, tags: ["ascii.rest", theirCategory], cols, rows, fps, ...(square ? { cell: "square" } : {}) }, "ascii.rest"));
     return [...ours, ...theirs];
   })();
   return index;
@@ -83,10 +74,8 @@ export async function resolveSource(source) {
   if (source.startsWith(REST)) {
     const m = await restBridge();
     if (!m) throw new Error(`"${source}" is an ascii.rest piece, and ascii-magic-art-rest is not installed`);
-    const found = (await restEntries()).find(([n]) => restName(n) === source);
-    if (!found) throw new Error(`no ascii.rest piece called "${source}": search_pieces lists them`);
-    const p = await m.fromRest(found[1]);
-    return { meta: p.meta, draw: p.default(), name: source };
+    if (!m.isRestSlug(source)) throw new Error(`no ascii.rest piece called "${source}": search_pieces lists them`);
+    return { ...(await load(source)), name: source };
   }
   const p = await load(source);
   return { ...p, name: source };

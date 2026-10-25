@@ -123,7 +123,7 @@ export const TOOLS = [
         cols: z.number().int().min(20).max(160).default(60),
         effect: z.enum(BRAND_EFFECTS).default("reveal"),
         idle: z.enum(BRAND_IDLES).optional(),
-        style: z.enum(["blocks", "glyphs"]).default("blocks").describe("blocks: shaded cells; glyphs: characters that follow the outline (needs a newer studio)."),
+        style: z.enum(["blocks", "glyphs"]).default("blocks").describe("blocks: shaded cells; glyphs: characters shaped like the outline, as ascii.rest draws its logos."),
         out: z.string().optional().describe("Also write the spec here, as .json."),
         overwrite: z.boolean().default(false),
       },
@@ -132,8 +132,6 @@ export const TOOLS = [
       const input = inputPath(file);
       if (!/\.(svg|png)$/i.test(input)) throw new Error("svg_to_brand takes an .svg or .png file");
       const { brandSpec } = await import("ascii-magic-art-studio/src/raster.js");
-      // brandSpec ignores options it doesn't know, so say so rather than hand back blocks for glyphs
-      if (style === "glyphs" && !/\bstyle\b/.test(brandSpec.toString())) throw new Error('style "glyphs" needs a newer ascii-magic-art-studio');
       const spec = await brandSpec(input, { cols, effect, idle, ...(style !== "blocks" ? { style } : {}) });
       const content = [json(spec)];
       if (out) {
@@ -172,7 +170,7 @@ export const TOOLS = [
       // our own temp folder is ours to overwrite; anywhere else needs the caller to say so
       const file = outputPath(out, format, { name, overwrite: overwrite || !out });
       const { exportTo } = await import("ascii-magic-art-studio/src/export.js");
-      const opts = { format, seconds, state, ...(t != null ? { at: t } : {}), ...(preset ? { preset } : {}), ...(dark != null ? { dark } : {}), ...(dark === false && format !== "svg" ? { bg: "#ffffff" } : {}) };
+      const opts = { format, seconds, state, ...(t != null ? { at: t } : {}), ...(preset ? { preset } : {}), ...(dark != null ? { dark, light: format === "svg" && dark === false } : {}), ...(dark === false && format !== "svg" ? { bg: "#ffffff" } : {}) };
       try {
         await exportTo(p, file, opts);
       } catch (e) {
