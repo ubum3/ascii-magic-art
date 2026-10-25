@@ -1,0 +1,30 @@
+{
+  "name": "ascii-magic-art-mcp",
+  "version": "0.1.0",
+  "description": "ama-mcp: an MCP server so coding agents can search 634 animated ASCII pieces, render a frame as text, make banners, turn logos into brand specs and export GIF, PNG, cast or SVG files.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "ama-mcp": "bin/ama-mcp.js"
+  },
+  "main": "./src/server.js",
+  "files": [
+    "bin",
+    "src"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "ascii-magic-art-extras": "0.1.0",
+    "ascii-magic-art-studio": "0.1.0",
+    "zod": "^4.6.7"
+  },
+  "peerDependencies": {
+    "ascii-magic-art": ">=1.0.2"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "ascii-magic-art-cli-kit",
+  "version": "0.1.0",
+  "description": "An animated intro for your CLI that stays in the scrollback, plus a progress bar and spinner, all degrading to plain text when piped, under CI or with NO_COLOR.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": { "types": "./src/index.d.ts", "default": "./src/index.js" },
+    "./package.json": "./package.json"
+  },
+  "files": ["src"],
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "dependencies": {
+    "ascii-magic-art-extras": "0.1.0",
+    "ascii-magic-art-studio": "0.1.0"
+  },
+  "peerDependencies": {
+    "ascii-magic-art": ">=1.0.2"
+  }
+}
