@@ -1,0 +1,23 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import type { ReactNode } from "react";
+import "./globals.css";
+
+export const metadata: Metadata = { title: "ascii-magic-art-react demo" };
+
+export default function RootLayout({ children }: { children: ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <nav>
+          <Link href="/">Gallery</Link>
+          <Link href="/hero">Hero</Link>
+          <Link href="/states">States</Link>
+          <Link href="/custom">Custom pieces</Link>
+          <Link href="/nope">404</Link>
+        </nav>
+        <main>{children}</main>
+      </body>
+    </html>
+  );
+}

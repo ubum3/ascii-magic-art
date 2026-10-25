@@ -1,0 +1,25 @@
+{
+  "name": "next-demo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "dev:webpack": "next dev --webpack",
+    "build": "next build",
+    "build:webpack": "next build --webpack",
+    "start": "next start"
+  },
+  "dependencies": {
+    "ascii-magic-art": "file:../..",
+    "ascii-magic-art-react": "*",
+    "next": "^16.4.3",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^7.0.2"
+  }
+}

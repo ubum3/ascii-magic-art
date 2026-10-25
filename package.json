@@ -41,5 +41,13 @@
   ],
   "engines": {
     "node": ">=18"
+  },
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
+  "scripts": {
+    "validate": "node scripts/validate.mjs",
+    "stress": "node scripts/stress.mjs"
   }
 }

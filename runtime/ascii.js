@@ -23,10 +23,13 @@ const BASE = new URL(/\/runtime\/[^/]*$/.test(new URL(import.meta.url).pathname)
 class AsciiArt extends HTMLElement {
   static get observedAttributes() { return ["piece", "speed", "still", "size", "bg", "look", "chars", "mono", "contrast", "dot-size", "steps", "density", "all"]; }
   connectedCallback() { this.start(); }
-  disconnectedCallback() { this.stop?.(); }
+  disconnectedCallback() { this.run = (this.run || 0) + 1; this.stop?.(); this.stop = null; }
   attributeChangedCallback() { if (this.isConnected) this.start(); }
   async start() {
-    this.stop?.();
+    // Each start() takes a ticket; one that is overtaken while its piece loads (a quick
+    // attribute change, or the element leaving the page) must not start a second player.
+    const run = (this.run = (this.run || 0) + 1);
+    this.stop?.(); this.stop = null;
     const slug = (this.getAttribute("piece") || "").replace(/[^a-z0-9-]/g, "");
     if (!slug) return;
     if (!this.pre) {
@@ -38,10 +41,15 @@ class AsciiArt extends HTMLElement {
       this.pre = root.querySelector("pre");
     }
     this.style.setProperty("--ascii-size", (parseFloat(this.getAttribute("size")) || 12) + "px");
-    if (this.getAttribute("bg")) this.style.background = this.getAttribute("bg");
+    this.style.background = this.getAttribute("bg") || "";
     this.setAttribute("role", "img");
+    let mod;
+    try { mod = await import(`${BASE}pieces/${slug}.js`); } catch (e) {
+      if (run === this.run) this.pre.textContent = `ascii-art: no piece "${slug}"`;
+      return;
+    }
+    if (run !== this.run || !this.isConnected) return;
     try {
-      const mod = await import(`${BASE}pieces/${slug}.js`);
       if (!this.getAttribute("aria-label")) this.setAttribute("aria-label", mod.meta.name + ", animated ASCII art");
       this.stop = play(this.pre, mod, {
         speed: parseFloat(this.getAttribute("speed")) || 1,
@@ -58,7 +66,7 @@ class AsciiArt extends HTMLElement {
         },
       });
     } catch (e) {
-      this.pre.textContent = `ascii-art: no piece "${slug}"`;
+      this.pre.textContent = `ascii-art: "${slug}" failed to play: ${e && e.message ? e.message : e}`;
     }
   }
 }

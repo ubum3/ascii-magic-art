@@ -1,0 +1,52 @@
+{
+  "name": "ascii-magic-art-react",
+  "version": "0.1.0",
+  "description": "Typed React and Next.js components for ascii-magic-art: a player that renders on the server, a hero background, ready-made loading, empty and error states, and hooks for writing your own pieces.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "default": "./dist/server.js"
+    },
+    "./kit": {
+      "types": "./dist/kit.d.ts",
+      "default": "./dist/kit.js"
+    },
+    "./catalog": {
+      "types": "./dist/catalog.d.ts",
+      "default": "./dist/catalog.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "types"
+  ],
+  "scripts": {
+    "gen": "node scripts/gen-registry.mjs",
+    "build": "npm run gen && rm -rf dist && tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json -w",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test \"test/*.test.mjs\"",
+    "prepack": "npm run build"
+  },
+  "peerDependencies": {
+    "ascii-magic-art": ">=1.0.2",
+    "react": ">=18.3",
+    "react-dom": ">=18.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "ascii-magic-art": "file:../..",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "typescript": "^7.0.2"
+  }
+}

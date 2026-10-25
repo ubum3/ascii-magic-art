@@ -62,6 +62,17 @@ Attributes:
 
 The element plays only while it is on screen, and holds a still frame for visitors who prefer reduced motion.
 
+## React and Next.js
+
+`packages/react` is a typed component library on top of the pieces. It includes:
+
+- `<AsciiArt piece="…">` with the first frame rendered on the server
+- a full-bleed `<AsciiHero>`
+- ready-made 404, error, loading and empty states
+- `definePiece` and hooks for writing your own pieces in TypeScript
+
+See [packages/react/README.md](packages/react/README.md), and `examples/next-demo` for a working app.
+
 ## Use a piece in your own code
 
 ```bash

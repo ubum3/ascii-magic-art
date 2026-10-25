@@ -1,0 +1,128 @@
+/*
+ * Smoke tests against the built dist/: server rendering, the registry, and
+ * where "use client" ends up. Run `npm run build` first (npm test does not).
+ */
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { createRequire } from "node:module";
+import { fileURLToPath } from "node:url";
+import { createElement as h } from "react";
+import { renderToString } from "react-dom/server";
+
+import { AsciiPlayer, AsciiArt, AsciiHero, AsciiNotFound, AsciiLoader, AsciiEmptyState, EMPTY_PIECES, LOADER_VARIANTS, firstFrameHTML } from "../dist/index.js";
+import { AsciiArt as ServerAsciiArt, AsciiHero as ServerAsciiHero } from "../dist/server.js";
+import { definePiece, Grid, palette } from "../dist/kit.js";
+import { CATALOG } from "../dist/catalog.js";
+import { SIZES } from "../dist/registry/sizes.generated.js";
+import { LOADERS } from "../dist/registry/loaders.generated.js";
+import * as torus from "ascii-magic-art/pieces/spinning-torus.js";
+
+const DIST = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "dist");
+const PIECES = path.join(path.dirname(createRequire(import.meta.url).resolve("ascii-magic-art/package.json")), "pieces");
+const preText = (html) => html.match(/<pre[^>]*>([\s\S]*?)<\/pre>/)?.[1] ?? null;
+const lines = (inner) => inner.replace(/<[^>]+>/g, "").split("\n").length;
+
+test("AsciiPlayer puts the first frame in the server HTML", () => {
+  const html = renderToString(h(AsciiPlayer, { piece: torus }));
+  assert.match(html, /data-ama=""/);
+  assert.match(html, /role="img"/);
+  assert.match(html, /aria-label="Spinning Torus, animated ASCII art"/);
+  assert.equal(lines(preText(html)), torus.meta.rows);
+});
+
+test("the first frame is the same every time (server and client agree)", async () => {
+  for (const slug of ["spinning-torus", "page-404", "matrix-rain", "game-of-life"]) {
+    const mod = await import(`ascii-magic-art/pieces/${slug}.js`);
+    assert.equal(firstFrameHTML(mod), firstFrameHTML(mod), slug);
+  }
+});
+
+test("a look changes the first frame", () => {
+  const plain = firstFrameHTML(torus), dots = firstFrameHTML(torus, { look: "dots" });
+  assert.notEqual(plain, dots);
+  assert.match(dots, /[·•●]/);
+});
+
+test("server AsciiArt sends the frame; picture pieces get a sized box", async () => {
+  const html = renderToString(await ServerAsciiArt({ piece: "page-404" }));
+  assert.equal(lines(preText(html)), SIZES["page-404"][1]);
+  const pic = renderToString(await ServerAsciiArt({ piece: "ocean-sunset" }));
+  assert.equal(preText(pic), "");
+  assert.match(pic, /width:115\.584em;height:65\.016em/);
+});
+
+test("client AsciiArt by name holds the space with a box", () => {
+  const html = renderToString(h(AsciiArt, { piece: "matrix-rain" }));
+  assert.equal(preText(html), "");
+  assert.match(html, /width:[\d.]+em;height:[\d.]+em/);
+});
+
+test("a bad slug on the server still renders", async () => {
+  const html = renderToString(await ServerAsciiArt({ piece: "no-such-piece" }));
+  assert.match(html, /<pre/);
+});
+
+test("AsciiHero scales with container units and renders children", async () => {
+  const html = renderToString(await ServerAsciiHero({ piece: "spinning-torus", children: h("h1", null, "Hello") }));
+  assert.match(html, /container-type:size/);
+  assert.match(html, /font:max\(calc\(100cqw/);
+  assert.match(html, /<h1>Hello<\/h1>/);
+  assert.equal(lines(preText(html)), 24);
+  const contain = renderToString(h(AsciiHero, { piece: torus, fit: "contain" }));
+  assert.match(contain, /font:min\(/);
+});
+
+test("states render with title, description and action", () => {
+  const html = renderToString(h(AsciiNotFound, { title: "Not found", description: "Nothing here", action: h("a", { href: "/" }, "Home") }));
+  assert.match(html, /<h2[^>]*>Not found<\/h2>/);
+  assert.match(html, /Nothing here/);
+  assert.match(html, /href="\/"/);
+  assert.ok(lines(preText(html)) > 1);
+  for (const variant of LOADER_VARIANTS) assert.ok(preText(renderToString(h(AsciiLoader, { variant }))).length > 50, variant);
+  assert.match(renderToString(h(AsciiEmptyState, { variant: "no-results", title: "No results" })), /No results/);
+});
+
+test("empty-state sizes match the pieces", () => {
+  for (const [variant, e] of Object.entries(EMPTY_PIECES)) {
+    assert.ok(SIZES[e.slug], `${variant}: no piece ${e.slug}`);
+    assert.deepEqual([e.cols, e.rows], SIZES[e.slug].slice(0, 2), variant);
+  }
+});
+
+test("definePiece makes a module the player can render", () => {
+  const piece = definePiece({ slug: "hello", cols: 20, rows: 3, palette: palette(["#7ee787"]) }, () => {
+    const g = new Grid(20, 3);
+    return (t) => { g.clear(); g.text(1, 1, "hello " + Math.floor(t), "0"); return g.frame(); };
+  });
+  assert.equal(piece.meta.fps, 24);
+  const html = renderToString(h(AsciiPlayer, { piece, t0: 7 }));
+  assert.match(html, /<span style="color:#7ee787">hello 7<\/span>/);
+});
+
+test("the registry covers every piece, and every loader resolves to its own size", async () => {
+  const files = fs.readdirSync(PIECES).filter((f) => f.endsWith(".js")).map((f) => f.slice(0, -3)).sort();
+  assert.deepEqual(Object.keys(SIZES).sort(), files);
+  assert.deepEqual(Object.keys(LOADERS).sort(), files);
+  assert.equal(CATALOG.length, files.length);
+  for (const slug of files) {
+    const { meta } = await LOADERS[slug]();
+    assert.deepEqual(SIZES[slug], [meta.cols, meta.rows, meta.cell === "square" ? 1 : 0], slug);
+  }
+});
+
+test('"use client" only where it belongs', () => {
+  const first = (f) => fs.readFileSync(path.join(DIST, f), "utf8").split("\n", 1)[0];
+  for (const dir of ["client", "hooks"]) for (const f of fs.readdirSync(path.join(DIST, dir)).filter((f) => f.endsWith(".js")))
+    assert.equal(first(`${dir}/${f}`), '"use client";', `${dir}/${f}`);
+  for (const f of ["index.js", "server.js", "kit.js", "catalog.js", "core/look.js", "core/prerender.js", "core/resolve.js", "core/styles.js", "core/variants.js"])
+    assert.notEqual(first(f), '"use client";', f);
+});
+
+test("server AsciiArt takes a library module by name, and refuses a custom one clearly", async () => {
+  const html = renderToString(await ServerAsciiArt({ piece: torus }));
+  assert.equal(lines(preText(html)), torus.meta.rows);
+  const custom = definePiece({ slug: "mine", cols: 20, rows: 2 }, () => () => "x".repeat(20) + "\n" + "y".repeat(20));
+  await assert.rejects(() => ServerAsciiArt({ piece: custom }), /use client/);
+});
