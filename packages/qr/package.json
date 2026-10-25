@@ -1,0 +1,22 @@
+{
+  "name": "ascii-magic-art-qr",
+  "version": "0.1.0",
+  "description": "QR codes as ascii-magic-art pieces: an animated entrance that settles into a scannable code in half blocks. Also the \"qr\" kind for ascii-magic-art-extras specs.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": { "types": "./src/index.d.ts", "default": "./src/index.js" },
+    "./kind": "./src/kind.js",
+    "./package.json": "./package.json"
+  },
+  "files": ["src", "README.md"],
+  "scripts": {
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "devDependencies": {
+    "jsqr": "^1.4.0"
+  }
+}

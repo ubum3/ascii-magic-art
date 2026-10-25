@@ -65,8 +65,11 @@ export interface TickerSpec extends Common, Partial<TickerState> { kind: "ticker
 export interface CelebrateState { message?: string; style?: "check" | "confetti" | "fireworks" }
 export interface CelebrateSpec extends Common, CelebrateState { kind: "celebrate"; cols?: number; rows?: number; color?: string; accent?: string }
 
-export type Spec = ImageSpec | BrandSpec | TextSpec | ProgressSpec | SparklineSpec | TickerSpec | CelebrateSpec;
+export type Spec = ImageSpec | BrandSpec | TextSpec | ProgressSpec | SparklineSpec | TickerSpec | CelebrateSpec | QrSpec;
 export type State = ProgressState | SparklineState | TickerState | CelebrateState | Record<string, unknown>;
+
+/** A QR code that makes an entrance and settles into a scannable code (ascii-magic-art-qr). */
+export interface QrSpec extends Common { kind: "qr"; text?: string; url?: string; effect?: "assemble" | "reveal" | "matrix" | "glitch" | "none"; ecc?: "L" | "M" | "Q" | "H"; version?: number; quiet?: number; light?: string; dark?: string; accent?: string; ghost?: string; settle?: number; logo?: string; still?: boolean }
 
 export type StateDrawFn = (t: number, state?: State) => Frame;
 export interface SpecPiece { meta: PieceMeta; default: () => StateDrawFn }
@@ -105,6 +108,8 @@ export declare function progress(spec: ProgressSpec): { meta: PieceMeta; create:
 export declare function sparkline(spec: SparklineSpec): { meta: PieceMeta; create: () => StateDrawFn };
 export declare function ticker(spec: TickerSpec): { meta: PieceMeta; create: () => StateDrawFn };
 export declare function celebrate(spec: CelebrateSpec): { meta: PieceMeta; create: () => StateDrawFn };
+export declare function qr(spec: QrSpec): { meta: PieceMeta; create: () => StateDrawFn };
+export declare const QR_EFFECTS: NonNullable<QrSpec["effect"]>[];
 
 export type TransitionKind = "dissolve" | "wipe-right" | "wipe-left" | "wipe-down" | "wipe-up" | "melt" | "scramble" | "iris";
 export declare const TRANSITIONS: TransitionKind[];

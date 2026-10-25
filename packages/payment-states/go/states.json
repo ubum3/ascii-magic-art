@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "tones": ["ok", "wait", "warn", "fail"],
+  "states": {
+    "pending": { "tone": "wait", "label": "Payment pending", "slug": "hourglass" },
+    "authorised": { "tone": "ok", "label": "Payment authorised", "slug": "empty-payment-success" },
+    "declined": { "tone": "fail", "label": "Payment declined", "slug": "empty-payment-failed" },
+    "voided": { "tone": "warn", "label": "Payment voided", "slug": "empty-trash-lid" },
+    "refund": { "tone": "warn", "label": "Refunded", "slug": "spinning-coin", "caption": { "kind": "text", "text": "refunded", "font": "plain", "effect": "typewriter", "colors": ["#f2cc60", "#ffffff", "#5c4a12"] } },
+    "chargeback": { "tone": "fail", "label": "Chargeback received", "spec": { "kind": "text", "text": "CHARGEBACK", "effect": "glitch", "colors": ["#ff7b72", "#ffffff", "#5a1e1b"], "loop": 4 } },
+    "payout-scheduled": { "tone": "wait", "label": "Payout scheduled", "slug": "digital-clock" },
+    "payout-sent": { "tone": "ok", "label": "Payout sent", "slug": "empty-inbox-plane" },
+    "settled": { "tone": "ok", "label": "Funds settled", "spec": { "kind": "celebrate", "cols": 40, "rows": 12, "message": "Settled", "style": "fireworks" } },
+    "onboarding": { "tone": "wait", "label": "Onboarding started", "slug": "empty-onboarding-flag" },
+    "kyc-review": { "tone": "wait", "label": "Documents under review", "slug": "hourglass", "caption": { "kind": "text", "text": "reviewing documents", "font": "plain", "effect": "typewriter", "loop": 6 } },
+    "kyc-rejected": { "tone": "fail", "label": "Verification failed", "slug": "empty-access-denied" },
+    "merchant-live": { "tone": "ok", "label": "Merchant live", "slug": "empty-rocket-countdown" },
+    "terminal-offline": { "tone": "fail", "label": "Terminal offline", "slug": "empty-offline-plug" },
+    "terminal-reconnecting": { "tone": "wait", "label": "Terminal reconnecting", "slug": "empty-reconnecting" },
+    "rate-limited": { "tone": "warn", "label": "Too many requests", "slug": "empty-rate-limited" },
+    "session-expired": { "tone": "warn", "label": "Session expired", "slug": "empty-session-expired" },
+    "demo": { "tone": "ok", "label": "Checkout", "slug": "checkout-payment-flow" }
+  },
+  "aliases": {
+    "pending": ["processing", "in-progress", "received", "requires-action", "requires-payment-method", "requires-confirmation", "authorisation-pending", "pending-capture", "payment-intent.processing", "payment-intent.requires-action", "offer-closed"],
+    "authorised": ["authorized", "authorisation", "authorization", "authorise", "authorize", "approved", "success", "succeeded", "successful", "paid", "captured", "capture", "payment-intent.succeeded", "charge.succeeded", "charge.captured", "checkout.session.completed"],
+    "declined": ["refused", "rejected", "failed", "failure", "fail", "error", "not-authorised", "capture-failed", "refund-failed", "payout-decline", "payout-declined", "payout-failed", "payment-intent.payment-failed", "charge.failed", "payout.failed"],
+    "voided": ["void", "cancelled", "canceled", "cancellation", "cancel", "cancel-or-refund", "technical-cancel", "expire", "expired", "authorisation-adjustment-failed", "payment-intent.canceled", "charge.expired"],
+    "refund": ["refunded", "refund-requested", "refunded-reversed", "refund-with-data", "partially-refunded", "charge.refunded"],
+    "chargeback": ["dispute", "disputed", "notification-of-chargeback", "second-chargeback", "prearbitration-lost", "chargeback-reversed-lost", "request-for-information", "charge.dispute.created", "charge.dispute.funds-withdrawn"],
+    "payout-scheduled": ["payout-created", "payout-pending", "payout.created", "payout-thirdparty-pending"],
+    "payout-sent": ["payout", "payout-thirdparty", "paid-out", "transfer-sent", "payout.paid", "transfer.created"],
+    "settled": ["settlement", "settled-bank", "booked", "funds-available", "chargeback-reversed", "prearbitration-won", "charge.dispute.closed", "balance.available"],
+    "onboarding": ["onboarding-started", "account-created", "new-merchant", "account-holder-created", "account.updated"],
+    "kyc-review": ["kyc", "kyc-pending", "in-review", "under-review", "verification-pending", "pending-verification", "awaiting-data", "awaiting-documents", "data-review"],
+    "kyc-rejected": ["kyc-failed", "verification-failed", "invalid", "data-rejected", "account-suspended", "suspended", "closed"],
+    "merchant-live": ["live", "active", "verified", "payouts-enabled", "charges-enabled", "kyc-passed", "allowed"],
+    "terminal-offline": ["offline", "disconnected", "unreachable", "terminal-disconnected", "no-connection"],
+    "terminal-reconnecting": ["reconnecting", "connecting", "terminal-connecting"],
+    "rate-limited": ["429", "too-many-requests", "throttled"],
+    "session-expired": ["expired-session", "401", "unauthenticated", "token-expired"]
+  },
+  "outcomes": {
+    "authorisation": ["authorised", "declined"],
+    "capture": ["authorised", "declined"],
+    "refund": ["refund", "declined"],
+    "cancellation": ["voided", "declined"],
+    "cancel-or-refund": ["voided", "declined"],
+    "payout-thirdparty": ["payout-sent", "declined"],
+    "chargeback-reversed": ["settled", "chargeback"]
+  }
+}

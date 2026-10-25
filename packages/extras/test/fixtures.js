@@ -51,6 +51,7 @@ export function fixtures() {
   out.push(["sparkline", { kind: "sparkline", cols: 30, rows: 4, label: "TPS" }, { values: Array.from({ length: 50 }, (_, i) => 20 + Math.sin(i / 3) * 10) }]);
   out.push(["ticker", { kind: "ticker", cols: 50 }, { items: [{ label: "VOLUME", value: 1234567, delta: 2.4 }, { label: "AUTH", value: 98.2, delta: -0.3 }] }]);
   for (const style of ["check", "confetti", "fireworks"]) out.push([`celebrate-${style}`, { kind: "celebrate", cols: 40, rows: 12, message: "Payment approved", style }]);
+  for (const effect of ["assemble", "matrix"]) out.push([`qr-${effect}`, { kind: "qr", text: "https://pay.example/r/42", effect, settle: 2 }]);
   return out;
 }
 

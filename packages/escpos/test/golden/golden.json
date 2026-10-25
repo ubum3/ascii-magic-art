@@ -1,0 +1,43 @@
+{
+  "coin-text-58": {
+    "bytes": "4438c344bcf1345d",
+    "length": 485,
+    "pixels": "5ad712f56a4a9886",
+    "size": "384x416"
+  },
+  "coin-raster-80": {
+    "bytes": "4994df323042afab",
+    "length": 36983,
+    "pixels": "4a36440d4c40657e",
+    "size": "576x593"
+  },
+  "success-bayer-58": {
+    "bytes": "5b071a7dfe3541b9",
+    "length": 10255,
+    "pixels": "b971fac687cbf5e0",
+    "size": "384x293"
+  },
+  "coin-flipbook-58": {
+    "bytes": "3eff7abb27fe5a0e",
+    "length": 1528,
+    "size": "384x1224"
+  },
+  "qr-text-58": {
+    "bytes": "3b1c8a3b9ca11fc3",
+    "length": 601,
+    "pixels": "099eee9b7a5ac63e",
+    "size": "384x348"
+  },
+  "qr-raster-58": {
+    "bytes": "1416254cb701edab",
+    "length": 15831,
+    "pixels": "1b87f11583b3d71d",
+    "size": "384x409"
+  },
+  "qr-native-80": {
+    "bytes": "c1b084697bd87245",
+    "length": 88,
+    "pixels": "02f8e6e96d70c6e1",
+    "size": "576x280"
+  }
+}

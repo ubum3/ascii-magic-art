@@ -17,6 +17,9 @@
   "scripts": {
     "test": "node --test \"test/*.test.mjs\""
   },
+  "dependencies": {
+    "ascii-magic-art-qr": "0.1.0"
+  },
   "peerDependencies": {
     "ascii-magic-art": ">=1.0.2"
   }

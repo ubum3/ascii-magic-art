@@ -1,0 +1,29 @@
+{
+  "name": "ascii-magic-art-escpos",
+  "version": "0.1.0",
+  "description": "Print ascii-magic-art pieces and QR codes on ESC/POS thermal receipt printers (58 and 80 mm): CP437 text or dithered raster, flipbooks, TCP 9100 or USB, and an emulator that turns a job back into a PNG.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.js",
+  "bin": { "ama-escpos": "bin/ama-escpos.js" },
+  "exports": {
+    ".": "./src/index.js",
+    "./package.json": "./package.json"
+  },
+  "files": ["bin", "src", "README.md"],
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^1.0.13",
+    "ascii-magic-art-qr": "0.1.0",
+    "ascii-magic-art-studio": "0.1.0"
+  },
+  "devDependencies": {
+    "jsqr": "^1.4.0"
+  },
+  "peerDependencies": {
+    "ascii-magic-art": ">=1.0.2"
+  }
+}
