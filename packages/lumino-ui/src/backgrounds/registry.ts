@@ -24,6 +24,38 @@ export const LUMINO_BACKGROUNDS: readonly BackgroundEntry[] = [
     tags: ["webgl", "aurora", "glass"],
     load: () => import("../components/lumino-aura/index.js").then((m) => m.LuminoAura),
   },
+  {
+    id: "lumino-glyphs",
+    name: "Lumino Glyphs",
+    description: "The portal's GradientASCII: a flowing brand gradient drawn as glyphs, with the brandmark as the most common glyph and amounts typed over it.",
+    author: "cd",
+    tags: ["webgl", "ascii", "gradient"],
+    load: () => import("../components/lumino-glyphs/index.js").then((m) => m.LuminoGlyphs),
+  },
+  {
+    id: "dither-lens",
+    name: "Dither Lens",
+    description: "A chunky dithered aurora in the brand gradient, seen smooth and glowing through a big frosted-glass brandmark lens.",
+    author: "cd",
+    tags: ["webgl", "dither", "glass"],
+    load: () => import("../components/dither-lens/index.js").then((m) => m.DitherLens),
+  },
+  {
+    id: "signal-rain",
+    name: "Signal Rain",
+    description: "Dim falling digits that ignite into warm light as they pass through a large brandmark, so the rain draws the mark.",
+    author: "cd",
+    tags: ["webgl", "ascii", "glow"],
+    load: () => import("../components/signal-rain/index.js").then((m) => m.SignalRain),
+  },
+  {
+    id: "halftone-tide",
+    name: "Halftone Tide",
+    description: "A lumino.io-style dot grid swelling under slow tides of brand light, with the brandmark surfacing in larger, brighter dots.",
+    author: "cd",
+    tags: ["webgl", "dots", "halftone"],
+    load: () => import("../components/halftone-tide/index.js").then((m) => m.HalftoneTide),
+  },
 ];
 
 /** The entry with this id, if there is one. */
