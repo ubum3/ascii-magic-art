@@ -64,3 +64,14 @@ test("frost: the server HTML already has the three glass slabs and their clip pa
   assert.match(html, /container-type:size/);
   assert.match(html, /<p>card<\/p>/);
 });
+
+test("orb: right of the card when wide, above it when tall, always partly on screen", async () => {
+  const { orbPlace } = await import("lumino-ui/lumino-orb");
+  for (const aspect of [1.33, 1.6, 2.4]) {
+    const { x, y, r } = orbPlace(aspect);
+    assert.ok(x - r > aspect / 2 + 200 / 900 - 0.05, `clear of the card at ${aspect}`);
+    assert.ok(x + r <= aspect + 0.01 && y - r >= 0 && y + r <= 1, `inside the box at ${aspect}`);
+  }
+  const phone = orbPlace(390 / 844);
+  assert.ok(phone.y > 0.7 && phone.x < 390 / 844 + phone.r && phone.r > 0.1, "upper area on a phone");
+});
