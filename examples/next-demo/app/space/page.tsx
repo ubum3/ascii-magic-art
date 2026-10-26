@@ -1,4 +1,4 @@
-import { LuminoSpace } from "ascii";
+import { LuminoSpace } from "lumino-ui";
 
 export default function SpacePage() {
   return (

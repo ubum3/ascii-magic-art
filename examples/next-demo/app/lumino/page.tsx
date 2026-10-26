@@ -1,4 +1,4 @@
-import { LuminoDonut } from "ascii";
+import { LuminoDonut } from "lumino-ui";
 
 export default function LuminoPage() {
   return (

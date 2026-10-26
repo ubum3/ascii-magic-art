@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { CursorField, CURSOR_FIELD_VARIANTS, type CursorFieldVariant } from "ascii/cursor-field";
 import { NebulaSky } from "ascii/nebula-sky";
-import { LuminoHolo } from "ascii/lumino-holo";
+import { LuminoHolo } from "lumino-ui/lumino-holo";
 import { AsciiTransition, ASCII_TRANSITION_EFFECTS, type AsciiTransitionEffect } from "ascii/ascii-transition";
 
 const box = { height: "60vh", borderRadius: 12 };

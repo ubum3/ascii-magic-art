@@ -1,5 +1,5 @@
 "use client";
-import { ShaderStage, type ShaderStageProps } from "../../shader/ShaderStage.js";
+import { ShaderStage, type ShaderStageProps } from "ascii/shader";
 import LuminoHoloScene, { type LuminoHoloSceneProps } from "./scene.js";
 
 export type LuminoHoloProps = ShaderStageProps & LuminoHoloSceneProps;

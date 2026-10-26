@@ -73,7 +73,7 @@ The element plays only while it is on screen, and holds a still frame for visito
 
 See [packages/react/README.md](packages/react/README.md), and `examples/next-demo` for a working app.
 
-[packages/ui](packages/ui/README.md) (`ascii`) holds fun, drop-in components built on it, such as `<LuminoDonut>`, the `<LuminoSpace>` and `<EdgeOrbit>` backgrounds, WebGPU shader scenes played as ASCII (`<NebulaSky>`, `<CursorField>`, `<LuminoHolo>`, `<AsciiTransition>`), and customisable gradient backgrounds with an optional ASCII overlay (`<PlasmaBackground>`, `<SilkBackground>`, `<MeshBackground>`, `<ChromaBackground>`).
+[packages/ui](packages/ui/README.md) (`ascii`) holds drop-in components built on it: WebGPU shader scenes played as ASCII (`<NebulaSky>`, `<CursorField>`, `<AsciiTransition>`), customisable gradient backgrounds with an optional ASCII overlay (`<PlasmaBackground>`, `<SilkBackground>`, `<MeshBackground>`, `<ChromaBackground>`), and React Bits ports. [packages/lumino-ui](packages/lumino-ui/README.md) (`lumino-ui`) has the Lumino brandmark components: `<LuminoDonut>`, the `<LuminoSpace>` and `<EdgeOrbit>` backgrounds, and the holographic `<LuminoHolo>`.
 
 ## Terminal UIs: ratatui and Bubble Tea
 

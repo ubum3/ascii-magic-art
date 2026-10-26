@@ -2,18 +2,14 @@
   "name": "ascii",
   "version": "0.1.0",
   "private": true,
-  "description": "Fun, ready-made React and Next.js components built on ascii-magic-art: drop-in animated pieces like LuminoDonut, the Lumino brandmark as a glassy spinning solid, and WebGPU shader scenes played as ASCII.",
+  "description": "Ready-made React and Next.js components built on ascii-magic-art: WebGPU shader scenes played as ASCII, gradient backgrounds with an optional ASCII overlay, and React Bits ports.",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    },
-    "./pieces": {
-      "types": "./dist/pieces.d.ts",
-      "default": "./dist/pieces.js"
+    "./shader": {
+      "types": "./dist/shader/ShaderStage.d.ts",
+      "default": "./dist/shader/ShaderStage.js"
     },
     "./*": {
       "types": "./dist/components/*/index.d.ts",

@@ -1,0 +1,59 @@
+{
+  "name": "lumino-ui",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Lumino brandmark components built on ascii-magic-art: LuminoDonut, the LuminoSpace and EdgeOrbit backgrounds, and LuminoHolo, a WebGPU holographic brandmark played as ASCII.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./pieces": {
+      "types": "./dist/pieces.d.ts",
+      "default": "./dist/pieces.js"
+    },
+    "./*": {
+      "types": "./dist/components/*/index.d.ts",
+      "default": "./dist/components/*/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json -w",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "mask": "node ../ui/scripts/mask.mjs",
+    "test": "node --test \"test/*.test.mjs\"",
+    "prepack": "npm run build",
+    "bake": "node scripts/bake.mjs"
+  },
+  "peerDependencies": {
+    "react": ">=18.3",
+    "react-dom": ">=18.3",
+    "shaders": ">=4"
+  },
+  "peerDependenciesMeta": {
+    "shaders": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "ascii-magic-art-react": "0.1.0",
+    "ascii": "0.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "sharp": "^0.35.5",
+    "typescript": "^7.0.2",
+    "shaders": "^4.0.5"
+  }
+}
