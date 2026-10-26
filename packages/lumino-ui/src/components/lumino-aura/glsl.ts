@@ -22,8 +22,8 @@ void main() {
   float warp = fbm(q * 1.4 + vec2(t, -t * 0.7));
   float band = fbm(vec2(q.x * 2.2 + warp * 1.6, q.y * 0.6 - t * 1.3));
   float edge = smoothstep(0.15, 0.95, length((vUv - 0.5) * vec2(1.1, 1.3)));
-  float light = pow(band, 2.2) * (0.25 + 1.2 * edge);
-  vec3 col = palette(fract(0.15 + band * 0.9 + vUv.x * 0.25)) * light;
+  float light = pow(smoothstep(0.38, 0.9, band), 2.0) * (0.3 + 2.0 * edge);
+  vec3 col = palette(clamp(vUv.x * 0.55 + (1.0 - vUv.y) * 0.45 + (warp - 0.5) * 0.6, 0.0, 1.0)) * light * 1.7;
 
   // The mark: a big rim of light low on the right, partly off the box.
   float s = 0.62;
