@@ -75,3 +75,17 @@ test("orb: right of the card when wide, above it when tall, always partly on scr
   const phone = orbPlace(390 / 844);
   assert.ok(phone.y > 0.7 && phone.x < 390 / 844 + phone.r && phone.r > 0.1, "upper area on a phone");
 });
+
+test("shards: the mesh is deterministic, three vertices a shard, and only covers the shape", async () => {
+  const { shardMesh } = await import("lumino-ui/lumino-shards");
+  const disc = (x, y) => (x - 0.5) ** 2 + (y - 0.5) ** 2 < 0.16;
+  const a = shardMesh(disc, { cols: 20, seed: 3 }), b = shardMesh(disc, { cols: 20, seed: 3 });
+  assert.ok(a.count > 100);
+  assert.deepEqual(a.home, b.home);
+  assert.equal(a.local.length, a.count * 3 * 2);
+  assert.equal(a.home.length, a.count * 3 * 2);
+  assert.equal(a.bary.length, a.count * 3 * 3);
+  assert.equal(a.rand.length, a.count * 3 * 4);
+  for (let i = 0; i < a.home.length; i += 2) assert.ok(Math.hypot(a.home[i] - 0.5, a.home[i + 1] - 0.5) < 0.5, "homes near the disc");
+  assert.equal(shardMesh(() => false, { cols: 20 }).count, 0);
+});
