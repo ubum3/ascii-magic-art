@@ -48,9 +48,10 @@ if (!ids.length) {
   ids = LUMINO_BACKGROUNDS.map((b) => b.id);
 }
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const out = path.join(root, ".shots");
 fs.mkdirSync(out, { recursive: true });
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // One browser for every shot, driven over the DevTools protocol.
 const port = 9300 + Math.floor(Math.random() * 600);
@@ -60,9 +61,11 @@ const chrome = spawn(browser(), [
   "--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist",
   `--remote-debugging-port=${port}`, "--window-size=1440,900", "about:blank",
 ], { stdio: "ignore" });
-const quit = () => {
+const exited = new Promise((r) => chrome.on("exit", r));
+const quit = async () => {
   chrome.kill();
-  fs.rmSync(profile, { recursive: true, force: true });
+  await Promise.race([exited, sleep(5000)]);
+  fs.rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
 };
 
 let targets;
@@ -70,7 +73,7 @@ for (let i = 0; i < 100 && !targets; i++) {
   try { targets = await (await fetch(`http://127.0.0.1:${port}/json`)).json(); } catch { await sleep(200); }
 }
 if (!targets) {
-  quit();
+  await quit();
   throw new Error("the browser did not start");
 }
 const ws = new WebSocket(targets.find((t) => t.type === "page").webSocketDebuggerUrl);
@@ -126,6 +129,6 @@ try {
   }
 } finally {
   ws.close();
-  quit();
+  await quit();
 }
 process.exit(failed ? 1 : 0);
