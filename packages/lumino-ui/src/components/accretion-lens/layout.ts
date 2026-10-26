@@ -6,8 +6,8 @@
  */
 export function holeLayout(aspect: number, size = 1): [number, number, number] {
   const wide = Math.max(0, Math.min(1, (aspect - 0.6) / 0.9));
-  const side = (0.27 + 0.25 * wide) * size;
+  const side = (0.27 + 0.19 * wide) * size;
   const x = aspect * (0.5 + 0.27 * wide);
-  const y = 0.82 - 0.14 * wide * wide;
+  const y = 0.82 - 0.06 * wide * wide;
   return [x, y, side];
 }
