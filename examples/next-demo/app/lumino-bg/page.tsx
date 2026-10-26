@@ -9,7 +9,8 @@ export default function LuminoBackgrounds() {
     <div>
       <h1>Lumino backgrounds</h1>
       <p style={{ opacity: 0.7 }}>
-        {LUMINO_BACKGROUNDS.length} backgrounds. Click one for full screen; <Link href="/sign-in">/sign-in</Link> picks one at random.
+        {LUMINO_BACKGROUNDS.length} backgrounds. Click one for full screen; <Link href="/sign-in">/sign-in</Link> picks one at random, and{" "}
+        <Link href="/lumino-bg/perf">/lumino-bg/perf</Link> times each one.
       </p>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(360px, 1fr))", gap: 16 }}>
         {LUMINO_BACKGROUNDS.map((b) => (
