@@ -47,6 +47,59 @@ After changing its scene or the brandmark mask, rebake the clip and logo (this n
 npm run bake -w packages/lumino-ui   # lumino-holo/clip.ts and lumino-holo/logo.ts
 ```
 
+## Backgrounds
+
+23 full-bleed Lumino brandmark backgrounds for sign-in pages and heroes, glassy and luminous, in the lumino.io palette (peach, coral, wine, plum, indigo, blue and lavender on `#111013`). Each one fills its container, keeps the middle calm for a centred card, and puts your content on top:
+
+```tsx
+import { LuminoRandomBackground } from "lumino-ui/backgrounds";
+
+// A different background on every load, never the same one twice in a row in a tab.
+<div style={{ position: "fixed", inset: 0 }}>
+  <LuminoRandomBackground dim={0.35}>
+    <SignInCard />
+  </LuminoRandomBackground>
+</div>
+
+// Or one of them, by its entry:
+import { PillarStage } from "lumino-ui/pillar-stage";
+<PillarStage dim={0.3} style={{ height: "100vh" }}><SignInCard /></PillarStage>
+```
+
+Every background takes `children`, `dim` (darkens the middle, 0 to 1), `paused`, `speed`, `quality` (render scale), `dpr` (default cap 1.5), `className` and `style`, plus its own props. The server HTML is a static CSS version of the look; the animation fades in over it once it draws. They pause off screen and in hidden tabs, show one still frame with reduced motion, and keep the CSS look without WebGL. Each is on its own `lumino-ui/<id>` entry and loads only when used: `LuminoRandomBackground` loads just the one it picks (`include`, `exclude`, `pick` and `onPick` narrow or pin it).
+
+| id | Name | By |
+|---|---|---|
+| `lumino-aura` | Aurora curtains with the mark as a rim of glass light (the reference background) | cd |
+| `lumino-glyphs` | The portal's GradientASCII: brand gradient as glyphs, the mark as a glyph, amounts typed over it | cd |
+| `dither-lens` | Dithered brand light, smooth and glowing through a frosted-glass mark | cd |
+| `signal-rain` | Dim falling digits that ignite warm inside the mark | cd |
+| `halftone-tide` | A dot grid under tides of brand light, the mark surfacing in brighter dots | cd |
+| `edge-orbit` | ASCII: the night Earth from orbit, a brandmark star in the sky | cd |
+| `lumino-space` | ASCII: deep space with brandmark stars | cd |
+| `glass-prism-rays` | A glass mark lit from behind, prismatic shafts down the sides | dd |
+| `apex-burst` | A prismatic burst from the mark's heart, cut into rays by its shapes | dd |
+| `arc-conduit` | Electric arcs crawling a big glass mark and jumping its gaps | dd |
+| `pillar-stage` | The blades as light pillars meeting in a star over the card, the base a horizon | dd |
+| `globe-dawn` | The lumino.io dotted globe, the mark rising off its limb like a sun | 97 |
+| `accretion-lens` | The mark as a black hole: photon ring, accretion disk, lensed space | 97 |
+| `brandmark-galaxy` | A spiral galaxy whose nucleus is the mark in stars | 97 |
+| `nebula-constellation` | Stars drift together and draw the mark in glass lines, then re-form elsewhere | 97 |
+| `ferro-bloom` | Glossy ferrofluid spiking along the mark, its magnet | 36 |
+| `field-lines` | Magnetic field lines between the mark's poles, with pulses along them | 36 |
+| `silk-wake` | Silk ribbons parting around an invisible mark | 36 |
+| `ether-imprint` | A fluid sim the mark is stamped into every 8 s, blooming and curling apart | 36 |
+| `lumino-chrome` | A liquid-chrome sea with the mark rising out of the metal | b3 |
+| `lumino-orb` | A glass ball lens with the mark turning inside, iridescent rim | b3 |
+| `lumino-frost` | The mark as three frosted-glass slabs framing the card (CSS glass) | b3 |
+| `lumino-shards` | Glass shards cut from the mark, orbiting the card and reassembling | b3 |
+
+`examples/next-demo` shows them at `/lumino-bg` (gallery), `/lumino-bg/<id>?card=1&dim=0.4` (one, full screen), `/lumino-bg/perf` (frame times, with GPU timer queries where the browser has them) and `/sign-in` (a mock sign-in page with a random one).
+
+### Making one
+
+`lumino-ui/backgrounds` and `lumino-ui/brand` hold the shared parts: `BackgroundFrame` (fallback, fade-in, dim, children), `useGLScene` / `use2DScene` (sizing, DPR cap, pausing, reduced motion, pointer), WebGL2 helpers (`link`, `drawFullscreen`, `paletteTexture`, `markSDFTexture`, `BRAND_GLSL`), and the brand (`LUMINO_COLORS`, `LUMINO_GRADIENT`, `BRANDMARK`, `brandmarkSDF`, `brandmarkPoints`, `brandmarkOutline`, `<Brandmark>`). Copy `src/components/lumino-aura/`, add an entry to `src/backgrounds/registry.ts`, and `test/backgrounds.test.mjs` checks it loads and renders on the server. To look at it without a browser, run the demo and `npm run shots -w packages/lumino-ui -- --url http://localhost:3000 [--card] <id>`, which writes headless Chromium screenshots to `.shots/`.
+
 ## Without React
 
 `lumino-ui/pieces` has the pieces on their own, as `{ meta, default }` modules: `luminoDonut`, `luminoSpace`, `edgeOrbit`, and their `LUMINO_DONUT_PERIOD`, `LUMINO_SPACE_PERIOD` and `EDGE_ORBIT_PERIOD` (one loop, in seconds).
