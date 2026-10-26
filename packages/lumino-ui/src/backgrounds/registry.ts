@@ -136,6 +136,38 @@ export const LUMINO_BACKGROUNDS: readonly BackgroundEntry[] = [
     tags: ["webgl", "nebula", "constellation", "cosmic"],
     load: () => import("../components/nebula-constellation/index.js").then((m) => m.NebulaConstellation),
   },
+  {
+    id: "ferro-bloom",
+    name: "Ferro Bloom",
+    description: "Glossy black ferrofluid spiking up along the brandmark, its magnet, with the brand gradient on the slopes.",
+    author: "36",
+    tags: ["webgl", "fluid", "glass", "interactive"],
+    load: () => import("../components/ferro-bloom/index.js").then((m) => m.FerroBloom),
+  },
+  {
+    id: "field-lines",
+    name: "Field Lines",
+    description: "The brandmark as a magnet: glowing field lines bridge its strokes and loop into the dark, with pulses of light running along them.",
+    author: "36",
+    tags: ["webgl", "lines", "field", "interactive"],
+    load: () => import("../components/field-lines/index.js").then((m) => m.FieldLines),
+  },
+  {
+    id: "silk-wake",
+    name: "Silk Wake",
+    description: "Translucent silk ribbons drift at 139deg and part around an invisible brandmark, which shows as the gap they leave and a rim of light.",
+    author: "36",
+    tags: ["webgl", "silk", "flow", "interactive"],
+    load: () => import("../components/silk-wake/index.js").then((m) => m.SilkWake),
+  },
+  {
+    id: "ether-imprint",
+    name: "Ether Imprint",
+    description: "Warm nebula dye in a live fluid; every few seconds the brandmark is stamped into it, blooms, curls apart and dissolves.",
+    author: "36",
+    tags: ["webgl", "fluid", "nebula", "interactive"],
+    load: () => import("../components/ether-imprint/index.js").then((m) => m.EtherImprint),
+  },
 ];
 
 /** The entry with this id, if there is one. */
