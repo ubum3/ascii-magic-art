@@ -73,7 +73,7 @@ The element plays only while it is on screen, and holds a still frame for visito
 
 See [packages/react/README.md](packages/react/README.md), and `examples/next-demo` for a working app.
 
-[packages/ui](packages/ui/README.md) (`ascii`) holds fun, drop-in components built on it, such as `<LuminoDonut>` and the `<LuminoSpace>` and `<EdgeOrbit>` backgrounds.
+[packages/ui](packages/ui/README.md) (`ascii`) holds fun, drop-in components built on it, such as `<LuminoDonut>`, the `<LuminoSpace>` and `<EdgeOrbit>` backgrounds, WebGPU shader scenes played as ASCII (`<NebulaSky>`, `<CursorField>`, `<LuminoHolo>`, `<AsciiTransition>`), and customisable gradient backgrounds with an optional ASCII overlay (`<PlasmaBackground>`, `<SilkBackground>`, `<MeshBackground>`, `<ChromaBackground>`).
 
 ## Terminal UIs: ratatui and Bubble Tea
 

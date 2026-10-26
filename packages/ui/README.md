@@ -32,7 +32,66 @@ Each component also has its own entry, `ascii/<name>`, e.g. `import { LuminoDonu
 
 `LuminoDonut` takes all of `AsciiPlayer`'s props: `size`, `speed`, `paused`, `still`, `bg`, `look`, `chars`, `mono`, `maxFps`, `label` and the rest. `LuminoSpace` and `EdgeOrbit` take all of `AsciiHero`'s: `fit` (`cover` by default), `dim`, `opacity`, `bg` (`#05060f` and `#04060c` by default), `speed`, `look`, `children` and the rest. It is decoration, hidden from screen readers, unless you give it a `label`. Playback pauses off screen, and visitors who prefer reduced motion get a still frame.
 
-`examples/next-demo` shows them at `/lumino` and `/space`.
+`examples/next-demo` shows them at `/lumino`, `/space` and `/orbit`.
+
+## Shader components
+
+These play a WebGPU scene from [`shaders`](../../shaders/README.md) as ASCII, through `AsciiShader`. They are only on their own entries (`ascii/nebula-sky` and the rest), never the root `ascii` entry, so pages that don't use them never load WebGPU code. `shaders` is an optional peer dependency: install it to use them.
+
+| Component | What it is |
+|---|---|
+| `<NebulaSky>` | A background: billowing nebula gas, god rays from the top-right corner and drifting motes. Colours: `gas`, `veil`, `core`, `rays`. |
+| `<CursorField>` | A background that follows the pointer, even under your content. `variant`: `flow` (dust you plough through), `filings` (iron filings around a magnet), `bloom` (reaction-diffusion that grows where you drag) or `smoke` (smoke from the pointer). Colours: `colorA`, `colorB`. |
+| `<LuminoHolo>` | The Lumino brandmark as holographic foil with glitter and split colour edges. `hueShift`, `sparkle`, `aberration`. |
+| `<AsciiTransition>` | Wraps content. When `show` changes, an ASCII cover closes over the old content, the content swaps, and the cover opens on the new. `effect`: `iris`, `dissolve`, `ripple` or `blinds`. `duration` (1000 ms), `colorA`, `colorB`. |
+
+```tsx
+import { NebulaSky } from "ascii/nebula-sky";
+import { AsciiTransition } from "ascii/ascii-transition";
+
+<NebulaSky dim={0.1} style={{ height: "100vh" }}><h1>Hello</h1></NebulaSky>
+
+<AsciiTransition show={step} effect="dissolve">{slides[step]}</AsciiTransition>
+```
+
+The three backgrounds share `src/shader/ShaderStage.tsx`. It fills its container like `AsciiHero`, sizing the grid to the box so nothing is cropped. It takes `cols` (96), `colors` (32), `look` (`dots` by default), `dim`, `opacity`, `bg`, `fit`, `label`, `children` and playback props.
+
+Without WebGPU (and on the server, until it starts), each background plays a clip baked from the same scene. Clips are 80 x 45 cells, 6 s at 12 fps, loaded with a dynamic import only when needed. `baked` forces the clip, for testing. `CursorField`'s `smoke` falls back to `flow`, since smoke is empty without a cursor. `AsciiTransition` has no clip: without WebGPU the content crossfades, and with reduced motion it swaps at once.
+
+After changing a scene, rebake its clips (this needs Chrome or Chromium with WebGPU, via `$CHROME`, the PATH or the macOS app):
+
+```bash
+npm run bake -w packages/ui                 # every clip, and lumino-holo/logo.ts
+npm run bake -w packages/ui -- nebula-sky   # one component
+```
+
+## Gradient backgrounds
+
+Full-resolution WebGPU gradients from [`shaders`](../../shaders/README.md) that fill their container behind your content. ASCII is off by default. Add `ascii="overlay"` to draw glyphs over the gradient, or `ascii="full"` to show only glyphs. Each one takes **every prop of its shaders/react layer** (colours, `speed`, `blendMode` and the rest), so you can customise them freely. Each has its own entry and is never on the root `ascii` entry.
+
+| Component | Layer | Out of the box |
+|---|---|---|
+| `<PlasmaBackground>` (`ascii/plasma-background`) | `Plasma` | Warped magenta plasma (`colorA`, `colorB`, `density`, `warp`, `intensity`, ...) |
+| `<SilkBackground>` (`ascii/silk-background`) | `FlowingGradient` | Liquid silk in four colours (`colorA` to `colorD`, `distortion`, ...) |
+| `<MeshBackground>` (`ascii/mesh-background`) | `MeshGradient` | Drifting mesh in indigo, violet, magenta, orange and gold. `colors={[...]}` sets your own palette. `colorA` and `colorB` alone switch to two colours. |
+| `<ChromaBackground>` (`ascii/chroma-background`) | `ChromaFlow` over a dark `MeshGradient` | Colour trails the pointer, tinted by the direction it moves (`upColor`, `downColor`, ...). `restA` and `restB` set the drifting base. |
+
+```tsx
+import { PlasmaBackground } from "ascii/plasma-background";
+import { MeshBackground } from "ascii/mesh-background";
+
+<PlasmaBackground colorA="#00ffa3" colorB="#001a33" speed={0.5} style={{ height: "100vh" }}>
+  <h1>Hello</h1>
+</PlasmaBackground>
+
+<MeshBackground ascii="overlay" colors={["#001219", "#0a9396", "#e9d8a6"]} cellSize={20} characters="#*+-. " />
+```
+
+ASCII options: `characters` (brightest first, default `@%#*+=-:.`), `cellSize` (CSS pixels, default 16), `gamma` (default 0.5, and 0.25 for plasma: lower lifts dark areas to denser glyphs), `fontFamily`, `spacing`, `backdrop` (behind the glyphs in full mode), `asciiBlend` (default `screen`) and `asciiOpacity` (default 0.8, overlay only). There are also `dim`, `label`, `className` and `style`.
+
+`<AsciiOverlay layers={...}>` (`ascii/ascii-overlay`) is what they're built on. Give it any shaders/react layers, such as `<ImageTexture url="..." />`, a `<VideoTexture>` or your own stack, and an `ascii` mode (default `overlay`). It can't capture plain HTML: shaders only sees DOM through `HTMLInCanvas`, which needs a Chrome Canary flag.
+
+Unlike the shader components above, these draw glyphs on the GPU in a real font, with no readback. Without WebGPU the canvas stays transparent and a CSS gradient built from the component's colours shows instead, which is also what the server HTML has. A baked clip wouldn't follow custom colours, so there isn't one. `examples/next-demo` shows them at `/gradients`.
 
 ## Without React
 
@@ -59,6 +118,9 @@ src/
       piece.ts             the piece (definePiece)
       mask.ts              its assets, here the brandmark shape
     lumino-space/          the background (it borrows lumino-donut's mask)
+    nebula-sky/            a shader component: NebulaSky.tsx, scene.tsx (the <Shader> tree), clip.ts (baked)
+    ascii-overlay/         AsciiOverlay: shaders layers plus GPU ASCII, used by the *-background folders
+  shader/ShaderStage.tsx   what the readback shader components share
 ```
 
 ## Adding a component

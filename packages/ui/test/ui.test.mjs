@@ -13,6 +13,16 @@ import * as deep from "ascii/lumino-donut";
 import * as pieces from "ascii/pieces";
 import * as space from "ascii/lumino-space";
 import { frameHTML } from "ascii-magic-art-react/kit";
+import { loadClip } from "ascii-magic-art-react/extras";
+import { NebulaSky } from "ascii/nebula-sky";
+import { CursorField } from "ascii/cursor-field";
+import { LuminoHolo } from "ascii/lumino-holo";
+import { AsciiTransition } from "ascii/ascii-transition";
+import { AsciiOverlay, splitStage } from "ascii/ascii-overlay";
+import { PlasmaBackground } from "ascii/plasma-background";
+import { SilkBackground } from "ascii/silk-background";
+import { MeshBackground } from "ascii/mesh-background";
+import { ChromaBackground } from "ascii/chroma-background";
 
 const cells = (f) => f.text.split("\n");
 
@@ -54,7 +64,10 @@ test("LuminoDonut puts its first frame in the server HTML", () => {
 });
 
 test('the component files start with "use client"', () => {
-  for (const f of ["lumino-donut/LuminoDonut.js", "lumino-space/LuminoSpace.js", "edge-orbit/EdgeOrbit.js"]) {
+  for (const f of ["lumino-donut/LuminoDonut.js", "lumino-space/LuminoSpace.js", "edge-orbit/EdgeOrbit.js", "nebula-sky/NebulaSky.js",
+    "cursor-field/CursorField.js", "lumino-holo/LuminoHolo.js", "ascii-transition/AsciiTransition.js", "../shader/ShaderStage.js",
+    "ascii-overlay/AsciiOverlay.js", "plasma-background/PlasmaBackground.js", "silk-background/SilkBackground.js",
+    "mesh-background/MeshBackground.js", "chroma-background/ChromaBackground.js"]) {
     const src = fs.readFileSync(new URL(`../dist/components/${f}`, import.meta.url), "utf8");
     assert.match(src, /^"use client";/, f);
   }
@@ -153,4 +166,68 @@ test("edge-orbit has a white brandmark star in the top right", () => {
   let white = 0;
   for (let r = 0; r < 35; r++) for (let x = Math.floor(cols * 0.6); x < cols; x++) if (T[r][x] === "●" && /^#(ffffff|d6d6de)$/.test(palette[C[r][x]])) white++;
   assert.ok(white > 40, `${white} big white dots`);
+});
+
+// The shader components: WebGPU scenes as ASCII, with baked clips for browsers without it.
+
+test("the root entry leaves the shader components (and shaders) out", async () => {
+  const root = await import("../dist/index.js");
+  for (const name of ["NebulaSky", "CursorField", "LuminoHolo", "AsciiTransition", "AsciiOverlay", "PlasmaBackground", "SilkBackground", "MeshBackground", "ChromaBackground"]) assert.equal(name in root, false, name);
+  const src = fs.readFileSync(new URL("../dist/index.js", import.meta.url), "utf8");
+  assert.doesNotMatch(src, /shader|nebula|cursor-field|holo|transition|overlay|background/);
+});
+
+test("shader components render on the server: their box, their children, no GPU", () => {
+  assert.equal(typeof navigator === "undefined" || !navigator.gpu, true);
+  for (const [C, bg] of [[NebulaSky, "#04060c"], [CursorField, "#05060a"], [LuminoHolo, "#04060c"]]) {
+    const html = renderToString(h(C, { style: { height: "50vh" } }, h("h1", null, "Hello")));
+    assert.match(html, /<h1>Hello<\/h1>/, C.name);
+    assert.match(html, new RegExp(`background:${bg}`), C.name);
+    assert.match(html, /container-type:size/, C.name);
+  }
+  const html = renderToString(h(AsciiTransition, { show: 1 }, h("p", null, "Slide")));
+  assert.match(html, /<p>Slide<\/p>/);
+});
+
+test("every baked clip decodes to a 6 s loop that fills the grid", async () => {
+  const clips = ["nebula-sky/clip.js", "cursor-field/clip-flow.js", "cursor-field/clip-filings.js", "cursor-field/clip-bloom.js", "lumino-holo/clip.js"];
+  for (const f of clips) {
+    const { CLIP } = await import(`../dist/components/${f}`);
+    const piece = await loadClip(Buffer.from(CLIP, "base64"));
+    const { cols, rows, fps } = piece.meta;
+    assert.deepEqual([cols, rows], [80, 45], f);
+    const draw = piece.default(), a = draw(0), b = draw(1.5);
+    assert.equal(a.text.split("\n").length, rows, f);
+    assert.notEqual(a.text, b.text, `${f}: it moves`);
+    assert.ok(CLIP.length < 400_000, `${f}: ${CLIP.length} bytes`);
+    assert.ok(fps > 0, f);
+  }
+});
+
+// The gradient backgrounds: full-resolution shaders with optional GPU ASCII on top.
+
+test("gradient backgrounds render on the server with a CSS gradient for no-WebGPU, and their children", () => {
+  const cases = [
+    [PlasmaBackground, {}, /radial-gradient\(circle at 30% 40%, #ff2bd6, #0a0420 70%\)/],
+    [SilkBackground, { colorB: "#123456" }, /linear-gradient\(135deg, #0a0015, #123456, #ff4d6a, #ff6b35\)/],
+    [MeshBackground, {}, /linear-gradient\(160deg, #1a0533, #6d2fd1, #e04b9e, #ff8c42, #ffdf8e\)/],
+    [MeshBackground, { colors: ["#000000", "#ffffff"] }, /linear-gradient\(160deg, #000000, #ffffff\)/],
+    [MeshBackground, { colorA: "#111111", colorB: "#222222" }, /linear-gradient\(160deg, #111111, #222222\)/],
+    [ChromaBackground, {}, /linear-gradient\(160deg, #0b0b1a, #2a1a5e\)/],
+  ];
+  for (const [C, props, fallback] of cases) {
+    for (const ascii of ["off", "overlay", "full"]) {
+      const html = renderToString(h(C, { ...props, ascii, style: { height: "50vh" } }, h("h1", null, "Hello")));
+      assert.match(html, /<h1>Hello<\/h1>/, `${C.name} ${ascii}`);
+      assert.match(html, fallback, `${C.name} ${JSON.stringify(props)}`);
+    }
+  }
+  const html = renderToString(h(AsciiOverlay, { layers: null, fallback: "#abcdef" }, h("p", null, "x")));
+  assert.match(html, /background:#abcdef/);
+});
+
+test("splitStage sends stage props to the stage and the rest to the layer", () => {
+  const [stage, layer] = splitStage({ ascii: "full", cellSize: 20, dim: 0.2, children: "x", colorA: "#fff", speed: 2 });
+  assert.deepEqual(stage, { ascii: "full", cellSize: 20, dim: 0.2, children: "x" });
+  assert.deepEqual(layer, { colorA: "#fff", speed: 2 });
 });

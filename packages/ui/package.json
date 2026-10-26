@@ -2,7 +2,7 @@
   "name": "ascii",
   "version": "0.1.0",
   "private": true,
-  "description": "Fun, ready-made React and Next.js components built on ascii-magic-art: drop-in animated pieces like LuminoDonut, the Lumino brandmark as a glassy spinning solid.",
+  "description": "Fun, ready-made React and Next.js components built on ascii-magic-art: drop-in animated pieces like LuminoDonut, the Lumino brandmark as a glassy spinning solid, and WebGPU shader scenes played as ASCII.",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
@@ -30,11 +30,18 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "mask": "node scripts/mask.mjs",
     "test": "node --test \"test/*.test.mjs\"",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "bake": "node scripts/bake.mjs"
   },
   "peerDependencies": {
     "react": ">=18.3",
-    "react-dom": ">=18.3"
+    "react-dom": ">=18.3",
+    "shaders": ">=4"
+  },
+  "peerDependenciesMeta": {
+    "shaders": {
+      "optional": true
+    }
   },
   "dependencies": {
     "ascii-magic-art-react": "0.1.0"
@@ -45,6 +52,7 @@
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "sharp": "^0.35.5",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "shaders": "^4.0.5"
   }
 }
