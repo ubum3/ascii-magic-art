@@ -1,0 +1,538 @@
+---
+/*
+ * The shell for every page: a sidebar index of every category and piece, the
+ * header with the theme switch, a footer with links to open an issue, [copy]
+ * buttons for code blocks, tabs, and the script that mounts each piece as it
+ * scrolls into view.
+ */
+import "../styles/site.css";
+import Analytics from "@vercel/analytics/astro";
+import SpeedInsights from "@vercel/speed-insights/astro";
+import Credit from "../components/Credit.astro";
+import Icon from "../components/Icon.astro";
+import { AUTHOR, NAME, REPO, SITE, STARS, groups, issue, pieces, stars } from "../lib/library";
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  /** Slug of the piece this page shows, marked in the sidebar. */
+  current?: string;
+  /** The share card, 1200x630, when the page has its own: path and alt text. */
+  card?: { path: string; alt: string };
+  /** The home page, which on a phone puts its scene before the sidebar's line of categories. */
+  home?: boolean;
+}
+
+const { title, description, path, current, card, home } = Astro.props;
+const canonical = new URL(path, SITE);
+// The site's share card is night coast with the name and credit, made from the
+// scene itself; a piece page shows its own piece (pages/og/[slug].png.ts).
+const image = new URL(card?.path ?? "/og.png", SITE);
+const imageAlt = card?.alt ?? "ascii.rest: a dot-drawn lighthouse and cottage under moonlit clouds, by @bas3line";
+// On a piece's page, a bug report starts out naming the piece.
+const bug = issue("bug", current ? { title: `${current}: `, where: current } : {});
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>(function(){var r=document.documentElement,s=null;try{s=localStorage.getItem("ascii-theme")}catch(e){}var t=s==="light"||s==="dark"?s:(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");r.dataset.theme=t;})();</script>
+    <!-- After a deploy, a page left open or restored from cache still names the old build's files, which are gone. The
+    first one that fails to load reloads the page, which brings the new build; at most once a minute, so a real outage
+    cannot loop. Safari reports no unhandled rejection for a failed import, so the piece loader calls asciiReload itself. -->
+    <script is:inline>(function(){var k="ascii-reload",go=window.asciiReload=function(){try{if(Date.now()-(+sessionStorage.getItem(k)||0)<6e4)return;sessionStorage.setItem(k,String(Date.now()))}catch(e){return}location.reload()};addEventListener("error",function(e){var t=e.target;if(t&&(t.tagName==="SCRIPT"||t.tagName==="LINK")&&/\/_astro\//.test(t.src||t.href||""))go()},true);addEventListener("unhandledrejection",function(e){var m=String(e.reason&&e.reason.message||e.reason);if(/dynamically imported module|Importing a module script failed/i.test(m))go()});addEventListener("vite:preloadError",go);})();</script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={`@${AUTHOR.handle}`} />
+    <link rel="author" href={AUTHOR.url} />
+    <meta name="theme-color" content="#f5f6f7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#131518" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={NAME} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:secure_url" content={image} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={imageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+    <meta name="twitter:image:alt" content={imageAlt} />
+    <!-- The site's face, Paper Mono, served from here: every page uses it, so it is fetched at once. -->
+    <link rel="preload" href="/fonts/paper-mono.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Vercel's Web Analytics (page views, no cookies) and Speed Insights (each visit's real Core Web Vitals), both
+    loaded from the site's own /_vercel/ paths after the page. -->
+    <Analytics />
+    <SpeedInsights />
+    <slot name="head" />
+  </head>
+
+  <body>
+    <div class:list={["frame", home && "home"]}>
+      <aside class="side">
+        <a class="home" href="/">{NAME}</a>
+        <p class="by">by <a href="/author/" rel="author">@{AUTHOR.name}</a></p>
+        <p class="make">
+          <a href="/docs/" aria-current={path.startsWith("/docs/") ? "page" : undefined}>[docs]</a>
+          <a href="/banner/" aria-current={path === "/banner/" ? "page" : undefined}>[make a banner]</a>
+          <a href="/make/" aria-current={path === "/make/" ? "page" : undefined}>[image to ascii]</a>
+        </p>
+        {Astro.slots.has("side") ? (
+          <slot name="side" />
+        ) : (
+        <>
+        <form class="find" role="search" hidden>
+          <label class="sr" for="find">Search the pieces</label>
+          <input
+            id="find"
+            type="search"
+            placeholder={`search ${pieces.length} pieces`}
+            autocomplete="off"
+            autocapitalize="none"
+            spellcheck="false"
+            enterkeyhint="go"
+          />
+          <span class="key" aria-hidden="true">/</span>
+          <p class="found sr" role="status"></p>
+        </form>
+        <p class="asks">
+          <a href={issue("logo")}>[request a logo]</a>
+          <a href={issue("piece")}>[suggest a piece]</a>
+        </p>
+        <nav aria-label="Pieces">
+          {groups.map((group, i) => (
+            <>
+              <h2><a href={i ? `/#${group.categories[0].name}` : "/#pieces"}>{group.label}</a></h2>
+              {group.categories.map((category) => (
+                <>
+                  <h3>
+                    <a href={`/#${category.name}`}>{category.name}</a>
+                    <span class="count">{category.pieces.length}</span>
+                  </h3>
+                  <ul role="list">
+                    {category.pieces.map((piece) => (
+                      <li>
+                        <a href={`/${piece.slug}/`} aria-current={piece.slug === current ? "page" : undefined}>
+                          {piece.name}
+                        </a>
+                        {piece.recent && <span class="new">new</span>}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ))}
+            </>
+          ))}
+        </nav>
+        </>
+        )}
+      </aside>
+
+      <script is:inline>
+        // Search: as you type, the sidebar keeps the pieces whose name holds each word, or
+        // whose category starts with it, and drops the headings left empty. Enter opens the
+        // first, Esc clears, and / comes here from anywhere but a field. It shows before the
+        // script below puts the sidebar's scroll back, so that lands where it was.
+        (function () {
+          var form = document.querySelector(".find");
+          // The docs have their own index in the sidebar, and no search.
+          if (!form) return;
+          var input = form.querySelector("input");
+          var found = form.querySelector(".found");
+          var nav = document.querySelector(".side nav");
+          var groups = [];
+          var group, category;
+          for (var el = nav.firstElementChild; el; el = el.nextElementSibling) {
+            if (el.tagName === "H2") groups.push((group = { head: el, categories: [] }));
+            else if (el.tagName === "H3") {
+              var count = el.querySelector(".count");
+              category = { head: el, count: count, all: count.textContent, name: el.querySelector("a").textContent, list: null, items: [] };
+              group.categories.push(category);
+            } else if (el.tagName === "UL") {
+              category.list = el;
+              for (var li = el.firstElementChild; li; li = li.nextElementSibling) {
+                var a = li.querySelector("a");
+                category.items.push({ li: li, a: a, words: [a.textContent.trim(), a.getAttribute("href").replace(/\//g, "")].join(" ") });
+              }
+            }
+          }
+          function filter() {
+            var words = input.value.toLowerCase().split(/\s+/).filter(Boolean);
+            var first = null;
+            var total = 0;
+            var lead = true;
+            groups.forEach(function (g) {
+              var any = false;
+              g.categories.forEach(function (c) {
+                var n = 0;
+                c.items.forEach(function (item) {
+                  var hit = words.every(function (w) {
+                    return item.words.indexOf(w) >= 0 || c.name.indexOf(w) === 0;
+                  });
+                  item.li.hidden = !hit;
+                  if (hit) n++;
+                  if (hit && !first) first = item.a;
+                });
+                c.head.hidden = c.list.hidden = !n;
+                c.count.textContent = words.length ? n : c.all;
+                total += n;
+                if (n) any = true;
+              });
+              g.head.hidden = !any;
+              // the first group left takes the top, as the first does unfiltered
+              g.head.classList.toggle("lead", any && lead);
+              if (any) lead = false;
+            });
+            nav.classList.toggle("searching", words.length > 0);
+            found.textContent = !words.length ? "" : !total ? "nothing matches" : total + (total === 1 ? " piece" : " pieces");
+            found.classList.toggle("sr", total > 0 || !words.length);
+            mark();
+            return words.length ? first : null;
+          }
+          // the / hint gives way while the field has focus or text
+          function mark() {
+            form.classList.toggle("on", input.value !== "" || document.activeElement === input);
+          }
+          form.hidden = false;
+          input.addEventListener("input", filter);
+          input.addEventListener("focus", mark);
+          input.addEventListener("blur", mark);
+          form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            var first = filter();
+            if (first) location.href = first.href;
+          });
+          input.addEventListener("keydown", function (e) {
+            if (e.key !== "Escape") return;
+            e.preventDefault();
+            input.value = "";
+            input.blur();
+            filter();
+          });
+          addEventListener("keydown", function (e) {
+            var t = e.target;
+            if (e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return;
+            if (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return;
+            e.preventDefault();
+            input.focus();
+            input.select();
+            mark();
+          });
+        })();
+      </script>
+
+      <script is:inline>
+        // Every piece is a full page load, which would reset the sidebar to its top. Put
+        // it back where it was, and bring the current piece into view if that leaves it out.
+        (function () {
+          var side = document.querySelector(".side");
+          var key = "ascii-side";
+          if (side.scrollHeight <= side.clientHeight) return;
+          try {
+            var y = sessionStorage.getItem(key);
+            if (y !== null) side.scrollTop = +y;
+          } catch (e) {}
+          var cur = side.querySelector('[aria-current="page"]');
+          if (cur) {
+            var s = side.getBoundingClientRect();
+            var c = cur.getBoundingClientRect();
+            if (c.top < s.top + 48 || c.bottom > s.bottom - 48) side.scrollTop += c.top - s.top - (s.height - c.height) / 2;
+          }
+          addEventListener("pagehide", function () {
+            try {
+              sessionStorage.setItem(key, String(side.scrollTop));
+            } catch (e) {}
+          });
+        })();
+      </script>
+
+      <main class="page">
+        <slot name="notice" />
+        <div class="top">
+          <slot name="heading" />
+          <span class="tools">
+            <button id="motion" class="button" type="button" hidden><span>[play anyway]</span></button>
+            <a href="/docs/">[docs]</a>
+            <a class="repo" href={REPO} aria-label={STARS === null ? undefined : `GitHub, ${STARS} stars`}>[<Icon name="github" />github<span class="stars" hidden={STARS === null}><Icon name="star" /><span>{STARS === null ? "" : stars(STARS)}</span></span>]</a>
+            <button id="theme" class="button" type="button" aria-label="Switch to dark theme" hidden><span>[dark]</span></button>
+          </span>
+        </div>
+        <slot />
+        <footer class="foot muted">
+          <p class="asks">
+            <a href="/docs/">[docs]</a>
+            <a href={issue("logo")}>[request a logo]</a>
+            <a href={issue("piece")}>[suggest a piece]</a>
+            <a href={bug}>[report a bug]</a>
+          </p>
+          <span>{NAME}, MIT licensed. <a class="source" href={REPO}><Icon name="github" /><span>Source on GitHub</span></a></span>
+          <Credit lead="Made by" />
+        </footer>
+      </main>
+    </div>
+
+    <script is:inline>
+      (function () {
+        var r = document.documentElement;
+        var b = document.getElementById("theme");
+        var metas = document.querySelectorAll('meta[name="theme-color"]');
+        function saved() {
+          try {
+            var s = localStorage.getItem("ascii-theme");
+            return s === "light" || s === "dark" ? s : null;
+          } catch (e) {
+            return null;
+          }
+        }
+        function show(t) {
+          var next = t === "dark" ? "light" : "dark";
+          r.dataset.theme = t;
+          b.firstChild.textContent = "[" + next + "]";
+          b.setAttribute("aria-label", "Switch to " + next + " theme");
+        }
+        function paintBar(t) {
+          for (var i = 0; i < metas.length; i++) metas[i].setAttribute("content", t === "dark" ? "#131518" : "#f5f6f7");
+        }
+        show(r.dataset.theme === "dark" ? "dark" : "light");
+        if (saved()) paintBar(r.dataset.theme);
+        b.hidden = false;
+        b.addEventListener("click", function () {
+          var t = r.dataset.theme === "dark" ? "light" : "dark";
+          show(t);
+          paintBar(t);
+          try {
+            localStorage.setItem("ascii-theme", t);
+          } catch (e) {}
+        });
+        var mq = matchMedia("(prefers-color-scheme: dark)");
+        if (mq.addEventListener)
+          mq.addEventListener("change", function (e) {
+            if (!saved()) show(e.matches ? "dark" : "light");
+          });
+      })();
+    </script>
+
+    <script is:inline>
+      // The header's star count is the build's; ask GitHub for today's. Every piece is a full page load and GitHub
+      // allows a visitor 60 asks an hour, so the answer is kept for an hour. Any failure leaves the build's count, and
+      // waits ten minutes before asking again, so an outage or a spent limit isn't asked on every page.
+      (function () {
+        var a = document.querySelector(".top .repo");
+        if (!a || !window.fetch) return;
+        var key = "ascii-stars";
+        var wait = "ascii-stars-wait";
+        var hour = 36e5;
+        function failed() {
+          try {
+            localStorage.setItem(wait, String(Date.now() + 6e5));
+          } catch (e) {}
+        }
+        function show(n) {
+          var s = a.querySelector(".stars");
+          s.lastElementChild.textContent = n < 1000 ? String(n) : n < 10000 ? Math.floor(n / 100) / 10 + "k" : Math.floor(n / 1000) + "k";
+          s.hidden = false;
+          a.setAttribute("aria-label", "GitHub, " + n + " stars");
+        }
+        try {
+          var kept = JSON.parse(localStorage.getItem(key) || "null");
+          if (kept && Date.now() - kept.at < hour && typeof kept.n === "number") return show(kept.n);
+          if (Date.now() < +localStorage.getItem(wait)) return;
+        } catch (e) {}
+        fetch("https://api.github.com/repos/" + a.getAttribute("href").replace("https://github.com/", ""))
+          .then(function (r) {
+            return r.ok ? r.json() : null;
+          })
+          .then(function (repo) {
+            if (!repo || typeof repo.stargazers_count !== "number") return failed();
+            show(repo.stargazers_count);
+            try {
+              localStorage.setItem(key, JSON.stringify({ n: repo.stargazers_count, at: Date.now() }));
+              localStorage.removeItem(wait);
+            } catch (e) {}
+          })
+          .catch(failed);
+      })();
+    </script>
+
+    <script>
+      import { isPiece, load, mount, type Piece } from "ascii.rest";
+      import { shown } from "../lib/shown";
+
+      // Logos come in colour or in one ink, and the choice holds from page to page.
+      let mono = false;
+      try {
+        mono = localStorage.getItem("ascii-ink") === "mono";
+      } catch {}
+      // Pieces hold their first frame when the system asks for reduced motion. The header says so with a button that
+      // plays them anyway, and that choice holds from page to page too.
+      const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+      let motion = false;
+      try {
+        motion = localStorage.getItem("ascii-motion") === "play";
+      } catch {}
+      const isLogo = (piece: Piece) => Boolean(piece.meta.palette && !piece.meta.ground);
+      const playing: { pre: HTMLElement; piece: Piece; fps?: number; el: HTMLElement; stop: () => void }[] = [];
+      // Every piece that `which` picks starts again on a new element.
+      const replay = (which: (piece: Piece) => boolean) => {
+        const again = playing.filter((p) => which(p.piece));
+        for (const p of again) {
+          p.stop();
+          if (p.el !== p.pre) p.el.replaceWith(p.pre);
+          playing.splice(playing.indexOf(p), 1);
+        }
+        for (const p of again) play(p.pre, p.piece, p.fps);
+      };
+
+      function play(pre: HTMLElement, piece: Piece, fps?: number) {
+        let el: HTMLElement = pre;
+        // A coloured piece swaps its baked text for a canvas painted in its palette, a
+        // logo in the box its text would take. A logo in one ink stays text.
+        if (piece.meta.palette && !(mono && isLogo(piece))) {
+          el = document.createElement("canvas");
+          el.className = "art";
+          el.setAttribute("role", "img");
+          el.setAttribute("aria-label", pre.getAttribute("aria-label") ?? "");
+          if (isLogo(piece)) {
+            el.setAttribute("style", pre.getAttribute("style") ?? "");
+            el.style.width = "var(--fit)";
+          }
+          pre.replaceWith(el);
+        }
+        // Each frame notes its time, for the downloads.
+        const timed: Piece = {
+          meta: piece.meta,
+          default: (options) => {
+            const frame = piece.default(options);
+            return (t, env) => (shown.set(el, t), frame(t, env));
+          },
+        };
+        const stop = mount(el, timed, { ...(fps ? { fps } : {}), motion });
+        playing.push({ pre, piece, fps, el, stop });
+      }
+
+      const motionButton = document.getElementById("motion") as HTMLButtonElement;
+      const showMotion = () => {
+        motionButton.hidden = !reduced.matches;
+        motionButton.firstElementChild!.textContent = motion ? "[hold still]" : "[play anyway]";
+        motionButton.setAttribute(
+          "aria-label",
+          motion ? "Hold the pieces still, as your system asks" : "Your system asks for reduced motion, so the pieces hold still. Play them anyway",
+        );
+      };
+      showMotion();
+      reduced.addEventListener("change", showMotion);
+      motionButton.addEventListener("click", () => {
+        motion = !motion;
+        try {
+          localStorage.setItem("ascii-motion", motion ? "play" : "still");
+        } catch {}
+        showMotion();
+        replay(() => true);
+      });
+
+      const inks = document.querySelectorAll<HTMLButtonElement>("button[data-ink]");
+      const label = () =>
+        inks.forEach((button) => {
+          button.firstElementChild!.textContent = mono ? "[colour]" : "[mono]";
+          button.setAttribute("aria-label", mono ? "Show the logos in colour" : "Show the logos in one ink");
+        });
+      label();
+      inks.forEach((button) => {
+        button.hidden = false;
+        button.addEventListener("click", () => {
+          mono = !mono;
+          try {
+            localStorage.setItem("ascii-ink", mono ? "mono" : "colour");
+          } catch {}
+          label();
+          replay(isLogo);
+        });
+      });
+
+      // Each piece is its own chunk, fetched the first time it nears the screen.
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            const pre = entry.target as HTMLElement;
+            io.unobserve(pre);
+            const name = pre.dataset.piece ?? "";
+            if (!isPiece(name)) continue;
+            load[name]().then(
+              (piece: Piece) => {
+                // Previews in the grid run at 20 fps at most; there can be a dozen on screen.
+                const grid = pre.closest(".grid") && piece.meta.fps > 20;
+                play(pre, piece, grid ? 20 : undefined);
+              },
+              // the piece's file is gone: the page is from an older build (the script at the top of <head>)
+              () => (window as Window & { asciiReload?: () => void }).asciiReload?.(),
+            );
+          }
+        },
+        { rootMargin: "200px 0px" },
+      );
+      document.querySelectorAll<HTMLElement>("pre[data-piece]").forEach((pre) => io.observe(pre));
+
+      // Each [copy] button copies the text of the element it names, then shows its own label again. Where the browser
+      // won't copy, a hidden source is shown and selected, so it can be copied by hand.
+      document.querySelectorAll<HTMLButtonElement>("button[data-copy]").forEach((button) => {
+        button.hidden = false;
+        const label = button.firstElementChild as HTMLElement;
+        const own = label.textContent;
+        button.addEventListener("click", async () => {
+          const source = document.getElementById(button.dataset.copy!);
+          const text = source?.textContent ?? "";
+          if (text.trim() === "" || button.getAttribute("aria-disabled") === "true") return;
+          try {
+            await navigator.clipboard.writeText(text);
+            label.textContent = "[copied]";
+          } catch {
+            label.textContent = "[select and copy]";
+            if (source) {
+              source.hidden = false;
+              getSelection()?.selectAllChildren(source);
+            }
+          }
+          setTimeout(() => (label.textContent = own), 1600);
+        });
+      });
+
+      // Tabs: without script every panel shows, one after another.
+      document.querySelectorAll<HTMLElement>("[data-tabs]").forEach((box) => {
+        const tabs = [...box.querySelectorAll<HTMLButtonElement>("[role=tab]")];
+        const panels = [...box.querySelectorAll<HTMLElement>("[role=tabpanel]")];
+        const select = (i: number, focus = false) => {
+          tabs.forEach((tab, j) => {
+            tab.setAttribute("aria-selected", String(i === j));
+            tab.tabIndex = i === j ? 0 : -1;
+          });
+          panels.forEach((panel, j) => (panel.hidden = i !== j));
+          if (focus) tabs[i].focus();
+        };
+        box.querySelector("[role=tablist]")?.removeAttribute("hidden");
+        box.classList.add("tabbed");
+        tabs.forEach((tab, i) => {
+          tab.addEventListener("click", () => select(i));
+          tab.addEventListener("keydown", (e) => {
+            const n = tabs.length;
+            const to = { ArrowRight: (i + 1) % n, ArrowLeft: (i - 1 + n) % n, Home: 0, End: n - 1 }[e.key];
+            if (to === undefined) return;
+            e.preventDefault();
+            select(to, true);
+          });
+        });
+        select(0);
+      });
+    </script>
+  </body>
+</html>

@@ -7,7 +7,7 @@ description: ascii-magic-art-rest (packages/rest-bridge), which plays the 240 as
 
 ## What it is
 
-A two-way bridge to [ascii.rest](https://github.com/bas3line/ascii) (MIT, bas3line). `fromRest` turns each of their 240 pieces into one of ours, slugged `rest-<name>`; `toRest` turns ours into theirs so their `svg()`, `banner()` and `drawing()` work on our pieces. It does not copy ascii.rest: it imports `./ascii` in the repo root, a git submodule pinned to the ubum3/ascii fork.
+A two-way bridge to [ascii.rest](https://github.com/bas3line/ascii) (MIT, bas3line). `fromRest` turns each of their 240 pieces into one of ours, slugged `rest-<name>`; `toRest` turns ours into theirs so their `svg()`, `banner()` and `drawing()` work on our pieces. It keeps no copy of ascii.rest inside the package: it imports `./ascii` in the repo root, a copy of the ubum3/ascii fork committed with this repo (no submodule, no separate .git).
 
 - Path: `packages/rest-bridge` (`src/index.js`, `src/bridge.js`, generated `src/catalog.js`, `scripts/build.mjs`, `scripts/validate-rest.mjs`)
 - Package: `ascii-magic-art-rest` (`.` resolves to `dist/index.js`; `./bridge` to `src/bridge.js`)
@@ -15,7 +15,6 @@ A two-way bridge to [ascii.rest](https://github.com/bas3line/ascii) (MIT, bas3li
 ## Quick start
 
 ```bash
-git submodule update --init                          # once, in the repo root
 npm install                                          # prepare runs scripts/build.mjs
 ```
 ```js
