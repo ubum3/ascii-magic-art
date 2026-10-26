@@ -24,6 +24,38 @@ export const LUMINO_BACKGROUNDS: readonly BackgroundEntry[] = [
     tags: ["webgl", "aurora", "glass"],
     load: () => import("../components/lumino-aura/index.js").then((m) => m.LuminoAura),
   },
+  {
+    id: "lumino-chrome",
+    name: "Lumino Chrome",
+    description: "A liquid-chrome sea reflecting the brand gradient, with the brandmark rising out of the metal as a bevelled relief.",
+    author: "b3",
+    tags: ["webgl", "chrome", "glass", "liquid"],
+    load: () => import("../components/lumino-chrome/index.js").then((m) => m.LuminoChrome),
+  },
+  {
+    id: "lumino-orb",
+    name: "Lumino Orb",
+    description: "A glass orb off to one side, with the brandmark caught inside as a slowly turning refracted caustic and an iridescent thin-film rim.",
+    author: "b3",
+    tags: ["webgl", "glass", "orb", "iridescent"],
+    load: () => import("../components/lumino-orb/index.js").then((m) => m.LuminoOrb),
+  },
+  {
+    id: "lumino-frost",
+    name: "Lumino Frost",
+    description: "Three frosted-glass slabs cut to the brandmark's three shapes, drifting in parallax over warm nebula light.",
+    author: "b3",
+    tags: ["css", "glass", "frosted", "canvas"],
+    load: () => import("../components/lumino-frost/index.js").then((m) => m.LuminoFrost),
+  },
+  {
+    id: "lumino-shards",
+    name: "Lumino Shards",
+    description: "The brandmark shattered into glass shards that orbit the card and pull back together into the mark every few seconds.",
+    author: "b3",
+    tags: ["webgl", "glass", "shards", "particles"],
+    load: () => import("../components/lumino-shards/index.js").then((m) => m.LuminoShards),
+  },
 ];
 
 /** The entry with this id, if there is one. */
