@@ -102,7 +102,7 @@ const DRAWN = `(() => {
 
 async function shoot(id, [w, h], name) {
   const file = path.join(out, `${id}-${name}${card ? "-card" : ""}.png`);
-  await send("Emulation.setDeviceMetricsOverride", { width: w, height: h, deviceScaleFactor: 1, mobile: w < 600 });
+  await send("Emulation.setDeviceMetricsOverride", { width: w, height: h, deviceScaleFactor: 1, mobile: false });
   await send("Page.navigate", { url: `${url}/lumino-bg/${id}?shot=1${card ? "&card=1" : ""}` });
   let drawn = false;
   for (let t = 0; t < 60000 && !drawn; t += 250) {
