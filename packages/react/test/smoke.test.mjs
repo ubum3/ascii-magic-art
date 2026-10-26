@@ -116,6 +116,7 @@ test('"use client" only where it belongs', () => {
   const first = (f) => fs.readFileSync(path.join(DIST, f), "utf8").split("\n", 1)[0];
   for (const dir of ["client", "hooks"]) for (const f of fs.readdirSync(path.join(DIST, dir)).filter((f) => f.endsWith(".js")))
     assert.equal(first(`${dir}/${f}`), '"use client";', `${dir}/${f}`);
+  for (const f of ["extras.js", "shader.js"]) assert.equal(first(f), '"use client";', f);
   for (const f of ["index.js", "server.js", "kit.js", "catalog.js", "core/look.js", "core/prerender.js", "core/resolve.js", "core/styles.js", "core/variants.js"])
     assert.notEqual(first(f), '"use client";', f);
 });
@@ -144,4 +145,15 @@ test("extras: specs and sequences render their first frame on the server, clips 
   const clip = await loadClip(bytes);
   assert.equal(clip.default()(0.6), "cd");
   assert.equal(typeof useSpecPiece, "function");
+});
+
+test("shader: the server renders the fallback and never the shader, nor touches navigator", async () => {
+  const { AsciiShader } = await import("../dist/shader.js");
+  const Boom = () => { throw new Error("the shader rendered on the server"); };
+  const html = renderToString(h(AsciiShader, { cols: 40, fallback: h(AsciiPlayer, { piece: torus }) }, h(Boom)));
+  assert.match(html, /data-ama-shader=""/);
+  assert.equal(lines(preText(html)), torus.meta.rows, "the fallback's first frame is in the HTML");
+  const bare = renderToString(h(AsciiShader, { cols: 32 }, h(Boom)));
+  assert.match(bare, /aria-busy="true"/);
+  assert.match(bare, /aspect-ratio:32 \/ 18/);
 });

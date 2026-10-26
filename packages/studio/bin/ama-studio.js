@@ -11,6 +11,7 @@
  *   ama-studio text "DEPLOYED" --effect scramble -o deployed.cast
  *   ama-studio play matrix-rain | logo.json | clip.amc | piece.js
  *   ama-studio export moonlit-sea -o moonlit.mp4 --seconds 8
+ *   ama-studio bake Aurora,FilmGrain -o aurora.amc     a WebGPU shader, as a clip
  *
  * Outputs by extension: .json (spec), .js (piece module), .amc (clip),
  * .cast, .png, .gif, .mp4, .webm. Without -o, it plays in the terminal.
@@ -23,6 +24,7 @@ import { LOOKS } from "ascii-magic-art/runtime/glyphs.js";
 import { load } from "../src/load.js";
 import { imageSpec, brandSpec } from "../src/raster.js";
 import { videoClip } from "../src/video.js";
+import { bakeClip } from "../src/bake.js";
 import { exportTo, FORMATS } from "../src/export.js";
 import { play } from "../src/play.js";
 import { pieceModule } from "../src/piecejs.js";
@@ -34,6 +36,7 @@ const HELP = `ama-studio: animated ASCII art from your pictures, videos, logos a
   text    "<words>"           words in a block font, with an effect
   play    <slug|file>         play a piece, spec, clip or piece module
   export  <slug|file> -o out  write a cast, PNG, GIF, MP4 or WebM
+  bake    <scene.jsx|Names>   a WebGPU shader (the shaders package) becomes a clip
 
 Output (-o) by extension: .json spec, .js piece module, .amc clip, ${FORMATS.map((f) => "." + f).join(", ")}.
 Without -o, it plays in the terminal (any key stops it).
@@ -54,6 +57,8 @@ Options
   --state JSON           state for data pieces (progress, sparkline, ticker, celebrate)
   --px N --width N --height N --preset NAME --bg #hex   image and video export size
   --at S                 the time of the frame a PNG shows
+  bake: a module whose default export is a <Shader> (or a component that renders one),
+  or shaders/react names: "Aurora,FilmGrain". It runs in headless Chromium ($CHROME).
   --frame                print one frame and exit
 `;
 
@@ -111,6 +116,20 @@ async function finish(spec, what) {
   await exportTo(await source(spec, out), out, exportOpts);
   done(out, what);
 }
+/** Write a clip, export it, or play it; the output format comes from -o. */
+async function finishClip(clip, fps) {
+  const mb = clip.bytes.length / 1048576;
+  if (mb > 5) console.warn(`warning: the clip is ${mb.toFixed(1)} MB. Fewer --cols, --fps or --seconds make it smaller.`);
+  const out = o.out;
+  if (out && out.endsWith(".amc")) { fs.writeFileSync(out, clip.bytes); return done(out, `${clip.frames.length} frames, ${clip.header.cols}x${clip.header.rows}`); }
+  if (out && /\.(json|js|mjs)$/i.test(out)) fail("a clip is written as .amc, or exported to a cast, image or video");
+  const tmp = path.join(fs.mkdtempSync(path.join((await import("os")).tmpdir(), "ama-")), "clip.amc");
+  fs.writeFileSync(tmp, clip.bytes);
+  const src = await load(tmp);
+  if (!out) return play(src, playOpts);
+  await exportTo(src, out, { ...exportOpts, seconds: num(o.seconds) ?? clip.frames.length / fps, look: undefined });
+  done(out, `${clip.frames.length} frames`);
+}
 function done(file, what) {
   const kb = (fs.statSync(file).size / 1024).toFixed(0);
   console.log(`${what} -> ${file} (${kb} KB)`);
@@ -128,16 +147,7 @@ try {
           cols: num(o.cols) ?? 80, rows: num(o.rows), square, fps, seconds: num(o.seconds) ?? 10, start: num(o.start),
           colors: num(o.colors) ?? 48, look, name: o.name || path.basename(input).replace(/\.[^.]+$/, ""),
         });
-        const mb = clip.bytes.length / 1048576;
-        if (mb > 5) console.warn(`warning: the clip is ${mb.toFixed(1)} MB. Fewer --cols, --fps or --seconds make it smaller.`);
-        const out = o.out;
-        if (out && out.endsWith(".amc")) { fs.writeFileSync(out, clip.bytes); done(out, `${clip.frames.length} frames, ${clip.header.cols}x${clip.header.rows}`); break; }
-        const tmp = path.join(fs.mkdtempSync(path.join((await import("os")).tmpdir(), "ama-")), "clip.amc");
-        fs.writeFileSync(tmp, clip.bytes);
-        const src = await load(tmp);
-        if (!out) { await play(src, playOpts); break; }
-        await exportTo(src, out, { ...exportOpts, seconds: num(o.seconds) ?? clip.frames.length / fps, look: undefined });
-        done(out, `${clip.frames.length} frames`);
+        await finishClip(clip, fps);
         break;
       }
       const spec = await imageSpec(input, {
@@ -186,8 +196,21 @@ try {
       done(o.out, f);
       break;
     }
+    case "bake": {
+      if (!input) fail('bake what? ama-studio bake scene.jsx, or ama-studio bake "Aurora,FilmGrain"');
+      const file = fs.existsSync(input) ? input : null;
+      if (!file && !/^[A-Z]\w*(\s*,\s*[A-Z]\w*)*$/.test(input)) fail(`no file ${input}, and it is not a list of shaders/react names ("Aurora,FilmGrain")`);
+      const scene = file ? { file } : { names: input.split(",").map((s) => s.trim()) };
+      const fps = num(o.fps) ?? 12;
+      const clip = await bakeClip(scene, {
+        cols: num(o.cols) ?? 80, rows: num(o.rows), square: o.text ? false : o.square ?? !look, fps, seconds: num(o.seconds) ?? 6,
+        colors: num(o.colors) ?? 48, look, name: o.name || (file ? path.basename(file).replace(/\.[^.]+$/, "") : scene.names.join("-").toLowerCase()),
+      });
+      await finishClip(clip, fps);
+      break;
+    }
     default:
-      fail(`no command "${cmd}". Try: convert, brand, text, play, export (ama-studio --help)`);
+      fail(`no command "${cmd}". Try: convert, brand, text, play, export, bake (ama-studio --help)`);
   }
 } catch (e) {
   fail(e.message);

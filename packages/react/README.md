@@ -191,6 +191,27 @@ import logo from "./logo.json"; // npx ama-studio brand logo.svg --effect assemb
 - **`state`:** data kinds read it every frame, so changing it never restarts playback. Changing the `spec` does restart it.
 - **Server rendering:** `AsciiSpec` and `AsciiSequence` render their first frame on the server, like `AsciiPlayer`. Clips and the webcam start on the client.
 - **Hooks:** `useSpecPiece(spec, state)` and `useClip(src)` give you the piece module. `loadClip(bytes)` decodes a clip with the browser's `DecompressionStream`.
+- **`usePixelsPiece(source, { square, colors, bg })`:** anything you can draw into a 2D canvas, as a live piece. `source` is `{ cols, rows, draw(ctx, w, h) }`, and `draw` is called every frame. `AsciiWebcam` and `AsciiShader` are built on it.
+
+## Shaders: WebGPU, as ASCII
+
+`ascii-magic-art-react/shader` plays a WebGPU shader as ASCII art. You bring the shader: a `<Shader>` tree from the [`shaders`](https://shaders.com) package, or any element that renders a `<canvas>`. This package doesn't depend on it.
+
+```tsx
+"use client";
+import { Shader, Aurora, FilmGrain } from "shaders/react";
+import { AsciiShader } from "ascii-magic-art-react/shader";
+import { AsciiArt } from "ascii-magic-art-react";
+
+<AsciiShader cols={96} colors={24} fallback={<AsciiArt piece="aurora-curtains" />}>
+  <Shader><Aurora /><FilmGrain /></Shader>
+</AsciiShader>
+```
+
+- **How it works:** the shader draws into a hidden canvas laid over the art, and every frame that canvas is read back into cells.
+- **Fallback:** `fallback` shows on the server, while the GPU starts, and wherever WebGPU is unavailable. `onUnavailable(reason)` is called once. A good fallback is a baked clip of the same shader: `npx ama-studio bake "Aurora,FilmGrain" -o public/aurora.amc`, then `<AsciiClip src="/aurora.amc" />`.
+- **Telemetry:** `<Shader>` reports usage to shaders.com by default. `AsciiShader` turns that off, and asks for sRGB, which is what a 2D canvas reads. Pass `telemetry` to leave both as they are.
+- **Other props:** `rows` (default 16:9), `square` (default true), `colors` (default 32), `bg` for a shader with transparency, and `interactive` to give the hidden shader the pointer. Every `AsciiPlayer` prop works too.
 
 ## Hooks
 

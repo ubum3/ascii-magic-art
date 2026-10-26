@@ -26,6 +26,10 @@
       "types": "./dist/extras.d.ts",
       "default": "./dist/extras.js"
     },
+    "./shader": {
+      "types": "./dist/shader.d.ts",
+      "default": "./dist/shader.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [

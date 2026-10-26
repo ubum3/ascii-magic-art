@@ -11,6 +11,7 @@ npx ama-studio brand logo.svg --effect assemble -o logo.json
 npx ama-studio text "DEPLOYED" --effect scramble -o deployed.cast
 npx ama-studio play matrix-rain                          # a slug, a .json spec, an .amc clip or a .js piece
 npx ama-studio export moonlit-sea -o moonlit.mp4 --seconds 8 --look dots
+npx ama-studio bake "Aurora,FilmGrain" -o aurora.amc    # a WebGPU shader becomes a clip
 ```
 
 The output format comes from the extension you give `-o`. Without `-o`, the result plays in the terminal, and any key stops it.
@@ -19,7 +20,7 @@ The output format comes from the extension you give `-o`. Without `-o`, the resu
 |---|---|
 | `.json` | a **spec**. It plays in React (`<AsciiSpec>`), Rust (`Player::from_spec`), Go (`asciiart.FromSpec`) and `ama-studio play` |
 | `.js` | one self-contained piece module (`{ meta, default }`) with no imports |
-| `.amc` | a **clip**: video frames, read natively by every package |
+| `.amc` | a **clip**: video (or shader) frames, read natively by every package |
 | `.cast` | an asciinema cast (asciicast v2): text, tiny, crisp at any size |
 | `.png` `.gif` `.mp4` `.webm` | drawn by `runtime/canvas.js`, exactly like the web player, then encoded by ffmpeg |
 
@@ -33,6 +34,10 @@ The output format comes from the extension you give `-o`. Without `-o`, the resu
   - It keeps its own colours. `--colors "#hex,#hex"` replaces them, in order of how much of the logo each one covers.
   - A PNG without transparency has its corner colour treated as the background.
 - **`text "<words>"`:** words in a 5-row block font with a drop shadow, or use `--font plain`.
+- **`bake <scene.jsx|Names>`:** a WebGPU shader from the [`shaders`](https://shaders.com) package becomes an `.amc` clip, so it plays where there is no GPU: a terminal, Rust, Go, or a browser without WebGPU (as `AsciiShader`'s fallback).
+  - The scene is a module whose default export is a `<Shader>` element or a component that renders one, or a list of `shaders/react` names: `"Aurora,FilmGrain"`. React, react-dom and `shaders` are resolved from the scene's folder, or the working directory.
+  - It runs in headless Chromium (`$CHROME`, or `chromium` on your PATH) with WebGPU on. A software GPU (SwiftShader) is fine: the shader runs on a clock that steps `1/--fps` per frame, so a slow GPU only takes longer.
+  - `--seconds` (default 6), `--fps` (default 12), `--cols` (default 80, 16:9), `--colors` (default 48), `--text` and `--look`. Telemetry is off.
 - **`play`** and **`export`:** for anything that plays. `--state '{"value":0.5}'` feeds a data spec.
 
 Effects, also listed by `--help`:
@@ -53,6 +58,7 @@ Effects, also listed by `--help`:
 - Node 20+.
 - [sharp](https://sharp.pixelplumbing.com) and [@napi-rs/canvas](https://github.com/Brooooooklyn/canvas) install as prebuilt binaries.
 - Video, GIF and every export except `.cast` and `.png` need `ffmpeg` on your PATH.
+- `bake` needs Chromium, plus `react`, `react-dom` and `shaders` installed where the scene is.
 
 ## Tests
 
@@ -60,4 +66,4 @@ Effects, also listed by `--help`:
 npm test -w packages/studio
 ```
 
-The tests cover the SVG and PNG logos, pictures, ffmpeg clips, the export formats, piece modules and the CLI.
+The tests cover the SVG and PNG logos, pictures, ffmpeg clips, shader bakes (skipped without Chromium), the export formats, piece modules and the CLI.
