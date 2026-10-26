@@ -15,6 +15,14 @@
       "types": "./dist/pieces.d.ts",
       "default": "./dist/pieces.js"
     },
+    "./brand": {
+      "types": "./dist/brand/index.d.ts",
+      "default": "./dist/brand/index.js"
+    },
+    "./backgrounds": {
+      "types": "./dist/backgrounds/index.d.ts",
+      "default": "./dist/backgrounds/index.js"
+    },
     "./*": {
       "types": "./dist/components/*/index.d.ts",
       "default": "./dist/components/*/index.js"
@@ -31,7 +39,8 @@
     "mask": "node ../ui/scripts/mask.mjs",
     "test": "node --test \"test/*.test.mjs\"",
     "prepack": "npm run build",
-    "bake": "node scripts/bake.mjs"
+    "bake": "node scripts/bake.mjs",
+    "shots": "node scripts/shots.mjs"
   },
   "peerDependencies": {
     "react": ">=18.3",
