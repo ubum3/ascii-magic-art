@@ -30,7 +30,7 @@ export const MARK_SQUARE = 1280.67 / 1111 / 0.76;
 /** The seconds one form, hold and dissolve takes. */
 export const CYCLE = 14;
 /** Where in the cycle time 0 falls: already formed, so the first frame shows the mark. */
-export const START = 5.5;
+export const START = 6.8;
 
 export interface ConstellationFrame {
   /** Centre and size (screen units per mark height) of this cycle's mark. */
@@ -61,8 +61,10 @@ export function slots(aspect: number): { centers: [number, number][]; size: numb
     return { centers: [[aspect * 0.5, 0.85], [aspect * 0.5, 0.15]], size };
   }
   const x = Math.min(0.2 * aspect, 0.42);
+  // Squarer boxes push the figure further up and down, past the card.
+  const dy = 0.2 + 0.08 * Math.max(0, Math.min(1, (1.6 - aspect) / 0.6));
   return {
-    centers: [[x, 0.7], [aspect - x, 0.3], [aspect - x, 0.7], [x, 0.3]],
+    centers: [[x, 0.5 + dy], [aspect - x, 0.5 - dy], [aspect - x, 0.5 + dy], [x, 0.5 - dy]],
     size: Math.min(0.4, 0.15 * aspect + 0.12),
   };
 }

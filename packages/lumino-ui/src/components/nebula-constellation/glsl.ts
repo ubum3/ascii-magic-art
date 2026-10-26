@@ -73,6 +73,8 @@ void main() {
     col += palette(0.2) * exp(-max(d, 0.0) / (S * 0.04)) * 0.12 * uFill * (1.0 - inside);
   }
 
+  // Only pixels near the constellation pay for the lines and stars (scattered stars stay within ~2.3 sizes).
+  if (length(p - uMarkAt.xy) < uMarkAt.z * 2.8) {
   // The lines: a thin hot core in a soft glow, warm at the top of the mark and cool at its base.
   for (int i = 0; i < LINES; i++) {
     if (uLineAlpha[i] <= 0.0) continue;
@@ -92,6 +94,8 @@ void main() {
     float spikes = exp(-abs(v.x) / px * 1.2) * exp(-abs(v.y) / px * 0.08) + exp(-abs(v.y) / px * 1.2) * exp(-abs(v.x) / px * 0.08);
     float tw2 = 0.8 + 0.2 * sin(uTime * 3.0 + float(i) * 1.7);
     col += (vec3(1.0, 0.95, 0.92) * exp(-r * r * 0.18) * 1.4 + mix(palette(0.08), palette(0.9), float(i % 3) * 0.4) * (exp(-r * 0.22) * 0.35 + spikes * 0.22)) * s.z * tw2;
+  }
+
   }
 
   // Keep the middle calm for content.
