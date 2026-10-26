@@ -49,7 +49,7 @@ fs.mkdirSync(out, { recursive: true });
 function shoot(id, [w, h], name) {
   const profile = fs.mkdtempSync(path.join(os.tmpdir(), "lumino-shots-"));
   const file = path.join(out, `${id}-${name}${card ? "-card" : ""}.png`);
-  const page = `${url}/lumino-bg/${id}${card ? "?card=1" : ""}`;
+  const page = `${url}/lumino-bg/${id}?shot=1${card ? "&card=1" : ""}`;
   return new Promise((resolve) => {
     const p = spawn(chrome, [
       "--headless=new", "--no-sandbox", "--hide-scrollbars", "--mute-audio", `--user-data-dir=${profile}`,
