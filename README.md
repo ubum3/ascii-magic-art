@@ -73,6 +73,8 @@ The element plays only while it is on screen, and holds a still frame for visito
 
 See [packages/react/README.md](packages/react/README.md), and `examples/next-demo` for a working app.
 
+[packages/ui](packages/ui/README.md) (`ascii`) holds fun, drop-in components built on it, such as `<LuminoDonut>` and the `<LuminoSpace>` background.
+
 ## Terminal UIs: ratatui and Bubble Tea
 
 Every piece also plays in terminal apps, as a full-screen background or as an intro with a title card that fades in and out. Each package also lets you write your own pieces in that language.

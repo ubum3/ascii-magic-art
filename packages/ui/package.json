@@ -1,0 +1,50 @@
+{
+  "name": "ascii",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Fun, ready-made React and Next.js components built on ascii-magic-art: drop-in animated pieces like LuminoDonut, the Lumino brandmark as a glassy spinning solid.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./pieces": {
+      "types": "./dist/pieces.d.ts",
+      "default": "./dist/pieces.js"
+    },
+    "./*": {
+      "types": "./dist/components/*/index.d.ts",
+      "default": "./dist/components/*/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json -w",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "mask": "node scripts/mask.mjs",
+    "test": "node --test \"test/*.test.mjs\"",
+    "prepack": "npm run build"
+  },
+  "peerDependencies": {
+    "react": ">=18.3",
+    "react-dom": ">=18.3"
+  },
+  "dependencies": {
+    "ascii-magic-art-react": "0.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "sharp": "^0.35.5",
+    "typescript": "^7.0.2"
+  }
+}
