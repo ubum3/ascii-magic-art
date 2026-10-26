@@ -17,7 +17,7 @@ export function chromeMarkPlace(aspect: number): ChromeMarkPlace {
     return { x: aspect - size * 0.44, y: size * 0.42, size };
   }
   const size = Math.max(0.36, aspect);
-  return { x: aspect * 0.5, y: size * 0.36, size };
+  return { x: aspect * 0.5, y: size * 0.3, size };
 }
 
 /** The sign-in card's half size in shader units (box height 1), for a box `cssWidth` x `cssHeight`: about 400 x 460 px, never wider than the box. */

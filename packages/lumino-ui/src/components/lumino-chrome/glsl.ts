@@ -69,9 +69,9 @@ vec3 env(vec3 r, vec2 p) {
   float tilt = smoothstep(0.02, 0.4, length(r.xy));
   float strip = sin(uv.y * 6.0 + uv.x * 2.2 + t * 0.35);
   float strip2 = sin(uv.x * 4.4 - uv.y * 1.6 - t * 0.25);
-  float k = (smoothstep(0.62, 0.8, strip) * 1.6 + smoothstep(0.82, 0.94, strip2) * 1.2 + pow(0.5 + 0.5 * strip, 3.0) * 0.2) * tilt;
+  float k = (smoothstep(0.62, 0.8, strip) * 1.25 + smoothstep(0.82, 0.94, strip2) * 1.2 + pow(0.5 + 0.5 * strip, 3.0) * 0.2) * tilt;
   float hot = smoothstep(0.965, 0.995, strip) * tilt;
-  vec3 tint = palette(fract(0.04 + uv.x * 0.12 + uv.y * 0.22));
+  vec3 tint = palette(fract(0.02 + uv.x * 0.22 + uv.y * 0.3 + p.x * 0.12));
   return palette(fract(0.55 + p.y * 0.1 - p.x * 0.05)) * 0.05 + tint * k + vec3(1.0, 0.94, 0.9) * hot * 1.2;
 }
 
