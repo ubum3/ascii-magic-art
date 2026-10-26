@@ -16,6 +16,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <Link href="/custom">Custom pieces</Link>
           <Link href="/lumino">Lumino</Link>
           <Link href="/space">Space</Link>
+          <Link href="/orbit">Orbit</Link>
           <Link href="/extras">Extras</Link>
           <Link href="/nope">404</Link>
         </nav>

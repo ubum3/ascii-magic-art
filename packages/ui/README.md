@@ -8,6 +8,7 @@ Fun, ready-made React and Next.js components built on [`ascii-magic-art-react`](
 |---|---|
 | `<LuminoDonut>` | The Lumino brandmark as a glassy solid, tumbling like [donut.c](https://www.a1k0n.net/2011/07/20/donut-math.html), with rainbow edges. 80 x 40 cells, loops every 5.7 s. |
 | `<LuminoSpace>` | A background: deep space with a nebula, twinkling dust, and Lumino brandmarks for stars that drift by in parallax, spin and flare, plus a shooting brandmark every 20 s. Fills its container behind your content. 160 x 56 cells, loops every 120 s. |
+| `<EdgeOrbit>` | A background: the night Earth from low orbit, city lights below and Cloudflare-orange requests arcing city to city, drawn as a halftone, with a white Lumino brandmark tilted in the top-right sky, twinkling like a star. Ported from ascii.rest's "edge orbit" (by bas3line, MIT). Fills its container. 200 x 100 square cells, loops every 24 min. Square cells are never prerendered, so it shows its `bg` until the browser draws the first frame. |
 
 ## Use
 
@@ -29,7 +30,7 @@ import { LuminoSpace } from "ascii";
 
 Each component also has its own entry, `ascii/<name>`, e.g. `import { LuminoDonut } from "ascii/lumino-donut"`.
 
-`LuminoDonut` takes all of `AsciiPlayer`'s props: `size`, `speed`, `paused`, `still`, `bg`, `look`, `chars`, `mono`, `maxFps`, `label` and the rest. `LuminoSpace` takes all of `AsciiHero`'s: `fit` (`cover` by default), `dim`, `opacity`, `bg` (`#05060f` by default), `speed`, `look`, `children` and the rest. It is decoration, hidden from screen readers, unless you give it a `label`. Playback pauses off screen, and visitors who prefer reduced motion get a still frame.
+`LuminoDonut` takes all of `AsciiPlayer`'s props: `size`, `speed`, `paused`, `still`, `bg`, `look`, `chars`, `mono`, `maxFps`, `label` and the rest. `LuminoSpace` and `EdgeOrbit` take all of `AsciiHero`'s: `fit` (`cover` by default), `dim`, `opacity`, `bg` (`#05060f` and `#04060c` by default), `speed`, `look`, `children` and the rest. It is decoration, hidden from screen readers, unless you give it a `label`. Playback pauses off screen, and visitors who prefer reduced motion get a still frame.
 
 `examples/next-demo` shows them at `/lumino` and `/space`.
 

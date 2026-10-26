@@ -7,7 +7,8 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { createElement as h } from "react";
 import { renderToString } from "react-dom/server";
-import { LuminoDonut, luminoDonut, LUMINO_DONUT_PERIOD, LuminoSpace, luminoSpace, LUMINO_SPACE_PERIOD } from "../dist/index.js";
+import { LuminoDonut, luminoDonut, LUMINO_DONUT_PERIOD, LuminoSpace, luminoSpace, LUMINO_SPACE_PERIOD, EdgeOrbit, edgeOrbit, EDGE_ORBIT_PERIOD } from "../dist/index.js";
+import * as orbit from "ascii/edge-orbit";
 import * as deep from "ascii/lumino-donut";
 import * as pieces from "ascii/pieces";
 import * as space from "ascii/lumino-space";
@@ -53,7 +54,7 @@ test("LuminoDonut puts its first frame in the server HTML", () => {
 });
 
 test('the component files start with "use client"', () => {
-  for (const f of ["lumino-donut/LuminoDonut.js", "lumino-space/LuminoSpace.js"]) {
+  for (const f of ["lumino-donut/LuminoDonut.js", "lumino-space/LuminoSpace.js", "edge-orbit/EdgeOrbit.js"]) {
     const src = fs.readFileSync(new URL(`../dist/components/${f}`, import.meta.url), "utf8");
     assert.match(src, /^"use client";/, f);
   }
@@ -108,4 +109,48 @@ test("LuminoSpace fills its container behind its children, first frame on the se
   assert.match(html, /<h1>Hello<\/h1>/);
   assert.match(html, /background:#05060f/);
   assert.match(html, /<pre[^>]*>[\s\S]*[#$@*!][\s\S]*<\/pre>/);
+});
+
+test("edge-orbit draws full square-cell frames with the brand's orange, pure in t", () => {
+  const { cols, rows, cell } = edgeOrbit.meta, a = edgeOrbit.default(), b = edgeOrbit.default();
+  assert.equal(cell, "square");
+  const f = a(30);
+  assert.equal(cells(f).length, rows);
+  assert.ok(cells(f).every((r) => [...r].length === cols));
+  assert.ok(/[·•●]/.test(f.text), "halftone dots are drawn");
+  assert.equal(edgeOrbit.meta.palette.h, "#f38020"); // key h is index 17, the requests' orange
+  a(500);
+  assert.deepEqual(a(30), b(30));
+  assert.equal(orbit.EdgeOrbit, EdgeOrbit);
+  assert.equal(pieces.edgeOrbit, edgeOrbit);
+});
+
+test("edge-orbit loops: the frame at one period is the first frame", () => {
+  const draw = edgeOrbit.default();
+  for (const t of [0, 13.7]) {
+    const x = draw(t).text, y = draw(t + EDGE_ORBIT_PERIOD).text;
+    const diff = [...x].filter((c, i) => c !== y[i]).length;
+    assert.ok(diff <= 8, `t=${t}: ${diff} cells differ`);
+  }
+});
+
+test("edge-orbit is cheap enough for a background", () => {
+  const draw = edgeOrbit.default(), t0 = performance.now();
+  for (let i = 0; i < 60; i++) draw(i / 15);
+  const ms = (performance.now() - t0) / 60;
+  assert.ok(ms < 12, `${ms.toFixed(2)} ms a frame`);
+});
+
+test("EdgeOrbit fills its container behind its children (square cells: no server frame)", () => {
+  const html = renderToString(h(EdgeOrbit, { style: { height: "100vh" } }, h("h1", null, "Hello")));
+  assert.match(html, /<h1>Hello<\/h1>/);
+  assert.match(html, /background:#04060c/);
+});
+
+test("edge-orbit has a white brandmark star in the top right", () => {
+  const { cols, palette } = edgeOrbit.meta, f = edgeOrbit.default()(5);
+  const T = f.text.split("\n"), C = f.color.split("\n");
+  let white = 0;
+  for (let r = 0; r < 35; r++) for (let x = Math.floor(cols * 0.6); x < cols; x++) if (T[r][x] === "●" && /^#(ffffff|d6d6de)$/.test(palette[C[r][x]])) white++;
+  assert.ok(white > 40, `${white} big white dots`);
 });
