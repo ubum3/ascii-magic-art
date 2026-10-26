@@ -62,11 +62,45 @@ export interface SparklineSpec extends Common, Partial<SparklineState> { kind: "
 export interface TickerItem { label: string; value?: number | string; delta?: number }
 export interface TickerState { items: (TickerItem | string)[] }
 export interface TickerSpec extends Common, Partial<TickerState> { kind: "ticker"; cols?: number; rows?: number; speed?: number; accent?: string }
-export interface CelebrateState { message?: string; style?: "check" | "confetti" | "fireworks" }
-export interface CelebrateSpec extends Common, CelebrateState { kind: "celebrate"; cols?: number; rows?: number; color?: string; accent?: string }
+export interface CelebrateState { message?: string; style?: "check" | "confetti" | "fireworks" | "coins" }
+export interface CelebrateSpec extends Common, CelebrateState {
+  kind: "celebrate"; cols?: number; rows?: number; color?: string; accent?: string;
+  /** Colours for the confetti, fireworks and coins (repeated to 8). Coins default to golds. */
+  hues?: string[];
+  /** Other positions for the sparks and coins, so two celebrations side by side differ. Default 0. */
+  seed?: number;
+}
 
-export type Spec = ImageSpec | BrandSpec | TextSpec | ProgressSpec | SparklineSpec | TickerSpec | CelebrateSpec;
-export type State = ProgressState | SparklineState | TickerState | CelebrateState | Record<string, unknown>;
+/** One spec placed on a layout. */
+export interface LayoutRegion {
+  /** The key for this region's state (and play counter). Default its index. */
+  id?: string;
+  x?: number; y?: number;
+  /** Size in cells; also the spec's default cols and rows. Default: to the layout's edge. */
+  w?: number; h?: number;
+  spec: Spec;
+  /** Seconds it plays each time play[id] changes; hidden otherwise. 0 (default) is always on. */
+  play?: number;
+  /** Clear the region before drawing, instead of letting spaces show what is under it. */
+  opaque?: boolean;
+}
+/** Specs on one screen, later regions on top. */
+export interface LayoutSpec extends Common {
+  kind: "layout";
+  cols: number; rows: number;
+  regions: LayoutRegion[];
+  /** Move everything by up to this many cells, slowly, against burn-in. */
+  drift?: number | { cells: number; period?: number };
+  square?: boolean;
+}
+export interface LayoutState {
+  regions?: Record<string, State>;
+  /** Bump a region's number to (re)start a region with `play`. */
+  play?: Record<string, number | string>;
+}
+
+export type Spec = ImageSpec | BrandSpec | TextSpec | ProgressSpec | SparklineSpec | TickerSpec | CelebrateSpec | LayoutSpec;
+export type State = ProgressState | SparklineState | TickerState | CelebrateState | LayoutState | Record<string, unknown>;
 
 export type StateDrawFn = (t: number, state?: State) => Frame;
 export interface SpecPiece { meta: PieceMeta; default: () => StateDrawFn }
@@ -105,6 +139,7 @@ export declare function progress(spec: ProgressSpec): { meta: PieceMeta; create:
 export declare function sparkline(spec: SparklineSpec): { meta: PieceMeta; create: () => StateDrawFn };
 export declare function ticker(spec: TickerSpec): { meta: PieceMeta; create: () => StateDrawFn };
 export declare function celebrate(spec: CelebrateSpec): { meta: PieceMeta; create: () => StateDrawFn };
+export declare function layoutKind(spec: LayoutSpec): { meta: PieceMeta; create: () => StateDrawFn };
 
 export type TransitionKind = "dissolve" | "wipe-right" | "wipe-left" | "wipe-down" | "wipe-up" | "melt" | "scramble" | "iris";
 export declare const TRANSITIONS: TransitionKind[];

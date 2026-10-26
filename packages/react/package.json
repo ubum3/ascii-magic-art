@@ -26,6 +26,10 @@
       "types": "./dist/extras.d.ts",
       "default": "./dist/extras.js"
     },
+    "./lens": {
+      "types": "./dist/lens.d.ts",
+      "default": "./dist/lens.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [

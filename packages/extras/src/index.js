@@ -15,8 +15,10 @@ import { image } from "./image.js";
 import { brand } from "./brand.js";
 import { text } from "./text.js";
 import { progress, sparkline, ticker, celebrate } from "./data.js";
+import { layoutKind } from "./layout.js";
 
 export const KINDS = { image, brand, text, progress, sparkline, ticker, celebrate };
+KINDS.layout = layoutKind;
 
 /** A spec to { meta, create } where create() returns draw(t, state?). Throws on an unknown kind. */
 export function make(spec) {
@@ -40,7 +42,7 @@ export function fromSpec(spec, look) {
   });
 }
 
-export { image, brand, text, progress, sparkline, ticker, celebrate };
+export { image, brand, text, progress, sparkline, ticker, celebrate, layoutKind };
 export { BRAND_EFFECTS, BRAND_IDLES } from "./brand.js";
 export { TEXT_EFFECTS, layout } from "./text.js";
 export { cellsFromPixels, buildPalette, cellsFrame, gridSize } from "./media.js";
