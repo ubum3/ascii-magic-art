@@ -8,6 +8,7 @@ import { fileURLToPath } from "url";
 import sharp from "sharp";
 import { imageSpec, brandSpec } from "../src/raster.js";
 import { videoClip, hasFfmpeg } from "../src/video.js";
+import { bakeClip, findChromium } from "../src/bake.js";
 import { toCast, exportTo } from "../src/export.js";
 import { load } from "../src/load.js";
 import { pieceModule } from "../src/piecejs.js";
@@ -180,4 +181,18 @@ test("brand --style glyphs: characters shaped like the logo's edges, that every 
   const f = p.create()(8);
   assert.equal(f.text.split("\n").length, spec.rows);
   await assert.rejects(brandSpec(MARK, { style: "nope" }), /no style "nope"/);
+});
+
+test("bake: a WebGPU shader becomes a clip, on its own clock", { skip: !findChromium() && "no Chromium" }, async () => {
+  const clip = await bakeClip({ names: ["Aurora", "FilmGrain"] }, { cols: 32, fps: 6, seconds: 1, colors: 16, name: "aurora" });
+  assert.equal(clip.header.cols, 32);
+  assert.equal(clip.header.rows, 18, "16:9 in square cells");
+  assert.equal(clip.frames.length, 6);
+  assert.ok(Object.keys(clip.header.palette).length > 4, "the shader drew colour, not one flat frame");
+  assert.ok(new Set(clip.frames.map((f) => JSON.stringify(f))).size > 3, "the frames move");
+  const file = path.join(tmp, "aurora.amc");
+  fs.writeFileSync(file, clip.bytes);
+  const src = await load(file);
+  assert.equal(src.kind, "clip");
+  await assert.rejects(bakeClip({ names: ["NoSuchShader"] }, { cols: 8, seconds: 0.2 }), /could not bundle the scene/);
 });

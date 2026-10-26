@@ -40,6 +40,11 @@ export function videoClip(file, { colors = 48, gamma = 1, look, name, fps = 12, 
   // A look redraws the blocks as text, so the grid is in text cells, not square pixels.
   if (look) opts.square = false;
   const v = decodeVideo(file, { fps, ...opts });
+  return framesClip(v, { colors, gamma, look, name, fps, loop, square: opts.square });
+}
+
+/** RGBA frames ({ cols, rows, frames }) to clip bytes, plus what went into it. Shared by video and bake. */
+export function framesClip(v, { colors = 48, gamma = 1, look, name, fps = 12, loop = true, square: sq } = {}) {
   const step = Math.max(1, Math.floor(v.frames.length / 24));
   const palette = buildPalette(v.frames.filter((_, i) => i % step === 0), colors);
   let pal = null;
@@ -53,7 +58,7 @@ export function videoClip(file, { colors = 48, gamma = 1, look, name, fps = 12, 
     pal = r.palette || pal;
     return { text: r.text, color: r.color };
   });
-  const square = opts.square !== false && !look;
+  const square = sq !== false && !look;
   const header = { cols: v.cols, rows: v.rows, fps, palette: pal, square, loop, name };
   return { bytes: encodeClip(header, frames, (u) => zlib.deflateRawSync(u, { level: 9 })), header, frames };
 }

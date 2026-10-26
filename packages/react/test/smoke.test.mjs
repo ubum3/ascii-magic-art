@@ -119,7 +119,7 @@ test('"use client" only where it belongs', () => {
   assert.equal(first("rest.js"), '"use client";', "rest.js");
   for (const f of ["index.js", "server.js", "rest-server.js", "kit.js", "catalog.js", "core/look.js", "core/prerender.js", "core/resolve.js", "core/styles.js", "core/variants.js"])
     assert.notEqual(first(f), '"use client";', f);
-  for (const f of ["extras.js", "lens.js"]) assert.equal(first(f), '"use client";', f);
+  for (const f of ["extras.js", "lens.js", "shader.js"]) assert.equal(first(f), '"use client";', f);
 });
 
 test("server AsciiArt takes a library module by name, and refuses a custom one clearly", async () => {
@@ -160,4 +160,15 @@ test("rest: ascii.rest pieces render their first frame on the server, and hold t
   const box = renderToString(h(AsciiRest, { piece: "night-coast" }));
   assert.doesNotMatch(box, /<pre[^>]*>[^<]+</, "no frame without the server");
   assert.throws(() => renderToString(h(AsciiRest, { piece: "nope" })), /no ascii.rest piece/);
+});
+
+test("shader: the server renders the fallback and never the shader, nor touches navigator", async () => {
+  const { AsciiShader } = await import("../dist/shader.js");
+  const Boom = () => { throw new Error("the shader rendered on the server"); };
+  const html = renderToString(h(AsciiShader, { cols: 40, fallback: h(AsciiPlayer, { piece: torus }) }, h(Boom)));
+  assert.match(html, /data-ama-shader=""/);
+  assert.equal(lines(preText(html)), torus.meta.rows, "the fallback's first frame is in the HTML");
+  const bare = renderToString(h(AsciiShader, { cols: 32 }, h(Boom)));
+  assert.match(bare, /aria-busy="true"/);
+  assert.match(bare, /aspect-ratio:32 \/ 18/);
 });

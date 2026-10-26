@@ -12,12 +12,13 @@
  * the same as for library pieces.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { Frame, PieceModule } from "ascii-magic-art/lib/types.js";
+import type { PieceModule } from "ascii-magic-art/lib/types.js";
 import {
-  fromSpec, readClipHeader, splitFrames, clipPiece, sequence, cellsFromPixels, buildPalette, cellsFrame, gridSize,
+  fromSpec, readClipHeader, splitFrames, clipPiece, sequence, gridSize,
   type Spec, type State, type SequenceOptions, type TransitionKind,
 } from "ascii-magic-art-extras";
 import { AsciiPlayer, type AsciiPlayerProps } from "./client/AsciiPlayer.js";
+import { usePixelsPiece, type PixelSource } from "./hooks/usePixelsPiece.js";
 
 export type {
   Spec, State, SequenceOptions, TransitionKind, BrandSpec, TextSpec, ImageSpec, ProgressSpec, SparklineSpec, TickerSpec, CelebrateSpec,
@@ -26,6 +27,7 @@ export type {
 export {
   fromSpec, sequence, mixFrames, TRANSITIONS, cellsFromPixels, buildPalette, BRAND_EFFECTS, BRAND_IDLES, TEXT_EFFECTS,
 } from "ascii-magic-art-extras";
+export { usePixelsPiece, type PixelSource, type PixelsOptions } from "./hooks/usePixelsPiece.js";
 
 type PlayerProps = Omit<AsciiPlayerProps, "piece">;
 
@@ -143,50 +145,36 @@ export interface AsciiWebcamProps extends PlayerProps {
  * stops the camera when it unmounts. Nothing leaves the page.
  */
 export function AsciiWebcam({ cols = 80, square = true, colors = 32, mirror = true, constraints, ...rest }: AsciiWebcamProps) {
-  const [piece, setPiece] = useState<PieceModule>();
+  const [source, setSource] = useState<PixelSource>();
   useEffect(() => {
-    let cancelled = false, stream: MediaStream | undefined, raf = 0;
+    let cancelled = false, stream: MediaStream | undefined;
     const video = document.createElement("video");
     video.muted = true;
     video.playsInline = true;
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d", { willReadFrequently: true });
-    let latest: Frame = "";
-    let palette: string[] | undefined, keyed: Record<string, string> = {}, n = 0;
     navigator.mediaDevices.getUserMedia({ video: constraints ?? true }).then(async (s) => {
       stream = s;
       if (cancelled) { s.getTracks().forEach((t) => t.stop()); return; }
       video.srcObject = s;
       await video.play();
       const [w, h] = gridSize(video.videoWidth || 640, video.videoHeight || 480, cols, square);
-      canvas.width = w; canvas.height = h;
-      const grab = () => {
-        if (!ctx) return;
-        ctx.save();
-        if (mirror) { ctx.translate(w, 0); ctx.scale(-1, 1); }
-        ctx.drawImage(video, 0, 0, w, h);
-        ctx.restore();
-        const px = ctx.getImageData(0, 0, w, h).data;
-        if (!palette || n++ % 45 === 0) palette = buildPalette([px], colors); // follow the light, now and then
-        const cells = cellsFromPixels(px, w, h, { palette });
-        keyed = cells.palette;
-        latest = { ...cellsFrame(cells), palette: cells.palette } as Frame;
-        raf = requestAnimationFrame(grab);
-      };
-      grab();
-      const meta = {
-        slug: `webcam-${w}x${h}`, name: "Webcam", category: "extras", note: "", tags: ["extras", "webcam"],
-        cols: w, rows: h, fps: 30, palette: keyed,
-        ...(square ? { cell: "square" as const } : {}),
-      };
-      setPiece(Object.freeze({ meta, default: () => () => latest }));
+      if (cancelled) return;
+      setSource({
+        cols: w, rows: h,
+        draw(ctx) {
+          ctx.save();
+          if (mirror) { ctx.translate(w, 0); ctx.scale(-1, 1); }
+          ctx.drawImage(video, 0, 0, w, h);
+          ctx.restore();
+        },
+      });
     }, (e: unknown) => { if (!cancelled) rest.onError?.(e); });
     return () => {
       cancelled = true;
-      cancelAnimationFrame(raf);
+      setSource(undefined);
       stream?.getTracks().forEach((t) => t.stop());
     };
-  }, [cols, square, colors, mirror, JSON.stringify(constraints)]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [cols, square, mirror, JSON.stringify(constraints)]); // eslint-disable-line react-hooks/exhaustive-deps
+  const piece = usePixelsPiece(source, { square, colors, slug: "webcam", name: "Webcam" });
   if (!piece) return <span data-ama="" role="img" aria-label={rest.label ?? "Camera as ASCII art, starting"} aria-busy="true" />;
   return <AsciiPlayer piece={piece} ssr={false} {...rest} />;
 }

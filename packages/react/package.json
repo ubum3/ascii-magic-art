@@ -38,6 +38,10 @@
       "types": "./dist/lens.d.ts",
       "default": "./dist/lens.js"
     },
+    "./shader": {
+      "types": "./dist/shader.d.ts",
+      "default": "./dist/shader.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
