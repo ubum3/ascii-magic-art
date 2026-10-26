@@ -19,6 +19,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <Link href="/orbit">Orbit</Link>
           <Link href="/shaders">Shaders</Link>
           <Link href="/gradients">Gradients</Link>
+          <Link href="/reactbits">React Bits</Link>
           <Link href="/extras">Extras</Link>
           <Link href="/nope">404</Link>
         </nav>

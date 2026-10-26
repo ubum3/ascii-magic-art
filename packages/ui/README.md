@@ -93,6 +93,27 @@ ASCII options: `characters` (brightest first, default `@%#*+=-:.`), `cellSize` (
 
 Unlike the shader components above, these draw glyphs on the GPU in a real font, with no readback. Without WebGPU the canvas stays transparent and a CSS gradient built from the component's colours shows instead, which is also what the server HTML has. A baked clip wouldn't follow custom colours, so there isn't one. `examples/next-demo` shows them at `/gradients`.
 
+## React Bits
+
+Components from [React Bits](https://reactbits.dev) (MIT + Commons Clause), ported to TypeScript with their CSS inlined as styles, so there's no stylesheet to import. Each one has its own entry and is never on the root `ascii` entry. They fill their container, so give it a size.
+
+| Component | What it is |
+|---|---|
+| `<DarkVeil>` (`ascii/dark-veil`) | A soft glowing veil drawn with WebGL2 that swirls and lights up around the cursor (`color`, `speed`, `sheen`, `glow`, `fade`, `lightMode`, ...). |
+| `<GhostFibers>` (`ascii/ghost-fibers`) | Twisting ribbons of glowing fibers with depth of field, bloom and dust, drawn with WebGL2. The cursor pulls the focus (`hoverEffect="focus"`) or parts the fibers (`"part"`), and a click sends a pulse along a ribbon (`glowColor`, `layers`, `twist`, `threads`, `fiberStyle`, `tips`, ...). |
+| `<Threads>` (`ascii/threads`) | A bundle of fine threads drawn with WebGL2 that peel apart into waves. `enableMouseInteraction` lets the cursor steer the waves and `parting` moves the threads aside around it (`color`, `accentColor`, `lineCount`, `amplitude`, `angle`, ...). Colours can be CSS or `[r, g, b]` from 0 to 1. |
+| `<PixelSnow>` (`ascii/pixel-snow`) | Pixel-art snow drawn with WebGL2, with depth, glow and twinkle. The cursor brushes the flakes aside, and `accumulate` piles them into drifts along the bottom (`variant="snowflake" \| "square" \| "round"`, `density`, `wind`, `pixelSize`, ...). |
+
+```tsx
+import { DarkVeil } from "ascii/dark-veil";
+
+<div style={{ width: "100%", height: 600, position: "relative" }}>
+  <DarkVeil color="#38bdf8" sheen={1} />
+</div>
+```
+
+`examples/next-demo` shows them at `/reactbits`.
+
 ## Without React
 
 `ascii/pieces` has the pieces on their own, as `{ meta, default }` modules: `luminoDonut`, `luminoSpace`, and their `LUMINO_DONUT_PERIOD` and `LUMINO_SPACE_PERIOD` (one loop, in seconds).
@@ -120,6 +141,7 @@ src/
     lumino-space/          the background (it borrows lumino-donut's mask)
     nebula-sky/            a shader component: NebulaSky.tsx, scene.tsx (the <Shader> tree), clip.ts (baked)
     ascii-overlay/         AsciiOverlay: shaders layers plus GPU ASCII, used by the *-background folders
+    dark-veil/             a React Bits component: DarkVeil.tsx, glsl.ts (its shaders); ghost-fibers/, threads/ and pixel-snow/ (plus sprites.ts) likewise
   shader/ShaderStage.tsx   what the readback shader components share
 ```
 

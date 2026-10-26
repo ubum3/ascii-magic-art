@@ -23,6 +23,10 @@ import { PlasmaBackground } from "ascii/plasma-background";
 import { SilkBackground } from "ascii/silk-background";
 import { MeshBackground } from "ascii/mesh-background";
 import { ChromaBackground } from "ascii/chroma-background";
+import { DarkVeil } from "ascii/dark-veil";
+import { GhostFibers } from "ascii/ghost-fibers";
+import { Threads } from "ascii/threads";
+import { PixelSnow } from "ascii/pixel-snow";
 
 const cells = (f) => f.text.split("\n");
 
@@ -230,4 +234,41 @@ test("splitStage sends stage props to the stage and the rest to the layer", () =
   const [stage, layer] = splitStage({ ascii: "full", cellSize: 20, dim: 0.2, children: "x", colorA: "#fff", speed: 2 });
   assert.deepEqual(stage, { ascii: "full", cellSize: 20, dim: 0.2, children: "x" });
   assert.deepEqual(layer, { colorA: "#fff", speed: 2 });
+});
+
+// React Bits components: ported as they are, on their own entries.
+
+test("DarkVeil renders an empty, sized box on the server and stays off the root entry", async () => {
+  const html = renderToString(h(DarkVeil, { className: "hero", style: { height: 600 }, "data-x": "1" }));
+  assert.match(html, /class="dark-veil-container hero"/);
+  assert.match(html, /position:relative;width:100%;height:600px;overflow:hidden/);
+  assert.match(html, /data-x="1"/);
+  assert.match(html, /<canvas class="dark-veil-canvas"[^>]*aria-hidden="true"/);
+  assert.equal("DarkVeil" in await import("../dist/index.js"), false);
+});
+
+test("GhostFibers renders an empty, sized box on the server and stays off the root entry", async () => {
+  const html = renderToString(h(GhostFibers, { className: "hero", style: { height: 600 }, fiberStyle: "lines" }));
+  assert.match(html, /class="ghost-fibers-container hero"/);
+  assert.match(html, /position:relative;width:100%;height:600px;overflow:hidden/);
+  assert.match(html, /<canvas class="ghost-fibers-canvas"[^>]*aria-hidden="true"/);
+  assert.equal("GhostFibers" in await import("../dist/index.js"), false);
+});
+
+test("Threads renders an empty, sized box on the server and stays off the root entry", async () => {
+  const html = renderToString(h(Threads, { className: "hero", style: { height: 600 }, color: "#38bdf8" }));
+  assert.match(html, /class="threads-container hero"/);
+  assert.match(html, /position:relative;width:100%;height:600px/);
+  assert.doesNotMatch(html, /color:/);
+  assert.match(html, /<canvas class="threads-canvas"[^>]*aria-hidden="true"/);
+  assert.equal("Threads" in await import("../dist/index.js"), false);
+});
+
+test("PixelSnow renders an empty, sized box on the server and stays off the root entry", async () => {
+  const html = renderToString(h(PixelSnow, { className: "hero", style: { height: 600 }, color: "#bae6fd", variant: "round" }));
+  assert.match(html, /class="pixel-snow-container hero"/);
+  assert.match(html, /position:relative;width:100%;height:600px;overflow:hidden/);
+  assert.doesNotMatch(html, /color:|variant=/);
+  assert.match(html, /<canvas class="pixel-snow-canvas"[^>]*aria-hidden="true"/);
+  assert.equal("PixelSnow" in await import("../dist/index.js"), false);
 });
