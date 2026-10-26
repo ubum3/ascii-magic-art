@@ -104,6 +104,38 @@ export const LUMINO_BACKGROUNDS: readonly BackgroundEntry[] = [
     tags: ["webgl", "pillars", "light"],
     load: () => import("../components/pillar-stage/index.js").then((m) => m.PillarStage),
   },
+  {
+    id: "globe-dawn",
+    name: "Globe Dawn",
+    description: "The lumino.io dotted globe low on the screen, with the brandmark rising behind its limb like a sun.",
+    author: "97",
+    tags: ["webgl", "globe", "dots", "cosmic"],
+    load: () => import("../components/globe-dawn/index.js").then((m) => m.GlobeDawn),
+  },
+  {
+    id: "accretion-lens",
+    name: "Accretion Lens",
+    description: "The brandmark as a black hole: a photon ring on its outline, an accretion disk, and space lensed to its shape.",
+    author: "97",
+    tags: ["webgl", "black-hole", "lensing", "cosmic"],
+    load: () => import("../components/accretion-lens/index.js").then((m) => m.AccretionLens),
+  },
+  {
+    id: "brandmark-galaxy",
+    name: "Brandmark Galaxy",
+    description: "A tilted spiral galaxy whose nucleus is the brandmark in stars, its arms unwinding from it.",
+    author: "97",
+    tags: ["webgl", "particles", "galaxy", "cosmic"],
+    load: () => import("../components/brandmark-galaxy/index.js").then((m) => m.BrandmarkGalaxy),
+  },
+  {
+    id: "nebula-constellation",
+    name: "Nebula Constellation",
+    description: "Warm nebula clouds where stars drift together and draw the brandmark in glowing glass lines, then dissolve and re-form.",
+    author: "97",
+    tags: ["webgl", "nebula", "constellation", "cosmic"],
+    load: () => import("../components/nebula-constellation/index.js").then((m) => m.NebulaConstellation),
+  },
 ];
 
 /** The entry with this id, if there is one. */
