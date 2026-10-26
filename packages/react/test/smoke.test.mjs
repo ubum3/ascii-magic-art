@@ -119,6 +119,7 @@ test('"use client" only where it belongs', () => {
   assert.equal(first("rest.js"), '"use client";', "rest.js");
   for (const f of ["index.js", "server.js", "rest-server.js", "kit.js", "catalog.js", "core/look.js", "core/prerender.js", "core/resolve.js", "core/styles.js", "core/variants.js"])
     assert.notEqual(first(f), '"use client";', f);
+  for (const f of ["extras.js", "lens.js"]) assert.equal(first(f), '"use client";', f);
 });
 
 test("server AsciiArt takes a library module by name, and refuses a custom one clearly", async () => {

@@ -119,3 +119,64 @@ test("brand: chars replace the shading a cell settles on, and only that", () => 
   assert.doesNotMatch(a.text, /q/);
 });
 
+test("layout: regions in order, spaces show through, palettes merge", () => {
+  const spec = {
+    kind: "layout", cols: 6, rows: 3,
+    regions: [
+      { id: "a", x: 0, y: 0, w: 6, h: 3, spec: { kind: "progress", cols: 6, rows: 2, colors: ["#ff0000", "#00ff00", "#0000ff"] } },
+      { id: "b", x: 1, y: 1, w: 3, h: 1, spec: { kind: "ticker", cols: 3, rows: 1, speed: 0 } },
+    ],
+  };
+  const p = fromSpec(spec);
+  assert.equal(p.meta.cols, 6);
+  assert.equal(p.meta.rows, 3);
+  const d = p.default();
+  const f = d(5, { regions: { a: { value: 1, label: "" }, b: { items: [{ label: "X Y" }] } } });
+  const rows = f.text.split("\n"), cols = f.color.split("\n");
+  assert.equal(rows.length, 3);
+  assert.ok(rows.every((r) => [...r].length === 6));
+  // the ticker's "X Y" lands at x 1..3 of row 1; its space keeps the bar under it
+  const bar = fromSpec({ kind: "progress", cols: 6, rows: 2, colors: ["#ff0000", "#00ff00", "#0000ff"] }).default()(5, { value: 1, label: "" });
+  const barRow = [...bar.text.split("\n")[1]];
+  assert.equal([...rows[1]][1], "X");
+  assert.equal([...rows[1]][2], barRow[2], "a space in an overlay is transparent");
+  assert.equal([...rows[1]][3], "Y");
+  for (const k of new Set(f.color.replace(/[\n ]/g, ""))) assert.ok(p.meta.palette[k], `key ${k} in the merged palette`);
+  // the ticker's label colour (its accent) is a key of its own in the merged palette
+  assert.equal(p.meta.palette[[...cols[1]][1]], "#ffffff");
+});
+
+test("layout: play regions wait, play for their seconds, and replay on a new number", () => {
+  const spec = { kind: "layout", cols: 20, rows: 6, regions: [{ id: "c", play: 1, spec: { kind: "celebrate", style: "confetti" } }] };
+  const d = fromSpec(spec).default();
+  const ink = (f) => f.text.replace(/[\n ]/g, "").length;
+  assert.equal(ink(d(0, {})), 0, "hidden until played");
+  assert.equal(ink(d(1, { play: {} })), 0);
+  assert.ok(ink(d(2, { play: { c: 1 } })) > 0, "plays when its number appears");
+  assert.ok(ink(d(2.5, { play: { c: 1 } })) > 0);
+  assert.equal(ink(d(3.1, { play: { c: 1 } })), 0, "hidden after `play` seconds");
+  assert.ok(ink(d(4, { play: { c: 2 } })) > 0, "a new number plays it again");
+});
+
+test("layout: drift moves everything, opaque regions clear what is under them", () => {
+  const base = { kind: "layout", cols: 12, rows: 5, regions: [{ x: 4, y: 2, w: 4, h: 1, spec: { kind: "text", text: "AB", font: "plain", effect: "plain" } }] };
+  const still = fromSpec(base).default(), moved = fromSpec({ ...base, drift: { cells: 2, period: 4 } }).default();
+  assert.equal(still(1).text, fromSpec(base).default()(0).text);
+  assert.notEqual(moved(1).text, still(1).text, "a quarter period in, it has moved");
+  assert.equal(moved(0).text, still(0).text, "no drift at t=0");
+  const o = fromSpec({ kind: "layout", cols: 6, rows: 1, regions: [
+    { spec: { kind: "ticker", cols: 6, speed: 0, items: [{ label: "ABCDEF" }] } },
+    { x: 2, w: 2, opaque: true, spec: { kind: "ticker", cols: 2, speed: 0, items: [{ label: "  " }] } },
+  ] }).default();
+  assert.equal(o(0).text, "AB  EF");
+});
+
+test("celebrate: coins fall and settle, hues recolour", () => {
+  const p = fromSpec({ kind: "celebrate", cols: 30, rows: 8, style: "coins" });
+  assert.match(p.meta.palette["2"], /^#(ffd23f|f5b700|ffe58a|e09f1f)$/);
+  const f = p.default()(4).text.split("\n");
+  assert.match(f[7], /[◎¢$]/, "settled on the floor");
+  const h = fromSpec({ kind: "celebrate", style: "fireworks", hues: ["#123456"] });
+  assert.equal(h.meta.palette["2"], "#123456");
+  assert.equal(h.meta.palette["9"], "#123456");
+});

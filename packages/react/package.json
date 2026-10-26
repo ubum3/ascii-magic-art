@@ -34,6 +34,10 @@
       "types": "./dist/rest-server.d.ts",
       "default": "./dist/rest-server.js"
     },
+    "./lens": {
+      "types": "./dist/lens.d.ts",
+      "default": "./dist/lens.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [

@@ -5,7 +5,7 @@
  *   progress   { value: 0..1, label }                  a bar that eases to the value
  *   sparkline  { values: number[], label }             the last `cols` values, bars in eighths
  *   ticker     { items: [{ label, value, delta }] }    a scrolling marquee, ▲ green, ▼ red
- *   celebrate  { message, style: check|confetti|fireworks }   "payment approved", "deployed"
+ *   celebrate  { message, style: check|confetti|fireworks|coins }   "payment approved", "deployed"
  *
  * The spec sets the size (cols, rows) and colours. Frames depend on the order of
  * draw calls only through easing, and are otherwise pure in (t, state).
@@ -139,12 +139,18 @@ export function ticker(spec) {
   };
 }
 
+const GOLDS = ["#ffd23f", "#f5b700", "#ffe58a", "#e09f1f"];
+const COINS = "◎¢$", SPIN = "◎○|○";
+
 export function celebrate(spec) {
   const W = spec.cols || 40, H = spec.rows || 12, aspect = 1 / 0.602;
-  const hues = Array.from({ length: 8 }, (_, i) => hsl(i * 45, 90, 62));
+  // spec.hues recolours the confetti, fireworks and coins; coins default to golds.
+  const own = spec.hues && spec.hues.length ? spec.hues : spec.style === "coins" ? GOLDS : null;
+  const hues = Array.from({ length: 8 }, (_, i) => (own ? own[i % own.length] : hsl(i * 45, 90, 62)));
   const palette = { ...kitPalette([spec.color || "#3fb950", "#c9d1d9", ...hues]), [FX.accent]: spec.accent || "#ffffff", [FX.dim]: "#484f58" };
   const meta = metaFor(spec, { cols: W, rows: H, fps: spec.fps || 30, palette });
   const SPARK = "*+·•°";
+  const seed = (spec.seed | 0) * 7919; // another seed, other positions (0 keeps the originals)
   return {
     meta,
     create() {
@@ -159,11 +165,11 @@ export function celebrate(spec) {
             if (burst) {
               const life = t - 0.45;
               if (life < 0 || life > 2.4) continue;
-              const a = hash(i, 1, 21) * Math.PI * 2, v = 6 + hash(i, 2, 21) * 14;
+              const a = hash(i + seed, 1, 21) * Math.PI * 2, v = 6 + hash(i + seed, 2, 21) * 14;
               w.put(cx + Math.cos(a) * v * life, cy + (Math.sin(a) * v * life) / aspect + 4 * life * life, ch, k);
             } else {
-              const sp = 3 + hash(i, 3, 21) * 6, x = hash(i, 4, 21) * W + Math.sin(t * 2 + i) * 1.5;
-              const y = ((t * sp + hash(i, 5, 21) * H * 2) % (H + 4)) - 2;
+              const sp = 3 + hash(i + seed, 3, 21) * 6, x = hash(i + seed, 4, 21) * W + Math.sin(t * 2 + i) * 1.5;
+              const y = ((t * sp + hash(i + seed, 5, 21) * H * 2) % (H + 4)) - 2;
               w.put(x, y, ch, k);
             }
           }
@@ -172,12 +178,24 @@ export function celebrate(spec) {
         else if (s.style === "fireworks") {
           for (let b = 0; b < 3; b++) {
             const per = 1.8, ph = t + b * 0.6, n = Math.floor(ph / per), life = ph % per;
-            const bx = W * (0.2 + hash(n, b, 22) * 0.6), byy = H * (0.2 + hash(n, b, 23) * 0.4), k = KEYS[2 + ((n + b) % 8)];
+            const bx = W * (0.2 + hash(n + seed, b, 22) * 0.6), byy = H * (0.2 + hash(n + seed, b, 23) * 0.4), k = KEYS[2 + ((n + b) % 8)];
             for (let i = 0; i < 18; i++) {
               const a = (i / 18) * Math.PI * 2, r = easeOut(life / 1.2) * Math.min(W / 4, 10);
               if (life > 1.5) continue;
               w.put(bx + Math.cos(a) * r, byy + (Math.sin(a) * r) / aspect + life * life, life > 1 ? "·" : "*", k);
             }
+          }
+        } else if (s.style === "coins") {
+          // coins rain down spinning, bounce once and settle along the floor
+          const floor = msg ? H - 3 : H - 1, n = Math.max(8, Math.floor(W * 0.6));
+          for (let i = 0; i < n; i++) {
+            const k = KEYS[2 + (i % 8)], x = Math.floor(hash(i + seed, 1, 24) * W);
+            const life = t - hash(i + seed, 2, 24) * 1.4;
+            if (life < 0) continue;
+            const g = 9 + hash(i + seed, 3, 24) * 6, fall = Math.sqrt((floor + 1) / g * 2), y = -1 + 0.5 * g * life * life;
+            if (life < fall) { w.put(x, y, SPIN[Math.floor(life * 14 + i) % SPIN.length], k); continue; }
+            const b = life - fall, hop = 0.5;
+            w.put(x, b < hop ? floor - Math.round(Math.sin((b / hop) * Math.PI) * 1.5) : floor, COINS[i % COINS.length], k);
           }
         } else {
           // a ring that draws itself, then a check stroked into it, then a burst

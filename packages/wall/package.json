@@ -1,0 +1,36 @@
+{
+  "name": "ascii-magic-art-wall",
+  "version": "0.1.0",
+  "description": "A live payments wall for office TVs: every auth a firework in its card scheme's colours, payouts rain coins, an auth-rate sparkline and a ticker. One extras layout spec, played by React in the browser and by the ratatui and Bubble Tea packages in a terminal.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./server": "./src/server.js",
+    "./webhook": "./src/sources/webhook.js",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "ama-wall": "bin/ama-wall.js"
+  },
+  "files": ["src", "bin", "web", "dist"],
+  "scripts": {
+    "build": "node src/bundle.js",
+    "start": "node bin/ama-wall.js",
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "dependencies": {
+    "ascii-magic-art-extras": "0.1.0",
+    "ascii-magic-art-react": "0.1.0",
+    "esbuild": "^0.25.12",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "ascii-magic-art": "file:../.."
+  }
+}

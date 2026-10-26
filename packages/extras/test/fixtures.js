@@ -35,6 +35,20 @@ export function testPixels(w = 32, h = 24) {
   return px;
 }
 
+/** A small screen: a sparkline and a bar side by side, a ticker, and a burst over them. */
+export function testLayout() {
+  return {
+    kind: "layout", cols: 48, rows: 14,
+    regions: [
+      { id: "title", x: 0, y: 0, w: 48, h: 1, spec: { kind: "text", text: "LIVE", font: "plain", effect: "plain" } },
+      { id: "tps", x: 0, y: 2, w: 28, h: 6, spec: { kind: "sparkline", label: "Auths / s" } },
+      { id: "ok", x: 30, y: 4, w: 18, h: 2, spec: { kind: "progress" } },
+      { id: "feed", x: 0, y: 13, w: 48, h: 1, spec: { kind: "ticker" } },
+      { id: "burst", x: 0, y: 1, w: 48, h: 12, play: 3, spec: { kind: "celebrate", style: "fireworks", hues: ["#1a1f71", "#f7b600"] } },
+    ],
+  };
+}
+
 /** [name, spec, state?] for every kind, every effect and idle. */
 export function fixtures() {
   const m = testMask();
@@ -55,6 +69,12 @@ export function fixtures() {
   const chars = m.cov.map((r) => [...r].map((c) => (c === "0" ? " " : c === "8" ? "8" : "/")).join(""));
   out.push(["brand-glyphs", { kind: "brand", effect: "draw", ...m, chars }]);
   for (const effect of ["assemble", "matrix"]) out.push([`qr-${effect}`, { kind: "qr", text: "https://pay.example/r/42", effect, settle: 2 }]);
+  out.push(["celebrate-coins", { kind: "celebrate", cols: 40, rows: 12, message: "Payout sent", style: "coins" }]);
+  out.push(["celebrate-hues", { kind: "celebrate", cols: 40, rows: 12, style: "fireworks", hues: ["#1a1f71", "#f7b600", "#ffffff"] }]);
+  out.push(["layout", testLayout(), {
+    regions: { tps: { values: Array.from({ length: 40 }, (_, i) => 10 + (i % 7) * 3) }, ok: { value: 0.97, label: "Approval 97%" }, feed: { items: [{ label: "VOLUME", value: 98765, delta: 1.2 }] } },
+    play: { burst: 1 },
+  }]);
   return out;
 }
 
