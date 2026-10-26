@@ -19,6 +19,16 @@ const MARK = path.join(HERE, "../../extras/examples/mark.svg");
 const CLI = path.join(HERE, "../bin/ama-studio.js");
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "ama-studio-test-"));
 
+test("brand: an SVG with a big viewBox and no size stays under sharp's pixel limit", async () => {
+  const big = path.join(tmp, "big.svg");
+  fs.writeFileSync(big, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2000 2000"><path d="M1000 400 1600 1600H400Z"/></svg>');
+  for (const style of ["blocks", "glyphs"]) {
+    const spec = await brandSpec(big, { cols: 40, style });
+    assert.ok(spec.cov.join("").replace(/0/g, "").length > 50, `${style} draws the shape`);
+  }
+  assert.equal((await imageSpec(big, { cols: 40 })).kind, "image");
+});
+
 test("brand: an SVG logo becomes a mask with its own colours", async () => {
   const spec = await brandSpec(MARK, { cols: 60, effect: "assemble" });
   assert.equal(spec.kind, "brand");

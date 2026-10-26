@@ -9,10 +9,15 @@ import { cellsFromPixels, gridSize } from "ascii-magic-art-extras";
 
 const TEXT_ASPECT = 1 / 0.602; // a text cell is this many times taller than wide
 
-/** Render at a size that keeps vector input sharp. */
+const MAX_SIDE = 4096; // largest SVG render, in px: big viewBoxes would pass sharp's pixel limit
+
+/** Render at a size that keeps vector input sharp, capped at MAX_SIDE on its longest side. */
 async function input(file, density) {
   const isSvg = /\.svg$/i.test(file) || (Buffer.isBuffer(file) && file.slice(0, 256).toString().includes("<svg"));
-  return sharp(file, isSvg ? { density } : {});
+  if (!isSvg) return sharp(file);
+  const { width = 0, height = 0 } = await sharp(file).metadata(); // at 72 dpi
+  const side = (Math.max(width, height) * density) / 72;
+  return sharp(file, { density: side > MAX_SIDE ? (density * MAX_SIDE) / side : density });
 }
 
 export async function imageSpec(file, { cols = 96, rows, square = true, colors = 48, gamma = 1, motion, look, fps, name } = {}) {
