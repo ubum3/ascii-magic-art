@@ -93,6 +93,8 @@ Both packages run the pieces from this repo. After adding or changing pieces, re
   - its 240 pieces (tech logos, companies, Linux distros and scenes) play everywhere as `rest-<name>`
   - its animated SVGs (`ama-studio export logo.json -o logo.svg --both`), banner fonts (`ama-studio banner`) and shape-matched logo glyphs (`ama-studio brand logo.svg --style glyphs`) work on ours
 
+The ascii.rest and shaders sources are git submodules at `./ascii` and `./shaders` (the ubum3 forks). Clone with `git clone --recursive`, or run `git submodule update --init` in an existing clone.
+
 None of this changes the pieces, `lib/` or `runtime/`. It builds on them.
 
 ## Use a piece in your own code

@@ -19,8 +19,9 @@ Third-party code used by the packages in packages/ (not by the core package):
 
   ascii.rest (https://github.com/bas3line/ascii), MIT License, by bas3line.
   packages/rest-bridge converts its pieces, and uses its svg(), banner() and logo
-  glyph code. A checkout is expected at ./ascii (git-ignored).
+  glyph code. It is a git submodule at ./ascii (the ubum3/ascii fork).
 
   shaders (https://github.com/shader-effects-inc/shaders), MIT License,
   by Shader Effects Inc. ascii-magic-art-react/shader renders a <Shader> tree you
-  pass it into ASCII. It is not a dependency; you install it yourself.
+  pass it into ASCII. It is not a dependency; you install it yourself. The source
+  is a git submodule at ./shaders (the ubum3/shaders fork), kept for reference.

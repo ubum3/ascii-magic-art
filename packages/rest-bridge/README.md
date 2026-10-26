@@ -24,10 +24,10 @@ ama-studio brand logo.svg --style glyphs -o logo.json
 
 ## The ascii.rest checkout
 
-This package doesn't copy ascii.rest. It reads a checkout at `./ascii` in the repo root, which is git-ignored:
+This package doesn't copy ascii.rest. It reads `./ascii` in the repo root, a git submodule pinned to the [ubum3/ascii](https://github.com/ubum3/ascii) fork:
 
 ```bash
-git clone https://github.com/bas3line/ascii ascii
+git submodule update --init   # or clone with --recursive
 npm install          # builds dist/ (scripts/build.mjs)
 ```
 

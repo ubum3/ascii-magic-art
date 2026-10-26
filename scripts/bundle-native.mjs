@@ -195,7 +195,7 @@ if (fs.existsSync(REST)) {
     restGolden[slug] = typeof fr === "string" ? [fr, ""] : [fr.text, fr.color];
   }
 } else {
-  console.log("no ascii.rest checkout at ./ascii: its pieces are left out");
+  console.log("no ascii.rest checkout at ./ascii (run: git submodule update --init): its pieces are left out");
 }
 if (problems.length) { console.error(problems.join("\n")); process.exit(1); }
 

@@ -1,0 +1,6 @@
+[submodule "ascii"]
+	path = ascii
+	url = https://github.com/ubum3/ascii.git
+[submodule "shaders"]
+	path = shaders
+	url = https://github.com/ubum3/shaders.git
