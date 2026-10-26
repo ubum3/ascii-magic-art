@@ -56,6 +56,22 @@ export const LUMINO_BACKGROUNDS: readonly BackgroundEntry[] = [
     tags: ["webgl", "dots", "halftone"],
     load: () => import("../components/halftone-tide/index.js").then((m) => m.HalftoneTide),
   },
+  {
+    id: "edge-orbit",
+    name: "Edge Orbit",
+    description: "ASCII halftone: the night Earth from low orbit, requests arcing between cities, a white brandmark star in the sky.",
+    author: "cd",
+    tags: ["ascii", "orbit", "halftone"],
+    load: () => import("./adapters.js").then((m) => m.EdgeOrbitBackground),
+  },
+  {
+    id: "lumino-space",
+    name: "Lumino Space",
+    description: "ASCII deep space: a nebula, twinkling dust and brandmark stars drifting by in parallax.",
+    author: "cd",
+    tags: ["ascii", "space"],
+    load: () => import("./adapters.js").then((m) => m.LuminoSpaceBackground),
+  },
 ];
 
 /** The entry with this id, if there is one. */
