@@ -10,7 +10,7 @@ export function SignIn({ pick }: { pick?: string }) {
       <LuminoRandomBackground pick={pick} dim={0.35} onPick={(b) => setName(b.name)}>
         <Card />
         <div style={{ position: "absolute", left: 16, bottom: 12, color: "rgba(255,255,255,0.55)", font: "13px system-ui, sans-serif" }}>
-          {name} · <a href="/sign-in" style={{ color: "inherit" }}>shuffle</a> · <a href="/lumino-bg" style={{ color: "inherit" }}>all</a>
+          {name} · <a href="/sign-in" style={{ color: "inherit" }}>shuffle</a> · <a href="/lumino" style={{ color: "inherit" }}>all</a>
         </div>
       </LuminoRandomBackground>
     </div>
