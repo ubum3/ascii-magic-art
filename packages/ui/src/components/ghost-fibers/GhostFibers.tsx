@@ -5,16 +5,19 @@
  * The cursor pulls the focus or parts the fibers; a click sends a pulse along a
  * ribbon. Ported to TypeScript; the CSS file is inlined as styles, since this
  * package ships no CSS. It fills its container, so give the container a size.
+ * Added here: an optional ASCII pass (`ascii`) that draws glyphs over the fibers.
  */
 import { useEffect, useRef, type CSSProperties, type HTMLAttributes } from "react";
 import {
   CAMERA, FOV, RIBBON_LENGTH, DOT_VERTEX, DUST_VERTEX, DOT_FRAGMENT, FULLSCREEN, BRIGHT_FRAGMENT, DOWN_FRAGMENT, UP_FRAGMENT,
   COMPOSITE_FRAGMENT,
 } from "./glsl.js";
+import { ASCII_FRAGMENT, ASCII_UNIFORMS, asciiRamp, atlasGrid, buildGlyphAtlas, glyphMarkTable, MAX_GLYPH_MARKS, type AsciiGlyphMark } from "./ascii.js";
 
 export type GhostFibersGradient = "depth" | "along" | "across";
 export type GhostFibersStyle = "dots" | "dashes" | "lines";
 export type GhostFibersHover = "focus" | "part" | "none";
+export type GhostFibersAscii = "off" | "overlay" | "full";
 
 export interface GhostFibersProps extends HTMLAttributes<HTMLDivElement> {
   /** Main colour of the fibers. Default #8b5cf6. */
@@ -91,6 +94,18 @@ export interface GhostFibersProps extends HTMLAttributes<HTMLDivElement> {
   paused?: boolean;
   /** Maximum device pixel ratio, capped at 2. Default: the screen's. */
   dpr?: number;
+  /** Glyphs over the fibers (overlay), only glyphs (full), or none. Default off. */
+  ascii?: GhostFibersAscii;
+  /** The glyph ramp, darkest to brightest. Default " .:-=+*#%@". */
+  characters?: string;
+  /** Glyph cell height in CSS pixels (width is 0.6 of it). Default 14. */
+  cellSize?: number;
+  /** Glyph opacity, 0 to 1. Default 0.8. */
+  asciiOpacity?: number;
+  /** The glyphs' font. Default a monospace stack. */
+  fontFamily?: string;
+  /** Up to four vector shapes (SVG paths) drawn as glyphs, each on a `chance` share of lit cells. */
+  marks?: readonly AsciiGlyphMark[];
 }
 
 type Vec3 = [number, number, number];
@@ -126,6 +141,9 @@ const DUST_UNIFORMS = [
   "uGradient", "uGain", "uGlowColor", "uLineColor", "uSecondaryColor",
 ];
 const PASS_UNIFORMS = ["uSource", "uTexel"];
+const ASCII_MODES: Record<GhostFibersAscii, number> = { off: 0, overlay: 1, full: 2 };
+const NO_MARKS: readonly AsciiGlyphMark[] = [];
+const MONO = 'ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace';
 const COMPOSITE_UNIFORMS = ["uScene", "uBloom", "uGlow", "uBrightness", "uLightMode", "uGrain", "uVignette", "uFrame", "uView", "uDpr"];
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
@@ -242,6 +260,12 @@ export function GhostFibers({
   lightMode = false,
   paused = false,
   dpr,
+  ascii = "off",
+  characters = " .:-=+*#%@",
+  cellSize = 14,
+  asciiOpacity = 0.8,
+  fontFamily = MONO,
+  marks = NO_MARKS,
   className = "",
   style,
   ...rest
@@ -287,6 +311,12 @@ export function GhostFibers({
     lightMode,
     paused,
     dpr,
+    ascii: ASCII_MODES[ascii] ?? 0,
+    characters: String(characters),
+    cellSize: clamp(cellSize, 4, 64),
+    asciiOpacity: clamp(asciiOpacity, 0, 1),
+    fontFamily: String(fontFamily),
+    marks,
   };
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
@@ -311,6 +341,8 @@ export function GhostFibers({
     const up = link(gl, FULLSCREEN, UP_FRAGMENT, PASS_UNIFORMS);
     const composite = link(gl, FULLSCREEN, COMPOSITE_FRAGMENT, COMPOSITE_UNIFORMS);
     if (!dots || !dust || !bright || !down || !up || !composite) return undefined;
+    // The ASCII pass is optional: if it fails to link, the fibers draw without it.
+    const glyphs = link(gl, FULLSCREEN, ASCII_FRAGMENT, ASCII_UNIFORMS);
 
     const format = floatTargets ? gl.RGBA16F : gl.RGBA8;
     const makeTarget = (): Target => ({ texture: null, framebuffer: gl.createFramebuffer(), width: 0, height: 0 });
@@ -332,6 +364,28 @@ export function GhostFibers({
     };
     const scene = makeTarget();
     const chain = Array.from({ length: BLOOM_LEVELS }, makeTarget);
+    const picture = makeTarget();
+    const atlas = { texture: null as WebGLTexture | null, key: "", grid: [1, 1] as [number, number], count: 1, marks: new Float32Array(MAX_GLYPH_MARKS * 2) as Float32Array<ArrayBuffer> };
+    // The glyph atlas, rebuilt only when the ramp, font or cell size in device pixels changes.
+    const ensureAtlas = (s: typeof settings, cellWidth: number, cellHeight: number) => {
+      const marks = s.marks.map((m) => `${m.scale ?? 1}:${m.chance ?? 0}:${m.viewBox.join(",")}:${m.paths.join("")}`).join("|");
+      const key = `${s.characters}|${s.fontFamily}|${cellWidth}x${cellHeight}|${marks}`;
+      if (key === atlas.key) return;
+      atlas.key = key;
+      const ramp = asciiRamp(s.characters);
+      const shapes = Math.min(MAX_GLYPH_MARKS, s.marks.length);
+      atlas.grid = atlasGrid(ramp.length + shapes);
+      atlas.count = ramp.length;
+      atlas.marks = glyphMarkTable(s.marks, ramp.length);
+      if (!atlas.texture) atlas.texture = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, atlas.texture);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, buildGlyphAtlas(ramp, s.marks, s.fontFamily, cellWidth, cellHeight));
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    };
     const vao = gl.createVertexArray();
 
     const probe = document.createElement("canvas");
@@ -581,7 +635,10 @@ export function GhostFibers({
         gl.disable(gl.BLEND);
       }
 
-      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      // With the ASCII pass on, the composite goes to a texture the glyph pass reads.
+      const asciiOn = s.ascii > 0 && !!glyphs;
+      if (asciiOn) allocate(picture, canvas.width, canvas.height);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, asciiOn ? picture.framebuffer : null);
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
@@ -602,6 +659,31 @@ export function GhostFibers({
       gl.uniform2f(c.uView, canvas.width, canvas.height);
       gl.uniform1f(c.uDpr, ratio);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
+      if (asciiOn && glyphs) {
+        const cellHeight = Math.max(4, Math.round(s.cellSize * ratio));
+        const cellWidth = Math.max(3, Math.round(cellHeight * 0.6));
+        ensureAtlas(s, cellWidth, cellHeight);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.useProgram(glyphs.program);
+        const a = glyphs.uniforms;
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, picture.texture);
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, atlas.texture);
+        gl.uniform1i(a.uPicture, 0);
+        gl.uniform1i(a.uAtlas, 1);
+        gl.uniform2f(a.uView, canvas.width, canvas.height);
+        gl.uniform2f(a.uCell, cellWidth, cellHeight);
+        gl.uniform2f(a.uAtlasGrid, atlas.grid[0], atlas.grid[1]);
+        gl.uniform1f(a.uCount, atlas.count);
+        gl.uniform1f(a.uMode, s.ascii);
+        gl.uniform1f(a.uOpacity, s.asciiOpacity);
+        gl.uniform2fv(a.uMarks, atlas.marks);
+        gl.uniform1f(a.uTime, state.time);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+      }
       gl.activeTexture(gl.TEXTURE1);
       gl.bindTexture(gl.TEXTURE_2D, null);
       gl.activeTexture(gl.TEXTURE0);
@@ -737,7 +819,9 @@ export function GhostFibers({
       document.documentElement.removeEventListener("pointerleave", onPointerLeave);
       document.removeEventListener("visibilitychange", onVisibility);
       gl.deleteVertexArray(vao);
-      [scene, ...chain].forEach((target) => {
+      if (atlas.texture) gl.deleteTexture(atlas.texture);
+      if (glyphs) gl.deleteProgram(glyphs.program);
+      [scene, picture, ...chain].forEach((target) => {
         if (target.texture) gl.deleteTexture(target.texture);
         gl.deleteFramebuffer(target.framebuffer);
       });

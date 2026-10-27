@@ -54,6 +54,11 @@ export default function ReactBitsPage() {
         <GhostFibers glowColor="#38bdf8" secondaryColor="#ff2bd6" gradient="along" layers={2} twist={0.6} threads={110} />
       </div>
 
+      <h2>GhostFibers with an ASCII overlay (ascii="overlay"; "full" draws only glyphs)</h2>
+      <div style={box}>
+        <GhostFibers ascii="overlay" cellSize={12} brightness={1.5} />
+      </div>
+
       <h2>GhostFibers with lightMode</h2>
       <div style={{ ...box, background: "#f4f1ea" }}>
         <GhostFibers lightMode glowColor="#7c3aed" fiberStyle="lines" />
