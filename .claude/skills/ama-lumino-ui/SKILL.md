@@ -1,6 +1,6 @@
 ---
 name: ama-lumino-ui
-description: lumino-ui (packages/lumino-ui) - the Lumino brandmark components for React/Next.js, built on ascii-magic-art-react: LuminoDonut (the brandmark spinning like donut.c), LuminoSpace (a space background with brandmark stars), EdgeOrbit (the night Earth from orbit with requests arcing between cities and a brandmark star) and LuminoHolo (the brandmark as WebGPU holographic foil played as ASCII, with a baked fallback). Also 23 glassy brandmark backgrounds (lumino-ui/backgrounds, LuminoRandomBackground for a random one per load) for sign-in pages. Use to "add a Lumino background", "random sign-in background", "make a new Lumino background", "add LuminoDonut to a page", "add a space/starfield background", "add a Lumino component", "turn a logo into a spinning 3D piece", "rebake the LuminoHolo clip", or regenerate the brandmark mask.
+description: lumino-ui (packages/lumino-ui) - the Lumino brandmark components for React/Next.js, built on ascii-magic-art-react: LuminoDonut (the brandmark spinning like donut.c), LuminoSpace (a space background with brandmark stars), EdgeOrbit (the night Earth from orbit with requests arcing between cities and a brandmark star) and LuminoHolo (the brandmark as WebGPU holographic foil played as ASCII, with a baked fallback) and LuminoGlassMark (LuminoChrome's liquid-glass mark as a standalone logo). Also 24 glassy brandmark backgrounds (lumino-ui/backgrounds, LuminoRandomBackground for a random one per load) for sign-in pages. Use to "add a Lumino background", "random sign-in background", "make a new Lumino background", "add LuminoDonut to a page", "add a space/starfield background", "add a Lumino component", "turn a logo into a spinning 3D piece", "rebake the LuminoHolo clip", or regenerate the brandmark mask.
 ---
 
 # ama-lumino-ui: Lumino brandmark components
@@ -16,6 +16,7 @@ Lives in `packages/lumino-ui`. package `lumino-ui` (private, local to this repo)
 |---|---|
 | `lumino-ui` | `LuminoDonut`, `LuminoSpace`, `EdgeOrbit`, their props types, and everything in `/pieces` |
 | `lumino-ui/<name>` | one component folder, e.g. `lumino-ui/lumino-donut`. LuminoHolo is only here: `lumino-ui/lumino-holo` (+ `LuminoHoloScene`) |
+| `lumino-ui/lumino-glass-mark` | `LuminoGlassMark`, `GLASS_MARK_PADDING`: LuminoChrome's liquid-glass mark alone, a sized transparent WebGL2 logo (`size`, `ripple`, `rings`, `tilt`, `glow`). Server HTML is the flat gradient mark at the same inset |
 | `lumino-ui/pieces` | `luminoDonut`, `LUMINO_DONUT_PERIOD` (2π / 1.1 ≈ 5.71 s); `luminoSpace`, `LUMINO_SPACE_PERIOD` (120 s); `edgeOrbit`, `EDGE_ORBIT_PERIOD` (1440 s) |
 
 `LuminoDonut` takes every `AsciiPlayer` prop except `piece` and defaults to `size={10}` and a label. `LuminoSpace` and `EdgeOrbit` take every `AsciiHero` prop except `piece` (need a height; `children` sit on top) and default `bg` to `#05060f` / `#04060c`. `LuminoHolo` takes `ShaderStageProps` plus `hueShift`, `sparkle`, `aberration`; defaults `bg="#04060c"`, `look="dots"`, `fit="contain"`.
@@ -56,12 +57,13 @@ cd examples/next-demo && npx next build         # /lumino, /space, /orbit and /s
 
 ## Backgrounds (lumino-ui/backgrounds)
 
-23 full-bleed brandmark backgrounds, listed in `src/backgrounds/registry.ts` (`LUMINO_BACKGROUNDS`: id, name, description, author, tags, lazy `load`). `LuminoRandomBackground` picks one after mount (server HTML is the fallback, so hydration matches), never the last one in this tab (`sessionStorage`), and loads only it.
+24 full-bleed brandmark backgrounds, listed in `src/backgrounds/registry.ts` (`LUMINO_BACKGROUNDS`: id, name, description, author, tags, lazy `load`). `LuminoRandomBackground` picks one after mount (server HTML is the fallback, so hydration matches), never the last one in this tab (`sessionStorage`), and loads only it.
 
 - Contract: `src/components/<id>/` with `index.ts` and `<Name>.tsx` (`"use client"`), rendered inside `BackgroundFrame` (`src/backgrounds/frame.tsx`) so the server HTML is a CSS `fallback`, the art fades in on `ready`, `dim` darkens the middle and `children` sit on top. Props: `LuminoBackgroundProps` (children, paused, speed, dim, quality, dpr) plus its own.
 - Loop: `useGLScene` / `use2DScene` (`src/backgrounds/loop.ts`): `setup(ctx)` returns `{ draw(frame), resize?, dispose? }`. It sizes the canvas (DPR cap 1.5 times quality), pauses off screen and in hidden tabs, draws one still frame with reduced motion, tracks the pointer on the window, and catches setup/draw errors (the fallback stays).
 - GL helpers (`src/backgrounds/gl.ts`): `link(gl, fragment)` returns `{ program, u }`, `drawFullscreen`, `paletteTexture` (256 x 1 brand gradient), `markSDFTexture(gl, brandmarkSDF(512))`, `BRAND_GLSL` (hash, vnoise, fbm, palette, markSD, tonemap; needs `markSpreadDefine(sdf)`). Bake the SDF at 512 when the mark is big; 256 looks stair-stepped. Clamp `exp(d * k)` on the SDF with `min(d, 0.0)`: far from the mark it overflows to inf, and inf * 0 is NaN (a black circle).
 - Layout: keep the mark off a centred ~380 px card: beside it on wide boxes, above or below it on tall ones (switch on aspect, don't blend, or it lands under the card on squarish boxes).
+- `lumino-fibers` is `ascii/ghost-fibers` with its `ascii` pass on and `marks: [FIBERS_MARK]` (BRANDMARK's paths at scale 1.8, `markChance` of lit cells), the same idea as GradientASCII's marks but in GhostFibers' own glyph pass.
 - Adapters (`src/backgrounds/adapters.tsx`) put EdgeOrbit and LuminoSpace in the pool.
 - `test/backgrounds.test.mjs` checks every registry entry (loads, renders BackgroundFrame with children on the server, "use client", unique ids); per-builder tests are `test/bg-*.test.mjs`.
 - Look at one: `npx next dev -p 3000` in examples/next-demo, then `npm run shots -w packages/lumino-ui -- --url http://localhost:3000 [--card] <id>` (CDP-driven headless Chromium on SwiftShader, real time, waits for the art to fade in; writes `.shots/<id>-{desktop,phone}[-card].png`). `/lumino-bg/perf` measures frame times (GPU timer queries where available); SwiftShader numbers only compare backgrounds with each other.

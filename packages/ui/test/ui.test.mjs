@@ -17,7 +17,7 @@ import { SilkBackground } from "ascii/silk-background";
 import { MeshBackground } from "ascii/mesh-background";
 import { ChromaBackground } from "ascii/chroma-background";
 import { DarkVeil } from "ascii/dark-veil";
-import { GhostFibers } from "ascii/ghost-fibers";
+import { GhostFibers, asciiRamp, atlasGrid, glyphMarkTable } from "ascii/ghost-fibers";
 import { Threads } from "ascii/threads";
 import { PixelSnow } from "ascii/pixel-snow";
 
@@ -99,6 +99,18 @@ test("GhostFibers renders an empty, sized box on the server", () => {
   assert.match(html, /class="ghost-fibers-container hero"/);
   assert.match(html, /position:relative;width:100%;height:600px;overflow:hidden/);
   assert.match(html, /<canvas class="ghost-fibers-canvas"[^>]*aria-hidden="true"/);
+});
+
+test("GhostFibers' ASCII pass: the ramp dedupes and never empties, the atlas grid holds it, and the server HTML is unchanged", () => {
+  assert.deepEqual(asciiRamp(" .:..:#\n"), [" ", ".", ":", "#"]);
+  assert.deepEqual(asciiRamp(""), [" "]);
+  assert.deepEqual(atlasGrid(10), [10, 1]);
+  assert.deepEqual(atlasGrid(40), [16, 3]);
+  const mark = { viewBox: [10, 10], paths: ["M0 0h10v10z"] };
+  assert.deepEqual([...glyphMarkTable([{ ...mark, chance: 0.3 }, { ...mark, chance: 2 }, mark], 10)], [10, Math.fround(0.3), 11, 1, 12, 0, 0, 0]);
+  assert.equal(glyphMarkTable(Array(6).fill({ ...mark, chance: 0.1 }), 4).filter((v, i) => i % 2 === 0 && v > 0).length, 4, "four marks at most");
+  const plain = renderToString(h(GhostFibers, { style: { height: 300 } }));
+  assert.equal(renderToString(h(GhostFibers, { style: { height: 300 }, ascii: "overlay", cellSize: 12 })), plain);
 });
 
 test("Threads renders an empty, sized box on the server", () => {

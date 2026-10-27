@@ -200,6 +200,14 @@ export const LUMINO_BACKGROUNDS: readonly BackgroundEntry[] = [
     tags: ["webgl", "glass", "shards", "particles"],
     load: () => import("../components/lumino-shards/index.js").then((m) => m.LuminoShards),
   },
+  {
+    id: "lumino-fibers",
+    name: "Lumino Fibers",
+    description: "React Bits' GhostFibers in the brand gradient, drawn over in ASCII glyphs, drifting past the liquid-glass brandmark on the left.",
+    author: "b4",
+    tags: ["webgl", "fibers", "glass", "ascii"],
+    load: () => import("../components/lumino-fibers/index.js").then((m) => m.LuminoFibers),
+  },
 ];
 
 /** The entry with this id, if there is one. */

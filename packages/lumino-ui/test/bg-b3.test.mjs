@@ -89,3 +89,19 @@ test("shards: the mesh is deterministic, three vertices a shard, and only covers
   for (let i = 0; i < a.home.length; i += 2) assert.ok(Math.hypot(a.home[i] - 0.5, a.home[i + 1] - 0.5) < 0.5, "homes near the disc");
   assert.equal(shardMesh(() => false, { cols: 20 }).count, 0);
 });
+
+test("glass mark: the server HTML is the flat mark in the brand gradient, sized and labelled", async () => {
+  const { LuminoGlassMark, GLASS_MARK_PADDING } = await import("lumino-ui/lumino-glass-mark");
+  const html = renderToString(h(LuminoGlassMark, { size: 180 }));
+  assert.match(html, /role="img" aria-label="Lumino"/);
+  assert.match(html, /width:180px;aspect-ratio:1/);
+  assert.equal(html.match(/<path /g).length, 3);
+  assert.equal(html.match(/<stop /g).length, 7);
+  const id = html.match(/<linearGradient id="([^"]+)"/)[1];
+  assert.match(html, new RegExp(`fill="url\\(#${id}\\)"`));
+  assert.match(html, /<canvas /);
+  assert.ok(html.includes(`left:${GLASS_MARK_PADDING * 100}%`));
+  const deco = renderToString(h(LuminoGlassMark, { label: "" }));
+  assert.match(deco, /aria-hidden="true"/);
+  assert.doesNotMatch(deco, /role="img"/);
+});

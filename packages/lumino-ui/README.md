@@ -10,6 +10,7 @@ Lumino brandmark components for React and Next.js, built on [`ascii-magic-art-re
 | `<LuminoSpace>` | A background: deep space with a nebula, twinkling dust, and Lumino brandmarks for stars that drift by in parallax, spin and flare, plus a shooting brandmark every 20 s. Fills its container behind your content. 160 x 56 cells, loops every 120 s. |
 | `<EdgeOrbit>` | A background: the night Earth from low orbit, city lights below and Cloudflare-orange requests arcing city to city, drawn as a halftone, with a white Lumino brandmark tilted in the top-right sky, twinkling like a star. Ported from ascii.rest's "edge orbit" (by bas3line, MIT). Fills its container. 200 x 100 square cells, loops every 24 min. Square cells are never prerendered, so it shows its `bg` until the browser draws the first frame. |
 | `<LuminoHolo>` (`lumino-ui/lumino-holo`) | The Lumino brandmark as holographic foil with glitter and split colour edges, a WebGPU scene played as ASCII. `hueShift`, `sparkle`, `aberration`. |
+| `<LuminoGlassMark>` (`lumino-ui/lumino-glass-mark`) | The liquid-glass brandmark from the LuminoChrome background on its own: a sized, transparent WebGL logo whose top waves, reflects the brand gradient, catches a light sweep and tilts toward the pointer. |
 
 ## Use
 
@@ -47,9 +48,21 @@ After changing its scene or the brandmark mask, rebake the clip and logo (this n
 npm run bake -w packages/lumino-ui   # lumino-holo/clip.ts and lumino-holo/logo.ts
 ```
 
+## LuminoGlassMark
+
+`<LuminoGlassMark>` is the bevelled chrome brandmark that rises out of `<LuminoChrome>`, cut out of the sea and drawn on a transparent background, so it sits on any page like a logo. It is on its own entry, `lumino-ui/lumino-glass-mark`, and needs WebGL2; the server HTML (and the look without WebGL) is the flat mark in the brand gradient, and the glass fades in over it.
+
+```tsx
+import { LuminoGlassMark } from "lumino-ui/lumino-glass-mark";
+
+<LuminoGlassMark size={320} />
+```
+
+Props: `size` (the square box, px or any CSS length; 240), `ripple` (how much the surface moves, 0 to 1; 1), `rings` (the rippled metal that hugs the mark in LuminoChrome, 0 for just the mark; 1), `tilt` (how far reflections follow the pointer; 1), `glow` (1), `paused`, `speed`, `quality` (1), `dpr` (2), and `label` (`"Lumino"`; `""` makes it decoration). It pauses off screen and draws one still frame for reduced motion.
+
 ## Backgrounds
 
-23 full-bleed Lumino brandmark backgrounds for sign-in pages and heroes, glassy and luminous, in the lumino.io palette (peach, coral, wine, plum, indigo, blue and lavender on `#111013`). Each one fills its container, keeps the middle calm for a centred card, and puts your content on top:
+24 full-bleed Lumino brandmark backgrounds for sign-in pages and heroes, glassy and luminous, in the lumino.io palette (peach, coral, wine, plum, indigo, blue and lavender on `#111013`). Each one fills its container, keeps the middle calm for a centred card, and puts your content on top:
 
 ```tsx
 import { LuminoRandomBackground } from "lumino-ui/backgrounds";
@@ -93,6 +106,7 @@ Every background takes `children`, `dim` (darkens the middle, 0 to 1), `paused`,
 | `lumino-orb` | A glass ball lens with the mark turning inside, iridescent rim | b3 |
 | `lumino-frost` | The mark as three frosted-glass slabs framing the card (CSS glass) | b3 |
 | `lumino-shards` | Glass shards cut from the mark, orbiting the card and reassembling | b3 |
+| `lumino-fibers` | GhostFibers in the brand gradient drawn over in ASCII glyphs, with the brandmark as one of the glyphs as in `lumino-glyphs` (`ascii`, `cellSize`, `asciiOpacity`, `characters`, `markChance`, `fibers`) | b4 |
 
 `examples/next-demo` shows them at `/lumino-bg` (gallery), `/lumino-bg/<id>?card=1&dim=0.4` (one, full screen), `/lumino-bg/perf` (frame times, with GPU timer queries where the browser has them) and `/sign-in` (a mock sign-in page with a random one).
 
@@ -126,6 +140,7 @@ src/
       mask.ts              its assets, here the brandmark shape
     lumino-space/          the background (it borrows lumino-donut's mask)
     edge-orbit/            the orbit background (it borrows the mask too)
+    lumino-glass-mark/     LuminoChrome's mark on its own: LuminoGlassMark.tsx, glsl.ts (it borrows lumino-chrome's smoothed SDF)
     lumino-holo/           the shader component: LuminoHolo.tsx, scene.tsx (the <Shader> tree), clip.ts (baked), logo.ts (the mask as a PNG)
 ```
 
